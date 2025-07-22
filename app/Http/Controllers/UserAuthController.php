@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
 
 class UserAuthController extends Controller
 {
@@ -136,6 +137,22 @@ class UserAuthController extends Controller
     public function updateUserConfig(Request $request)
     {
         $user = Auth::guard('user')->user();
+
+        $validator = Validator::make($request->all(), [
+            'apirul' => ['nullable', 'url'],
+            'fonnte' => ['nullable', 'string'],
+            'unit' => ['nullable', 'integer', 'unique:users,unit_id,' . $user->id],
+        ], [
+            'unit.unique' => 'Unit sudah digunakan oleh pengguna lain.',
+            'apirul.url' => 'Format URL tidak valid.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error', 'Gagal memperbarui konfigurasi!');
+        }
 
         $user->api_url = $request->filled('apirul') ? $request->apirul : $user->api_url;
         $user->fonnte = $request->filled('fonnte') ? $request->fonnte : $user->fonnte;

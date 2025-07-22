@@ -2,21 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\User;
 use Dom\Text;
 use Filament\Forms;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\DateTimePicker;
+use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\UserResource\RelationManagers;
 
 class UserResource extends Resource
 {
@@ -59,7 +60,26 @@ class UserResource extends Resource
                             ->default(now())
                             ->placeholder('select subs'),
                         TextInput::make('subscription_token')
-                            ->label('SITAKU Token')
+                            ->label('SITAKU Token'),
+                        Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'active' => 'active',
+                                'inactive' => 'inactive',
+                            ])
+                            ->required(),
+                        TextInput::make('unit_id')
+                            ->label('Unit ID')
+                            ->maxLength(255)
+                            ->placeholder('Enter Unit ID'),
+                        TextInput::make('api_url')
+                            ->label('API URL')
+                            ->maxLength(255)
+                            ->placeholder('Enter API URL'),
+                        TextInput::make('fonnte')
+                            ->label('Fonnte')
+                            ->maxLength(255)
+                            ->placeholder('Enter Fonnte'),
                     ])
             ]);
     }

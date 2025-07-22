@@ -29,6 +29,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'status',
         'email_verified_at',
         'unit_id',
         'fonnte',
