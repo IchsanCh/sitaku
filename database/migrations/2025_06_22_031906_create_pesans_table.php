@@ -18,6 +18,8 @@ return new class extends Migration
             $table->text('pesan');
             $table->enum('status', ['gagal', 'terkirim']);
             $table->timestamps();
+            $table->index('status');
+            $table->index('created_at');
         });
     }
 

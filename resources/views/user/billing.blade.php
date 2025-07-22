@@ -158,11 +158,16 @@
                                             Status
                                         </div>
                                     </th>
+                                    <th class="font-bold text-base-content">
+                                        <div class="flex items-center gap-2">
+                                            Action
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($billing as $p)
-                                    <tr class="hover:bg-base-200/30 transition-all duration-200 group">
+                                    <tr class="hover:bg-base-200/30 group">
                                         <td class="py-4">
                                             <div class="flex items-center gap-3">
                                                 <div class="font-bold text-base-content">#{{ $p->id }}</div>
@@ -193,7 +198,7 @@
                                         <td class="py-4 text-center">
                                             @php
                                                 $statusConfig = match ($p->status) {
-                                                    'paid' => [
+                                                    'success' => [
                                                         'class' => 'badge-success',
                                                         'text' => 'Terbayar',
                                                         'icon' => 'M5 13l4 4L19 7',
@@ -203,7 +208,7 @@
                                                         'text' => 'Pending',
                                                         'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
                                                     ],
-                                                    'unpaid' => [
+                                                    'failed' => [
                                                         'class' => 'badge-error',
                                                         'text' => 'Gagal',
                                                         'icon' => 'M6 18L18 6M6 6l12 12',
@@ -225,6 +230,10 @@
                                                 {{ $statusConfig['text'] }}
                                             </div>
                                         </td>
+                                        <td class="py-4">
+                                            <a href="{{ route('billing.status', ['payToken' => $p->payment_token]) }}"
+                                                class="btn bgc5 text-white">Lihat</a>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -241,7 +250,8 @@
                                                     </svg>
                                                 </div>
                                                 <div class="text-center">
-                                                    <p class="font-bold text-black text-lg mb-2">Belum ada riwayat billing
+                                                    <p class="font-bold text-black text-lg mb-2">Belum ada riwayat
+                                                        billing
                                                     </p>
                                                     <p class="text-base-content mb-4">Mulai berlangganan untuk melihat
                                                         riwayat pembayaran Anda</p>
@@ -330,18 +340,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Add entrance animations
-            const cards = document.querySelectorAll('.card, .stats, .table tbody tr');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    card.style.transition = 'all 0.6s ease-out';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-
             @if (session('error'))
                 showToast('error', "{{ session('error') }}");
             @endif

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('posisi')->nullable();
             $table->text('pesan')->nullable();
             $table->timestamps();
-            $table->index(['user_id', 'nama', 'nomor_hp']);
+            $table->index(['user_id', 'nama', 'nomor_hp', 'created_at']);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }

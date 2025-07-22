@@ -358,4 +358,10 @@ class BillingController extends Controller
             default => 'pending' // For unknown statuses, set as pending
         };
     }
+    public function paketStatus($payToken)
+    {
+        $subscription = Subscription::where('payment_token', $payToken)->first();
+        $package = Package::find($subscription->package_id);
+        return view('user.billing-status', compact('subscription', 'package'));
+    }
 }
