@@ -165,8 +165,6 @@ class BillingController extends Controller
                 'start_date' => Carbon::now(),
                 'end_date' => Carbon::now()->addDays($package->duration ?? 30),
                 'payment_token' => $orderId,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ]);
 
             Log::info('New subscription created:', [
