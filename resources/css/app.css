@@ -1,0 +1,98 @@
+@import "tailwindcss";
+@plugin "daisyui";
+@plugin "@tailwindcss/typography";
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+}
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 0;
+}
+
+body {
+    scroll-behavior: smooth;
+}
+.gets:hover {
+    background-color: #1e40af !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15) !important;
+}
+.gets {
+    color: black !important;
+    background-color: #25d366 !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) m !important;
+}
+.color1 {
+    color: #2f59ff;
+}
+.colorss1:hover {
+    background-color: #4e71ff;
+    color: white;
+}
+
+.colors1 {
+    background-color: #4e71ff;
+    color: white;
+}
+
+.borderc1 {
+    border: solid 1px #2f59ff;
+}
+.borderbc1 {
+    border-bottom: solid 1px #2f59ff;
+}
+.c1 {
+    color: #40514e;
+}
+.c2 {
+    color: #11999e;
+}
+.c3 {
+    color: #30e3ca;
+}
+.c4 {
+    color: #e4f9f5;
+}
+.c5 {
+    color: #236961;
+}
+.bgc1 {
+    background-color: #40514e;
+}
+.bgc2 {
+    background-color: #11999e;
+}
+.bgc3 {
+    background-color: #30e3ca;
+}
+.bgc4 {
+    background-color: #e4f9f5;
+}
+.bgc5 {
+    background-color: #3d605a;
+}
+.lisa:hover {
+    background-color: #11999e !important;
+    color: white;
+}
+.image-white {
+    filter: brightness(0) invert(1);
+}
+.lisaa:hover {
+    background-color: white;
+    color: #40514e;
+    transition: all;
+    transition-duration: 300ms;
+}
+.lisaa {
+    border: solid 1px #40514e;
+} 
