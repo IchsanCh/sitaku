@@ -45,12 +45,11 @@ class UserResource extends Resource
                             ->maxLength(255)
                             ->placeholder('Enter Email Address'),
                         TextInput::make('password')
-                            ->label('Password')
                             ->password()
-                            ->required(fn(string $context) => $context === 'create')
-                            ->revealable()
                             ->maxLength(255)
-                            ->placeholder('Enter password'),
+                            ->dehydrated(fn($state) => filled($state))
+                            ->dehydrateStateUsing(fn($state) => bcrypt($state))
+                            ->required(fn(string $context): bool => $context === 'create')->revealable(),
                         DateTimePicker::make('email_verified_at')
                             ->label('Email Verify')
                             ->default(now())
