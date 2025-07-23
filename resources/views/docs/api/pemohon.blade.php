@@ -90,11 +90,11 @@
                     </svg>
                     Format Respons JSON
                 </h2>
-                <p class="text-base-content font-semibold mb-4">
+                <p class="text-base-content font-semibold">
                     Berikut adalah contoh struktur JSON yang harus dikembalikan dari endpoint Anda:
                 </p>
                 <div class="mockup-code text-sm">
-                    <pre data-prefix="$"><code>curl -X GET https://example.com/api/pemohon</code></pre>
+                    <pre data-prefix="$"><code>curl -X GET https://example.com/api/v1/pemohon</code></pre>
                     <pre data-prefix=">" class="text-warning"><code>Response:</code></pre>
                     <pre data-prefix="1"><code>{</code></pre>
                     <pre data-prefix="2"><code><span class="invisible">__</span>"message": "Success",</code></pre>
@@ -112,6 +112,36 @@
                     <pre data-prefix="13"><code><span class="invisible">____</span>// other applicant data...</code></pre>
                     <pre data-prefix="14"><code><span class="invisible">__</span>]</code></pre>
                     <pre data-prefix="15"><code>}</code></pre>
+                </div>
+                <p class="text-base-content font-semibold mt-4">
+                    Contoh struktur JSON yang lain sebagai berikut:
+                </p>
+                <div class="mockup-code text-sm overflow-x-auto">
+                    <pre data-prefix="$"><code>curl -X GET https://example.com/api/v2/pemohon</code></pre>
+                    <pre data-prefix=">" class="text-warning"><code>Response:</code></pre>
+                    <pre data-prefix="1"><code>{</code></pre>
+                    <pre data-prefix="2"><code>  "data": {</code></pre>
+                    <pre data-prefix="3"><code>    "data": [</code></pre>
+                    <pre data-prefix="4"><code>      {</code></pre>
+                    <pre data-prefix="5"><code>        "id": 2,</code></pre>
+                    <pre data-prefix="6"><code>        "nama": "Dia orang istimewa",</code></pre>
+                    <pre data-prefix="7"><code>        "no_hp": "08xxxxxxxxx",</code></pre>
+                    <pre data-prefix="8"><code>        "no_permohonan": "siimutdia124",</code></pre>
+                    <pre data-prefix="9"><code>        "jenis_izin": "Izin Shutdown Koneksi Hati",</code></pre>
+                    <pre data-prefix="10"><code>        "nama_proses": "waiting for ACK... but it never came",</code></pre>
+                    <pre data-prefix="11"><code>        "status": "proses",</code></pre>
+                    <pre data-prefix="12"><code>        "tgl_pengajuan": "2025-06-15T03:07:33+00:00",</code></pre>
+                    <pre data-prefix="13"><code>        "alamat": "Jalan Kenangan No. 404",</code></pre>
+                    <pre data-prefix="14"><code>        "email": example@ex.com,</code></pre>
+                    <pre data-prefix="15"><code>        "end_date": "2025-06-15T03:07:33+00:00"</code></pre>
+                    <pre data-prefix="16"><code>      },</code></pre>
+                    <pre data-prefix="17"><code>      // other applicant data...</code></pre>
+                    <pre data-prefix="18"><code>    ]</code></pre>
+                    <pre data-prefix="19"><code>  },</code></pre>
+                    <pre data-prefix="20"><code>  "message": "Berhasil",</code></pre>
+                    <pre data-prefix="21"><code>  "success": true,</code></pre>
+                    <pre data-prefix="22"><code>  "code": 200</code></pre>
+                    <pre data-prefix="23"><code>}</code></pre>
                 </div>
             </div>
         </div>
