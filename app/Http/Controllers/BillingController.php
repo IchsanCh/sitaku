@@ -292,39 +292,7 @@ class BillingController extends Controller
             return false; // Return false if verification fails
         }
     }
-    public function updateSubscription(Subscription $subscription)
-    {
-        // Ambil user dari relasi
-        $user = $subscription->user;
 
-        // Cek status
-        if ($subscription->status !== 'success') {
-            Log::info('Subscription not successful, skip updating expiration.', [
-                'subscription_id' => $subscription->id,
-                'status' => $subscription->status
-            ]);
-            return;
-        }
-
-        $duration = $subscription->package->duration ?? 30;
-
-        // Inisialisasi tanggal expired sekarang atau sekarang() jika null
-        $currentExpiration = $user->subscription_expires_at ?? now();
-
-        // Hitung tanggal baru
-        $newExpiration = $currentExpiration->greaterThan(now())
-            ? $currentExpiration->copy()->addDays($duration)
-            : now()->addDays($duration);
-
-        $user->subscription_expires_at = $newExpiration;
-        $user->save();
-
-        Log::info('User subscription extended:', [
-            'user_id' => $user->id,
-            'subscription_id' => $subscription->id,
-            'new_expiration' => $newExpiration
-        ]);
-    }
 
     /**
      * Determine subscription status based on Midtrans transaction status
