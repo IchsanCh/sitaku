@@ -29,6 +29,9 @@ class BillingController extends Controller
 
     public function pay(Request $request)
     {
+        do {
+            $kodeInvoice = str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
+        } while (Subscription::where('id', $kodeInvoice)->exists());
         $user = Auth::guard('user')->user();
         $package = Package::findOrFail($request->package_id);
 
@@ -83,6 +86,17 @@ class BillingController extends Controller
             Log::info('Snap token generated:', [
                 'order_id' => $orderId,
                 'user_id' => $user->id
+            ]);
+            // Tambahkan sebelum return $snapToken;
+            $subscription = Subscription::create([
+                'id' => $kodeInvoice,
+                'user_id' => $user->id,
+                'package_id' => $package->id,
+                'status' => "failed",
+                'total' => $package->price,
+                'start_date' => Carbon::now(),
+                'end_date' => Carbon::now()->addDays($package->duration ?? 30),
+                'payment_token' => $orderId,
             ]);
 
             return view('user.billing-payment', compact('snapToken', 'package'));
@@ -156,25 +170,6 @@ class BillingController extends Controller
             // Create subscription record
             $subscriptionStatus = $isPaymentVerified ? 'success' : 'pending';
 
-            $subscription = Subscription::create([
-                'id' => $kodeInvoice,
-                'user_id' => $user->id,
-                'package_id' => $package->id,
-                'status' => $subscriptionStatus,
-                'total' => $package->price,
-                'start_date' => Carbon::now(),
-                'end_date' => Carbon::now()->addDays($package->duration ?? 30),
-                'payment_token' => $orderId,
-            ]);
-
-            Log::info('New subscription created:', [
-                'subscription_id' => $subscription->id,
-                'status' => $subscription->status,
-                'order_id' => $orderId,
-                'user_id' => $user->id,
-                'is_verified' => $isPaymentVerified
-            ]);
-
             $message = $isPaymentVerified
                 ? 'Pembayaran berhasil! Paket telah diaktifkan.'
                 : 'Pembayaran berhasil! Paket sedang diproses.';
@@ -195,7 +190,6 @@ class BillingController extends Controller
 
     public function handleCallback(Request $request)
     {
-        // Log all incoming callback data
         Log::info('Midtrans Callback Received:', [
             'all_data' => $request->all(),
             'headers' => $request->headers->all(),
@@ -209,89 +203,53 @@ class BillingController extends Controller
         $grossAmount = $request->gross_amount;
         $transactionStatus = $request->transaction_status;
 
-        // Validate required fields
         if (!$signatureKey || !$orderId || !$statusCode || !$grossAmount) {
-            Log::error('Missing required callback parameters:', [
-                'signature_key' => $signatureKey ? 'present' : 'missing',
-                'order_id' => $orderId ? 'present' : 'missing',
-                'status_code' => $statusCode ? 'present' : 'missing',
-                'gross_amount' => $grossAmount ? 'present' : 'missing'
-            ]);
-
+            Log::error('Missing required callback parameters');
             return response()->json(['message' => 'Missing required parameters'], 400);
         }
 
-        // Generate expected signature
         $expectedSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
 
-        Log::info('Signature Validation:', [
-            'order_id' => $orderId,
-            'received_signature' => $signatureKey,
-            'expected_signature' => $expectedSignature,
-            'is_valid' => $signatureKey === $expectedSignature,
-            'status_code' => $statusCode,
-            'gross_amount' => $grossAmount,
-            'transaction_status' => $transactionStatus
-        ]);
-
-        // Validate signature
         if ($signatureKey !== $expectedSignature) {
-            Log::error('Invalid signature for callback:', [
-                'order_id' => $orderId,
-                'received' => $signatureKey,
-                'expected' => $expectedSignature
+            Log::error('Invalid signature for callback', [
+                'order_id' => $orderId
             ]);
-
             return response()->json(['message' => 'Invalid signature'], 403);
         }
 
-        Log::info('Processing transaction callback:', [
-            'order_id' => $orderId,
-            'transaction_status' => $transactionStatus,
-            'fraud_status' => $request->fraud_status
-        ]);
-
-        // Find subscription by payment token
         $subscription = Subscription::where('payment_token', $orderId)->first();
 
         if (!$subscription) {
             Log::error('Subscription not found for callback:', [
-                'order_id' => $orderId,
-                'transaction_status' => $transactionStatus
+                'order_id' => $orderId
             ]);
-
             return response()->json(['message' => 'Order not found'], 404);
         }
-
-        Log::info('Found subscription for callback:', [
-            'subscription_id' => $subscription->id,
-            'current_status' => $subscription->status,
-            'user_id' => $subscription->user_id,
-            'order_id' => $orderId
-        ]);
 
         $oldStatus = $subscription->status;
         $newStatus = $this->determineSubscriptionStatus($transactionStatus, $request->fraud_status);
 
-        // Update subscription status
-        $subscription->status = $newStatus;
-        $subscription->updated_at = Carbon::now();
-
-        // Add payment details if available
-        if ($request->payment_type) {
-            $subscription->payment_method = $request->payment_type;
+        // Prevent downgrade
+        $statusPriority = ['failed' => 0, 'pending' => 1, 'success' => 2];
+        if ($statusPriority[$newStatus] < $statusPriority[$oldStatus]) {
+            Log::info('Preventing status downgrade', [
+                'order_id' => $orderId,
+                'old_status' => $oldStatus,
+                'attempted_status' => $newStatus
+            ]);
+            return response()->json(['message' => 'Status downgrade prevented'], 200);
         }
 
+        // Update fields
+        $subscription->status = $newStatus;
+        $subscription->updated_at = now();
         $subscription->save();
-
-        Log::info('Subscription status updated via callback:', [
+        $this->updateSubscription($subscription);
+        Log::info('Subscription updated via Midtrans callback:', [
             'subscription_id' => $subscription->id,
+            'user_id' => $subscription->user_id,
             'order_id' => $orderId,
-            'old_status' => $oldStatus,
-            'new_status' => $newStatus,
-            'transaction_status' => $transactionStatus,
-            'fraud_status' => $request->fraud_status,
-            'payment_type' => $request->payment_type
+            'new_status' => $newStatus
         ]);
 
         return response()->json([
@@ -301,10 +259,11 @@ class BillingController extends Controller
         ], 200);
     }
 
+
     /**
      * Verify payment status with Midtrans API
      */
-    private function verifyPaymentStatus($orderId)
+    public function verifyPaymentStatus($orderId)
     {
         try {
             Config::$serverKey = config('midtrans.server_key');
@@ -333,11 +292,44 @@ class BillingController extends Controller
             return false; // Return false if verification fails
         }
     }
+    public function updateSubscription(Subscription $subscription)
+    {
+        // Ambil user dari relasi
+        $user = $subscription->user;
+
+        // Cek status
+        if ($subscription->status !== 'success') {
+            Log::info('Subscription not successful, skip updating expiration.', [
+                'subscription_id' => $subscription->id,
+                'status' => $subscription->status
+            ]);
+            return;
+        }
+
+        $duration = $subscription->package->duration ?? 30;
+
+        // Inisialisasi tanggal expired sekarang atau sekarang() jika null
+        $currentExpiration = $user->subscription_expires_at ?? now();
+
+        // Hitung tanggal baru
+        $newExpiration = $currentExpiration->greaterThan(now())
+            ? $currentExpiration->copy()->addDays($duration)
+            : now()->addDays($duration);
+
+        $user->subscription_expires_at = $newExpiration;
+        $user->save();
+
+        Log::info('User subscription extended:', [
+            'user_id' => $user->id,
+            'subscription_id' => $subscription->id,
+            'new_expiration' => $newExpiration
+        ]);
+    }
 
     /**
      * Determine subscription status based on Midtrans transaction status
      */
-    private function determineSubscriptionStatus($transactionStatus, $fraudStatus = null)
+    public function determineSubscriptionStatus($transactionStatus, $fraudStatus = null)
     {
         // Handle fraud status
         if ($fraudStatus && $fraudStatus !== 'accept') {

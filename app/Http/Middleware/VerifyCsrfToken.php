@@ -16,6 +16,6 @@ class VerifyCsrfToken extends BaseVerifier
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     protected $except = [
-        '/midtrans/callback',
+        '/midtrans/*',
     ];
 }

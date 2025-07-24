@@ -46,4 +46,3 @@ Route::middleware('auth:user')->group(function () {
     Route::get('/billing/status/{payToken}', [BillingController::class, 'paketStatus'])->name('billing.status');
     Route::get('/billing/success', [BillingController::class, 'paymentSuccess'])->name('billing.success');
 });
-Route::post('/midtrans/callback', [BillingController::class, 'handleCallback']);

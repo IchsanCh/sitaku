@@ -15,3 +15,4 @@ Route::get('/v1/ichsan', [UserDataController::class, 'index'])
     ->middleware(ManualTokenAuth::class);
 Route::get('/v1/user', [UserTokenDataController::class, 'show'])
     ->middleware(SubscriptionTokenAuth::class);
+Route::post('/midtrans/callback', [BillingController::class, 'handleCallback']);
