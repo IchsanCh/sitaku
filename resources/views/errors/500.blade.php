@@ -26,6 +26,10 @@
                     Ada error internal di server. Bisa jadi bug, bisa juga servernya baru bangun dan belum ngopi ☕.
                     <br />
                     Kami sedang investigasi dengan penuh cinta dan console log ❤️
+                    <br class="my-2" />
+                    Tapi kalau butuh bantuannya cepet, kakak bisa langsung <a href="https://wa.me/6285175112406"
+                        target="_blank" class="text-primary underline decoration-wavy font-semibold">laporin ke admin di
+                        sini</a> yaa~ 🛎️
                 </p>
 
                 {{-- Tombol Ajak Balik --}}

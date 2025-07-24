@@ -5,7 +5,7 @@
 @section('content')
     <section class="hero min-h-screen bg-base-200">
         <div class="hero-content text-center">
-            <div class="max-w-xl">
+            <div class="max-w-xl font-semibold">
 
                 {{-- Ilustrasi bisa kamu ganti pakai gambar lucu AFK --}}
                 <div class="mb-8">

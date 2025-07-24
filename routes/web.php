@@ -1,12 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\DocsController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -46,3 +47,5 @@ Route::middleware('auth:user')->group(function () {
     Route::get('/billing/status/{payToken}', [BillingController::class, 'paketStatus'])->name('billing.status');
     Route::get('/billing/success', [BillingController::class, 'paymentSuccess'])->name('billing.success');
 });
+// Route::get('/test-error/{code}', [ErrorController::class, 'show'])
+//     ->whereNumber('code');

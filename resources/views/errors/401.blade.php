@@ -4,7 +4,7 @@
 
 @section('content')
     <section class="hero min-h-screen bg-base-200">
-        <div class="hero-content text-center">
+        <div class="hero-content text-center font-semibold">
             <div class="max-w-xl">
 
                 {{-- Ilustrasi --}}

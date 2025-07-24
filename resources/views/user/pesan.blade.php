@@ -166,7 +166,7 @@
                                 <td class="py-2 sm:py-4">
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center gap-1 sm:gap-2">
-                                            <span class="text-xs sm:text-sm line-clamp-2">{{ $p->pesan }}</span>
+                                            <span class="text-xs sm:text-sm">{{ $p->pesan }}</span>
                                         </div>
                                     </div>
                                 </td>

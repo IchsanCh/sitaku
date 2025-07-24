@@ -154,7 +154,7 @@
                 <div class="flex-1 max-w-md">
                     <div class="form-control">
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 z-50 flex items-center pointer-events-none">
+                            <div class="absolute inset-y-0 left-0 pl-3 z-20 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-magnifying-glass color1"></i>
                             </div>
                             <input type="text" placeholder="Search pegawai..."

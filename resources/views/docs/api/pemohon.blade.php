@@ -236,14 +236,16 @@
                     Contoh format URL endpoint:
                 </p>
 
-                <div class="alert alert-success">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="alert alert-success flex flex-row">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
                         </path>
                     </svg>
-                    <div>
-                        <div class="font-mono font-semibold text-sm">https://domainanda.com/api/data-pemohon</div>
+                    <div class="ml-3 overflow-hidden">
+                        <div class="font-mono font-semibold text-sm break-words">
+                            https://domainanda.com/api/data-pemohon
+                        </div>
                         <div class="text-xs font-bold mt-1">Pastikan endpoint ini dapat diakses secara publik</div>
                     </div>
                 </div>

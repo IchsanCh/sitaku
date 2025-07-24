@@ -5,7 +5,7 @@
 @section('content')
     <section class="hero min-h-screen bg-base-200">
         <div class="hero-content text-center">
-            <div class="max-w-xl">
+            <div class="max-w-xl font-semibold">
                 {{-- SVG Maintenance Illustration --}}
                 <div class="mb-8">
                     <img src="{{ asset('image/bugfix.svg') }}" alt="Maintenance Illustration" class="mx-auto w-60">
@@ -18,13 +18,14 @@
 
                 {{-- Main Title --}}
                 <h1 class="text-4xl font-bold text-base-content mb-4">
-                    Situs sedang dalam pemeliharaan
+                    Lagi disiapin yang terbaik nih ✨
                 </h1>
 
                 {{-- Description --}}
                 <p class="text-lg text-base-content/80 mb-6 leading-relaxed">
-                    Kami sedang melakukan perbaikan sistem, pembaruan fitur, atau penyesuaian teknis lainnya.<br>
-                    Jangan khawatir, layanan akan segera kembali normal.
+                    Website-nya lagi di-tune up dulu ya, mungkin sedang ada update fitur, perbaikan sistem, atau nambal bug
+                    yang nyelip 🐞<br>
+                    Sabar sebentar, nanti juga balik lagi lebih kece!
                 </p>
 
                 {{-- Button --}}
@@ -41,8 +42,8 @@
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span class="text-sm">
-                        Terima kasih atas pengertiannya. Kami bekerja secepat mungkin agar kamu bisa segera kembali
-                        menggunakan layanan kami 🙏
+                        Makasih banyak udah sabar nunggu ya. Tim kami lagi ngebut biar kamu bisa pake lagi secepat mungkin!
+                        🚀
                     </span>
                 </div>
             </div>

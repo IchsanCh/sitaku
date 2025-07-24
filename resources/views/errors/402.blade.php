@@ -5,11 +5,11 @@
 @section('content')
     <section class="hero min-h-screen bg-base-200">
         <div class="hero-content text-center">
-            <div class="max-w-xl">
+            <div class="max-w-xl font-semibold">
 
                 {{-- Ilustrasi --}}
                 <div class="mb-8">
-                    <img src="{{ asset('image/payment-required.svg') }}" alt="Bayar Dulu Kak" class="mx-auto w-60">
+                    <img src="{{ asset('image/warning.svg') }}" alt="Bayar Dulu Kak" class="mx-auto w-60">
                 </div>
 
                 {{-- Kode Error --}}
