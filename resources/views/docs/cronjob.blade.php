@@ -48,7 +48,7 @@
                         <div class="divider">Jadwal Harian</div>
 
                         <div class="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
-                            <div class="badge badge-warning">06:00 WIB</div>
+                            <div class="badge badge-warning">07:00 WIB</div>
                             <span class="text-sm">Reset status pengiriman</span>
                         </div>
 
