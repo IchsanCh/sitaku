@@ -96,3 +96,16 @@ body {
 .lisaa {
     border: solid 1px #40514e;
 }
+.san {
+    background-color: #40514e;
+    color: white;
+    transition: all;
+    transition-duration: 300ms;
+}
+.san:hover {
+    background-color: white;
+    color: #40514e;
+    transition: all;
+    transition-duration: 300ms;
+    border: solid 1px #40514e;
+}

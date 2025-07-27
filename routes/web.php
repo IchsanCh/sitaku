@@ -24,6 +24,7 @@ Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showRese
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/pricing', [HomeController::class, 'pricing'])->name('pricing');
 Route::get('/docs/{page?}', [DocsController::class, 'show'])->name('docs')->where('page', '.*');
 
 Route::get('/login', [UserAuthController::class, 'showLogin'])->name('login');

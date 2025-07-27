@@ -41,7 +41,7 @@
                         <label for="nama" class="label mb-1">
                             <span class="label-text text-black">Nama Pegawai</span>
                         </label>
-                        <input type="text" id="nama" name="nama" placeholder="Ex: Ichsan"
+                        <input type="text" id="nama" name="nama" placeholder="Ex: Dia"
                             class="input input-bordered w-full border-primary focus:border-primary focus:input-primary"
                             required />
                     </div>
@@ -50,7 +50,7 @@
                         <label for="no_hp" class="label mb-1">
                             <span class="label-text text-black">Nomor HP</span>
                         </label>
-                        <input type="text" id="no_hp" name="no_hp" placeholder="Ex: 0851XXXXXX" pattern="[0-9]+"
+                        <input type="text" id="no_hp" name="no_hp" placeholder="Ex: 08XXXXXXXX" pattern="[0-9]+"
                             title="Hanya angka yang diperbolehkan"
                             class="input input-bordered w-full border-primary focus:border-primary focus:input-primary"
                             required />

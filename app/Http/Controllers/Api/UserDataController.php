@@ -33,6 +33,7 @@ class UserDataController extends Controller
         $data = $filteredUsers->map(function ($user) {
             return [
                 'id' => $user->id,
+                'username' => $user->name,
                 'unit_id' => $user->unit_id,
                 'api_url' => $user->api_url,
                 'fonnte_token' => $user->fonnte,

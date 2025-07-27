@@ -47,7 +47,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @foreach ($packages as $index => $package)
+                    @forelse ($packages as $index => $package)
                         <div
                             class="card bg-gradient-to-br from-base-100 to-base-200 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-base-300">
                             <div class="card-body relative overflow-hidden">
@@ -88,7 +88,9 @@
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <p>Paket tidak tersedia</p>
+                    @endforelse
                 </div>
 
                 <div class="modal-action pt-6">

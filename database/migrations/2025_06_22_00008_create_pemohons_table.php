@@ -13,20 +13,21 @@ return new class extends Migration
     {
         Schema::create('pemohons', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('external_id')->unique();
+            $table->unsignedBigInteger('external_id')->index();
             $table->foreignId('user_id')->nullable()->constrained()->after('external_id');
             $table->string('nama')->nullable();
             $table->string('nomor_hp', 20)->nullable();
-            $table->string('no_permohonan', 100)->nullable();
+            $table->string('no_permohonan', 100)->nullable()->index();
             $table->string('nama_izin')->nullable();
-            $table->string('tahapan')->nullable();
-            $table->string('status', 100)->nullable();
-            $table->enum('kirim_pegawai', ['sudah', 'belum']);
-            $table->char('payload_hash', 32)->nullable();
+            $table->string('tahapan')->nullable()->index();
+            $table->string('status', 100)->nullable()->index();
+            $table->enum('kirim_pegawai', ['sudah', 'belum'])->index();
+            $table->char('payload_hash', 32)->nullable()->unique();
             $table->dateTime('tgl_pengajuan')->nullable();
-            $table->string('last_notified_tahapan')->nullable();
-            $table->dateTime('notified_at')->nullable();
+            $table->string('last_notified_tahapan')->nullable()->index();
+            $table->dateTime('notified_at')->nullable()->index();
             $table->timestamps();
+            $table->index(['user_id', 'external_id']);
         });
     }
 

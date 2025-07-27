@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Mail\OtpMail;
 use Illuminate\Http\Request;
 use App\Models\EmailVerification;
+use App\Models\Package;
 use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
@@ -112,5 +113,10 @@ class HomeController extends Controller
     public function forgotPass()
     {
         return view('user.forgot-pass');
+    }
+    public function pricing()
+    {
+        $packages = Package::all();
+        return view('pricing', compact('packages'));
     }
 }

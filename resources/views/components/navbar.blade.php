@@ -34,7 +34,7 @@
             </li>
             <li title="About">
                 <a href="/about"
-                    class="flex items-center gap-3 rounded-lg lisa transition-colors {{ request()->is('about*') ? 'bgc2 text-white font-semibold border-b-2 border-white' : '' }}">
+                    class="flex items-center gap-3 rounded-lg lisa transition-colors {{ request()->is('about') ? 'bgc2 text-white font-semibold border-b-2 border-white' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-6">
                         <rect x="3" y="4" width="18" height="16" rx="2" ry="2"
@@ -45,6 +45,17 @@
                         <path d="M6 14c0-2 1.5-2 3-2s3 0 3 2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     About Us
+                </a>
+            </li>
+            <li title="Pricing">
+                <a href="/pricing"
+                    class="flex items-center gap-3 rounded-lg lisa transition-colors {{ request()->is('pricing') ? 'bgc2 text-white font-semibold border-b-2 border-white' : '' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                    </svg>
+                    Pricing
                 </a>
             </li>
             <li title="Documentation">
@@ -103,7 +114,7 @@
         </li>
         <li title="About">
             <a href="/about"
-                class="flex items-center gap-3 p-3 rounded-lg lisa transition-colors {{ request()->is('about*') ? 'bgc2 text-white' : '' }}">
+                class="flex items-center gap-3 p-3 rounded-lg lisa transition-colors {{ request()->is('about') ? 'bgc2 text-white' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-5 h-5">
                     <rect x="3" y="4" width="18" height="16" rx="2" ry="2"
@@ -114,6 +125,17 @@
                     <path d="M6 14c0-2 1.5-2 3-2s3 0 3 2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 About Us
+            </a>
+        </li>
+        <li title="Pricing">
+            <a href="/pricing"
+                class="flex items-center gap-3 p-3 rounded-lg lisa transition-colors {{ request()->is('pricing') ? 'bgc2 text-white' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                </svg>
+                Pricing
             </a>
         </li>
         <li title="Documentation">
