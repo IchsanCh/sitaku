@@ -101,11 +101,11 @@
                     <pre data-prefix="3"><code><span class="invisible">__</span>"data": [</code></pre>
                     <pre data-prefix="4"><code><span class="invisible">____</span>{</code></pre>
                     <pre data-prefix="5"><code><span class="invisible">______</span>"id": 1,</code></pre>
-                    <pre data-prefix="6"><code><span class="invisible">______</span>"nama": "Dia Orangnya",</code></pre>
+                    <pre data-prefix="6"><code><span class="invisible">______</span>"nama": "Sitaku HSI",</code></pre>
                     <pre data-prefix="7"><code><span class="invisible">______</span>"no_hp": "08xxxxxxx",</code></pre>
                     <pre data-prefix="8"><code><span class="invisible">______</span>"no_permohonan": "siimutdia123",</code></pre>
-                    <pre data-prefix="9"><code><span class="invisible">______</span>"jenis_izin": "Izin Melupakan Dia",</code></pre>
-                    <pre data-prefix="10"><code><span class="invisible">______</span>"nama_proses": "Blokir Nomor Dia",</code></pre>
+                    <pre data-prefix="9"><code><span class="invisible">______</span>"jenis_izin": "Izin Jadi Pesan yang Selalu Datang Tepat Waktu",</code></pre>
+                    <pre data-prefix="10"><code><span class="invisible">______</span>"nama_proses": "Dikirim dengan Perasaan, Dibaca dengan Senyuman",</code></pre>
                     <pre data-prefix="11"><code><span class="invisible">______</span>"status": "proses",</code></pre>
                     <pre data-prefix="12"><code><span class="invisible">______</span>"tgl_pengajuan": "2025-07-21 14:30:00"</code></pre>
                     <pre data-prefix="13"><code><span class="invisible">____</span>},</code></pre>
@@ -177,7 +177,7 @@
                                 <td><code class="badge badge-ghost">nama</code></td>
                                 <td><span class="badge bgc5 text-white">string</span></td>
                                 <td>Nama lengkap pemohon</td>
-                                <td>Dia Orangnya</td>
+                                <td>Sitaku HSI</td>
                             </tr>
                             <tr>
                                 <td><code class="badge badge-ghost">no_hp</code></td>
@@ -195,13 +195,13 @@
                                 <td><code class="badge badge-ghost">jenis_izin</code></td>
                                 <td><span class="badge bgc5 text-white">string</span></td>
                                 <td>Jenis Izin Pemohon</td>
-                                <td>Izin Melupakan Dia</td>
+                                <td>Izin Jadi Pesan yang Selalu Datang Tepat Waktu</td>
                             </tr>
                             <tr>
                                 <td><code class="badge badge-ghost">nama_proses</code></td>
                                 <td><span class="badge bgc5 text-white">string</span></td>
                                 <td>Proses tahapan pemohon</td>
-                                <td>Blokir Nomor Dia</td>
+                                <td>Dikirim dengan Perasaan, Dibaca dengan Senyuman</td>
                             </tr>
                             <tr>
                                 <td><code class="badge badge-ghost">status</code></td>

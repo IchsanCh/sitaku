@@ -32,7 +32,7 @@
                                 </svg>
                                 Pelajari Lebih Lanjut
                             </a>
-                            <a href="/docs" title="documentation" class="btn btn-outline btn-lg">
+                            <a href="/docs/getting-started" title="documentation" class="btn btn-outline btn-lg">
                                 <i class="fa-solid fa-book mr-2"></i>
                                 Lihat Dokumentasi
                             </a>

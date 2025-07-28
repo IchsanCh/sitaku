@@ -94,9 +94,9 @@
                         <pre data-prefix="12"><code>    "pegawais": [</code></pre>
                         <pre data-prefix="13"><code>      {</code></pre>
                         <pre data-prefix="14"><code>        "id": 1,</code></pre>
-                        <pre data-prefix="15"><code>        "nama": "Si Penjaga Token Cinta",</code></pre>
+                        <pre data-prefix="15"><code>        "nama": "Sitaku - Karena Kamu Layak Diingat",</code></pre>
                         <pre data-prefix="16"><code>        "no_hp": "08xxxxxxxxx",</code></pre>
-                        <pre data-prefix="17"><code>        "posisi": "Handler Auth yang Tak Pernah Expired"</code></pre>
+                        <pre data-prefix="17"><code>        "posisi": "Agent Cinta & Automation"</code></pre>
                         <pre data-prefix="18"><code>      },</code></pre>
                         <pre data-prefix="19"><code>      // other pegawai data...</code></pre>
                         <pre data-prefix="20"><code>    ]</code></pre>
