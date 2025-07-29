@@ -195,7 +195,7 @@
                         <!-- Update Password Button -->
                         <button type="submit" id="updateButton"
                             class="btn btn-primary w-full h-12 text-base font-medium transition-all duration-200">
-                            <span id="updateBtnText" class="flex items-center gap-2">
+                            <span id="updateBtnText" class="flex items-center gap-2" title="Update Password">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 12l2 2 4-4m5.95-3.95A10.97 10.97 0 0121 12c0 6.075-4.925 11-11 11S-1 18.075-1 12 3.925 1 10 1c2.3 0 4.44.708 6.21 1.917">
@@ -208,8 +208,8 @@
                     </form>
                     <!-- Back to Login Link -->
                     <div class="text-center mt-4">
-                        <a href="{{ route('login') }}" class="link link-primary text-sm">
-                            ← Back to Login
+                        <a href="{{ route('login') }}" title="Sign In" class="link link-primary text-sm">
+                            ← Back to Sign In
                         </a>
                     </div>
                 </div>

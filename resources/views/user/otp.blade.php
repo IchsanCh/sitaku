@@ -108,8 +108,8 @@
 
                     <!-- Back to Login Link -->
                     <div class="text-center mt-6" data-aos="fade-up" data-aos-duration="1200">
-                        <a href="{{ route('login') }}" class="link link-primary text-sm">
-                            ← Back to Login
+                        <a href="{{ route('login') }}" title="Sign In" class="link link-primary text-sm">
+                            ← Back to Sign In
                         </a>
                     </div>
                 </div>

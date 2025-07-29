@@ -54,7 +54,7 @@
                         </div>
 
                         <!-- Send Reset Link Button -->
-                        <button type="submit" id="resetButton"
+                        <button type="submit" id="resetButton" title="Send Reset Link"
                             class="btn btn-primary w-full h-12 text-base font-medium transition-all duration-200">
                             <span id="resetBtnText" class="flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,16 +75,18 @@
                         <div class="text-base-content/70 text-sm mb-3">Remember your password?</div>
 
                         <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                            <a href="{{ route('login') }}" class="btn btn-outline btn-primary btn-sm flex-1 sm:flex-none">
+                            <a href="{{ route('login') }}" title="Sign In"
+                                class="btn btn-outline btn-primary btn-sm flex-1 sm:flex-none">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
                                     </path>
                                 </svg>
-                                Back to Login
+                                Back to Sign In
                             </a>
 
-                            <a href="{{ route('signup') }}" class="btn btn-ghost btn-sm flex-1 sm:flex-none">
+                            <a href="{{ route('signup') }}" title="Sign Up"
+                                class="btn btn-ghost btn-sm flex-1 sm:flex-none">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z">
