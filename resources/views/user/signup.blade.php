@@ -228,7 +228,7 @@
                             @enderror
                         </div>
                         <!-- Signup Button -->
-                        <button type="submit" id="signupButton"
+                        <button type="submit" id="signupButton" title="Sign Up"
                             class="btn btn-primary w-full h-12 text-base font-medium">
                             <span id="btnText" class="flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,7 +246,8 @@
                         <div class="text-center pt-4">
                             <p class="text-base-content/70 text-sm">
                                 Already have an account?
-                                <a href="{{ route('login') }}" class="link link-primary font-medium">Sign in here</a>
+                                <a href="{{ route('login') }}" title="Sign In" class="link link-primary font-medium">Sign
+                                    in here</a>
                             </p>
                         </div>
                     </form>

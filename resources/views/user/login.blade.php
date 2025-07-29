@@ -86,7 +86,7 @@
                         </div>
                         <!-- Login Button -->
                         <button type="submit" id="loginButton" class="btn btn-primary w-full h-12 text-base font-medium"
-                            data-aos="fade-in" data-aos-duration="1100">
+                            title="Sign In" data-aos="fade-in" data-aos-duration="1100">
                             <span id="btnText" class="flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -102,13 +102,14 @@
                         <p class="text-base-content/70 text-sm">
                             Lupa password?
                             <a href="{{ route('password.email') }}" class="link link-primary font-medium"
-                                title="lupa password">Click here</a>
+                                title="Lupa Password" title="lupa password">Click here</a>
                         </p>
                     </div>
                     <div class="text-center pt-2">
                         <p class="text-base-content/70 text-sm">
                             Don't have account?
-                            <a href="{{ route('signup') }}" class="link link-primary font-medium" title="sign up">Sign up
+                            <a href="{{ route('signup') }}" title="Sign Up" class="link link-primary font-medium"
+                                title="sign up">Sign up
                                 here</a>
                         </p>
                     </div>
