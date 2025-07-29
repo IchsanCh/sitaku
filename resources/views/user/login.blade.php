@@ -1,6 +1,6 @@
 @extends('user.layout')
 
-@section('title', 'Login')
+@section('title', 'Sign In')
 @section('meta_description', 'Masuk ke akun SITAKU untuk mengelola notifikasi otomatis ke pemohon dan pegawai.')
 @section('og_description', 'Login ke SITAKU dan mulai kirim notifikasi WhatsApp otomatis ke pemohon dan pegawai.')
 
