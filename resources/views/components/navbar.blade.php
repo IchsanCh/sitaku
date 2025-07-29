@@ -6,10 +6,10 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
         </button>
-        <a href="https://lotusaja.com" class="font-2xl font-semibold text-white ml-2 hover:font-bold md:hidden"
+        <a href="https://sitaku.lotusaja.com" class="font-2xl font-semibold text-white ml-2 hover:font-bold md:hidden"
             title="sitaku">SITAKU</a>
         <!-- Logo -->
-        <a href="https://lotusaja.com"
+        <a href="https://sitaku.lotusaja.com"
             class="flex flex-row items-center hover:text-green-500 transition-colors hidden md:flex"
             title="Website sitaku">
             <img src="{{ asset('image/logoLotus.png') }}" alt="Lotus Logo" class="h-8"
@@ -92,7 +92,7 @@
                 style="filter: brightness(0) invert(1);">
             <h2 class="text-lg font-bold ml-2 text-white">SITAKU</h2>
         </div>
-        <button id="close-menu" class="p-2 rounded-full lisa">
+        <button id="close-menu" class="p-2 rounded-full lisa" title="Close">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                 stroke="currentColor" class="w-6 h-6 text-white">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />

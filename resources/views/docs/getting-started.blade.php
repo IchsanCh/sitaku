@@ -40,12 +40,13 @@
                         </div>
                         <div class="collapse-content">
                             <p class="mb-4 font-semibold">
-                                Buka halaman <a href="{{ url('/signup') }}" class="link link-primary font-semibold">Sign
+                                Buka halaman <a href="{{ url('/signup') }}" title="Sign Up"
+                                    class="link link-primary font-semibold">Sign
                                     Up</a>
                                 dan buat akun baru dengan email dan password yang valid.
                             </p>
                             <div class="flex gap-2">
-                                <a href="{{ url('/signup') }}" class="btn btn-primary btn-sm">
+                                <a href="{{ url('/signup') }}" title="Sign Up" class="btn btn-primary btn-sm">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z">
@@ -67,10 +68,11 @@
                         <div class="collapse-content">
                             <p class="mb-4 font-semibold">
                                 Setelah berhasil registrasi, masuk melalui halaman
-                                <a href="{{ url('/login') }}" class="link link-primary font-semibold">Login</a>.
+                                <a href="{{ url('/login') }}" title="Login"
+                                    class="link link-primary font-semibold">Login</a>.
                             </p>
                             <div class="flex gap-2">
-                                <a href="{{ url('/login') }}" class="btn btn-secondary btn-sm">
+                                <a href="{{ url('/login') }}" title="Login" class="btn btn-secondary btn-sm">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
@@ -146,7 +148,7 @@
                                 </svg>
                                 <span class="font-semibold">
                                     Jika tetap tidak ada notifikasi, silakan hubungi
-                                    <a href="https://wa.me/6285175112406" target="_blank"
+                                    <a href="https://wa.me/6285175112406" target="_blank" title="Hubungi Support"
                                         class="link link-primary font-semibold">Support</a>.
                                 </span>
                             </div>
@@ -164,7 +166,7 @@
                         </h3>
                         <p class="mb-4 font-semibold">Jika mengalami kendala, silakan hubungi tim support kami.</p>
                         <div class="card-actions justify-center">
-                            <a href="https://wa.me/6285175112406" target="_blank"
+                            <a href="https://wa.me/6285175112406" target="_blank" title="Hubungi Support"
                                 class="btn bgc1 text-white lisaa font-semibold">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

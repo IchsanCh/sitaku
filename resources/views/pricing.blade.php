@@ -94,7 +94,7 @@
 
                                     <!-- CTA Button -->
                                     <div class="card-actions justify-center">
-                                        <a href="/billing"
+                                        <a href="/billing" title="Pilih Paket {{ $p->name }}"
                                             class="btn san btn-lg w-full font-bold group-hover:scale-105 transition-transform">
                                             Pilih Paket Ini
                                         </a>
@@ -121,7 +121,7 @@
                                     <p class="text-base-content/80 font-semibold mb-6">Silakan hubungi admin untuk informasi
                                         lebih lanjut.
                                     </p>
-                                    <a href="https://wa.me/6285175112406" target="_blank"
+                                    <a href="https://wa.me/6285175112406" target="_blank" title="Hubungi Admin"
                                         class="btn btn-outline btn-primary">
                                         <i class="fa-brands fa-whatsapp"></i> Hubungi Admin</a>
                                 </div>
@@ -138,7 +138,7 @@
                             Jadilah bagian dari instansi yang beralih ke notifikasi otomatis bersama Sitaku.
                         </p>
                         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                            <a href="/login"
+                            <a href="/login" title="Mulai Langganan Sekarang"
                                 class="btn btn-success px-10 font-bold shadow-lg hover:shadow-xl transition-shadow">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -147,7 +147,8 @@
                                 </svg>
                                 Mulai Langganan Sekarang
                             </a>
-                            <a href="https://wa.me/6285175112406" target="_blank" class="btn san px-8">
+                            <a href="https://wa.me/6285175112406" target="_blank" class="btn san px-8"
+                                title="Konsultasi Gratis">
                                 <i class="fa-brands fa-whatsapp"></i> Konsultasi Gratis
                             </a>
                         </div>

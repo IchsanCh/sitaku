@@ -41,12 +41,12 @@
         <div>
             <h3 class="text-xl font-bold mb-6 text-gray-300">Navigation</h3>
             <ul class="space-y-4">
-                <li><a href="{{ route('home') }}"
+                <li><a href="{{ route('home') }}" title="Home"
                         class="block text-gray-300 hover:text-white hover:translate-x-1 transition-all">Home</a></li>
-                <li><a href="{{ route('about') }}"
+                <li><a href="{{ route('about') }}" title="About Us"
                         class="block text-gray-300 hover:text-white hover:translate-x-1 transition-all">About Us</a>
                 </li>
-                <li><a href="/docs/getting-started"
+                <li><a href="/docs/getting-started" title="Documentation"
                         class="block text-gray-300 hover:text-white hover:translate-x-1 transition-all">Documentation</a>
                 </li>
             </ul>
@@ -54,7 +54,7 @@
         <div>
             <h3 class="text-xl font-bold mb-6 text-gray-300">Help</h3>
             <ul class="space-y-4">
-                <li><a href="/?section=faq"
+                <li><a href="/?section=faq" title="FAQ"
                         class="block text-gray-300 hover:text-white hover:translate-x-1 transition-all">FAQ</a>
                 </li>
             </ul>
