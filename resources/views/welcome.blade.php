@@ -286,6 +286,7 @@
                                                 <div>
                                                     <h3 class="font-bold">Email</h3>
                                                     <a href="mailto:info.lotusaja@gmail.com" target="_blank"
+                                                        title="Email Us"
                                                         class="c1 hover:underline font-semibold">info.lotusaja@gmail.com</a>
                                                 </div>
                                             </div>
@@ -309,6 +310,7 @@
                                                 <div>
                                                     <h3 class="font-bold">WhatsApp</h3>
                                                     <a href="https://wa.me/6285175112406" target="_blank"
+                                                        title="WhatsApp Us"
                                                         class="c1 hover:underline font-semibold">(+62)
                                                         8517-5112-406</a>
                                                 </div>
@@ -328,6 +330,7 @@
                                                 <div>
                                                     <h3 class="font-bold">Instagram</h3>
                                                     <a href="https://www.instagram.com/lotusaja_com" target="_blank"
+                                                        title="Instagram Lotus"
                                                         class="c1 hover:underline font-semibold">@lotusaja_com</a>
                                                 </div>
                                             </div>
@@ -364,9 +367,10 @@
                 <div class="text-center mt-12">
                     <p class="mb-4">Masih punya pertanyaan?</p>
                     <div class="flex justify-center gap-4">
-                        <a href="https://wa.me/6285175112406" class="btn bgc1 text-white" target="_blank">Hubungi
+                        <a href="https://wa.me/6285175112406" title="Hubungi Kami" class="btn bgc1 text-white"
+                            target="_blank">Hubungi
                             Kami</a>
-                        <a href="/about" class="btn btn-outline">About Us</a>
+                        <a href="/about" class="btn btn-outline" title="About Us">About Us</a>
                     </div>
                 </div>
             </div>
