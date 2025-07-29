@@ -39,7 +39,8 @@
                     </label>
                 </div>
                 <div class="flex flex-row items-center gap-2 pr-2.5">
-                    <img src="{{ asset('image/logoLotus.png') }}" alt="Logo lotusaja" class="h-5 w-auto image-white">
+                    <img src="{{ asset('image/logoLotus.png') }}" alt="Logo lotusaja" class="h-5 w-auto image-white"
+                        title="Logo Lotusaja">
                     <h1 class="text-xl font-bold text-white">SITAKU</h1>
                 </div>
             </div>
@@ -83,7 +84,7 @@
                     <ul class="menu menu-vertical w-full space-y-2">
                         <!-- Home -->
                         <li>
-                            <a href="{{ route('home') }}"
+                            <a href="{{ route('home') }}" title="Home"
                                 class="flex items-center gap-3 p-3 rounded-lg transition-all duration-200 text-white lisa {{ request()->is('home') ? 'bgc2 border-b-2 border-white' : '' }}">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -95,7 +96,7 @@
 
                         <!-- About -->
                         <li>
-                            <a href="{{ route('about') }}"
+                            <a href="{{ route('about') }}" title="About"
                                 class="flex items-center text-white lisa gap-3 p-3 rounded-lg transition-all duration-200 {{ request()->is('about') ? 'bgc2 border-b-2 border-white' : '' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -112,7 +113,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('pricing') }}"
+                            <a href="{{ route('pricing') }}" title="Pricing"
                                 class="flex items-center text-white lisa gap-3 p-3 rounded-lg transition-all duration-200 {{ request()->is('about') ? 'bgc2 border-b-2 border-white' : '' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -123,7 +124,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="/docs/getting-started"
+                            <a href="/docs/getting-started" title="Getting Started"
                                 class="flex items-center text-white lisa gap-3 p-3 rounded-lg transition-all duration-200 {{ request()->is('docs/getting-started') ? 'bgc2 border-b-2 border-white' : '' }}">
                                 <i class="fa-solid fa-book"></i>
                                 <span class="font-medium">Getting Started</span>
@@ -131,7 +132,8 @@
                         </li>
                         <!-- API References -->
                         <li>
-                            <details class="group" {{ request()->is('docs/api/*') ? 'open' : '' }}>
+                            <details class="group" {{ request()->is('docs/api/*') ? 'open' : '' }}
+                                title="API References">
                                 <summary
                                     class="flex items-center gap-3 p-3 lisa rounded-lg transition-all duration-200 text-white cursor-pointer {{ request()->is('docs/api/*') ? '' : '' }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
@@ -144,7 +146,7 @@
 
                                 <ul class="ml-6 mt-2 border-l-2 border-base-300 pl-4">
                                     <li class="mt-4 mb-2">
-                                        <a href="/docs/api/pemohon"
+                                        <a href="/docs/api/pemohon" title="API Pemohon"
                                             class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 lisa text-white {{ request()->is('docs/api/pemohon') ? 'bgc2 border-b-2 border-white' : '' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -155,7 +157,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="/docs/api/sitaku"
+                                        <a href="/docs/api/sitaku" title="API SITAKU"
                                             class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 lisa text-white {{ request()->is('docs/api/sitaku') ? 'bgc2 border-b-2 border-white' : '' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -169,7 +171,7 @@
                             </details>
                         </li>
                         <li>
-                            <a href="/docs/cronjob"
+                            <a href="/docs/cronjob" title="Cronjob Time"
                                 class="flex items-center gap-3 p-3 rounded-lg lisa transition-all duration-200 text-white {{ request()->is('docs/cronjob') ? 'bgc2 border-b-2 border-white' : '' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="w-5 h-5"
                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -182,7 +184,7 @@
                     </ul>
                 </nav>
                 <div class="p-4 bgc1 w-full">
-                    <a href="/login" class="btn btn-success w-full font-bold"><i
+                    <a href="/login" class="btn btn-success w-full font-bold" title="Login"><i
                             class="fa-solid fa-arrow-right-to-bracket"></i> Login</a>
                 </div>
             </aside>
