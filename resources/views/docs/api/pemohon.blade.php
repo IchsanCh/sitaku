@@ -107,7 +107,7 @@
                     <pre data-prefix="9"><code><span class="invisible">______</span>"jenis_izin": "Izin Jadi Pesan yang Selalu Datang Tepat Waktu",</code></pre>
                     <pre data-prefix="10"><code><span class="invisible">______</span>"nama_proses": "Dikirim dengan Perasaan, Dibaca dengan Senyuman",</code></pre>
                     <pre data-prefix="11"><code><span class="invisible">______</span>"status": "proses",</code></pre>
-                    <pre data-prefix="12"><code><span class="invisible">______</span>"tgl_pengajuan": "2025-07-21 14:30:00"</code></pre>
+                    <pre data-prefix="12"><code><span class="invisible">______</span>"tgl_pengajuan": "2025-07-08T00:00:00Z"</code></pre>
                     <pre data-prefix="13"><code><span class="invisible">____</span>},</code></pre>
                     <pre data-prefix="13"><code><span class="invisible">____</span>// other applicant data...</code></pre>
                     <pre data-prefix="14"><code><span class="invisible">__</span>]</code></pre>
@@ -130,10 +130,10 @@
                     <pre data-prefix="9"><code>        "jenis_izin": "Izin Shutdown Koneksi Hati",</code></pre>
                     <pre data-prefix="10"><code>        "nama_proses": "waiting for ACK... but it never came",</code></pre>
                     <pre data-prefix="11"><code>        "status": "proses",</code></pre>
-                    <pre data-prefix="12"><code>        "tgl_pengajuan": "2025-06-15T03:07:33+00:00",</code></pre>
+                    <pre data-prefix="12"><code>        "tgl_pengajuan": "2025-07-08T00:00:00Z",</code></pre>
                     <pre data-prefix="13"><code>        "alamat": "Jalan Kenangan No. 404",</code></pre>
                     <pre data-prefix="14"><code>        "email": example@ex.com,</code></pre>
-                    <pre data-prefix="15"><code>        "end_date": "2025-06-15T03:07:33+00:00"</code></pre>
+                    <pre data-prefix="15"><code>        "end_date": "2025-07-08T00:00:00Z"</code></pre>
                     <pre data-prefix="16"><code>      },</code></pre>
                     <pre data-prefix="17"><code>      // other applicant data...</code></pre>
                     <pre data-prefix="18"><code>    ]</code></pre>
@@ -170,7 +170,7 @@
                             <tr>
                                 <td><code class="badge badge-ghost">id</code></td>
                                 <td><span class="badge bgc5 text-white">string</span></td>
-                                <td>ID pemohon</td>
+                                <td>ID permohonan</td>
                                 <td>1</td>
                             </tr>
                             <tr>
@@ -213,7 +213,7 @@
                                 <td><code class="badge badge-ghost">tgl_pengajuan</code></td>
                                 <td><span class="badge bgc5 text-white">string</span></td>
                                 <td>Tanggal mengajukan permohonan</td>
-                                <td>2025-07-21 14:30:00</td>
+                                <td>2025-07-08T00:00:00Z</td>
                             </tr>
                         </tbody>
                     </table>
