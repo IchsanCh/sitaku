@@ -137,7 +137,7 @@
                             </div>
                             <label class="label">
                                 <span class="label-text-alt text-black">
-                                    Valid Until {{ $user->subscription_expires_at->format('d M Y') }}
+                                    Valid Until {{ $user->subscription_expires_at->format('d M Y H:i:s') }}
                                 </span>
                             </label>
 
