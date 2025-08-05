@@ -132,6 +132,7 @@
                             <th class="text-left font-semibold text-xs sm:text-sm hidden sm:table-cell">Contact</th>
                             <th class="text-left font-semibold text-xs sm:text-sm">Pesan</th>
                             <th class="text-center font-semibold text-xs sm:text-sm">Status</th>
+                            <th class="text-left font-semibold text-xs sm:text-sm">Created At</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -191,10 +192,18 @@
                                         </span>
                                     </div>
                                 </td>
+                                <td class="py-2 sm:py-4">
+                                    <div class="flex flex-col gap-1">
+                                        <div class="flex items-center gap-1 sm:gap-2">
+                                            <span class="text-xs sm:text-sm">
+                                                {{ $p->created_at->format('d M Y H:i') }}</span>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center py-8">
+                                <td colspan="5" class="text-center py-8">
                                     <div class="flex flex-col items-center gap-3 text-base-content">
                                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"

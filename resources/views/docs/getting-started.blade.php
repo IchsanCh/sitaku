@@ -93,12 +93,13 @@
                         </div>
                         <div class="collapse-content">
                             <p class="mb-4 font-semibold">
-                                Buka menu <a href="/setting" class="link link-primary" title="pengaturan">Pengaturan</a>
+                                Buka menu <a href="{{ route('setting.user') }}" class="link link-primary"
+                                    title="pengaturan">Pengaturan</a>
                                 untuk mengisi data
                                 unit, token fonnte dan
                                 endpoint api untuk pemohon,
-                                kemudian isi pegawai pada menu <a href="/pegawai" class="link link-primary"
-                                    title="pegawai">Pegawai.</a>
+                                kemudian isi pegawai pada menu <a href="{{ route('user.pegawai') }}"
+                                    class="link link-primary" title="pegawai">Pegawai.</a>
                             </p>
                             <div class="alert alert-warning mb-4 font-semibold">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,7 +108,7 @@
                                     </path>
                                 </svg>
                                 <span>
-                                    Pengaturan API untuk pemohon dan pegawai bisa dilihat melalui dokumentasi
+                                    Pengaturan API untuk pemohon bisa dilihat melalui dokumentasi
                                     <a href="/docs/api/pemohon" class="link link-primary font-semibold"
                                         title="api-guide">API
                                         Guide</a>

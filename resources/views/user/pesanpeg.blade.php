@@ -92,6 +92,7 @@
                             <th class="text-left font-semibold text-xs sm:text-sm">Nama</th>
                             <th class="text-left font-semibold text-xs sm:text-sm">Contact</th>
                             <th class="text-left font-semibold text-xs sm:text-sm">Pesan</th>
+                            <th class="text-left font-semibold text-xs sm:text-sm">Created At</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -121,6 +122,14 @@
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center gap-1 sm:gap-2">
                                             <span class="text-xs sm:text-sm">{{ $p->pesan }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-2 sm:py-4">
+                                    <div class="flex flex-col gap-1">
+                                        <div class="flex items-center gap-1 sm:gap-2">
+                                            <span class="text-xs sm:text-sm">
+                                                {{ $p->created_at->format('d M Y H:i') }}</span>
                                         </div>
                                     </div>
                                 </td>
@@ -181,7 +190,8 @@
 
                         {{-- Next Page Link --}}
                         @if ($pesan->hasMorePages())
-                            <a href="{{ $pesan->appends(request()->query())->nextPageUrl() }}" class="join-item btn">»</a>
+                            <a href="{{ $pesan->appends(request()->query())->nextPageUrl() }}"
+                                class="join-item btn">»</a>
                         @else
                             <button class="join-item btn btn-disabled">»</button>
                         @endif

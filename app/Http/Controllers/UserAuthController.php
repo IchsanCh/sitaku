@@ -220,7 +220,7 @@ class UserAuthController extends Controller
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-        $pesan = $query->orderBy('created_at', 'asc')
+        $pesan = $query->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
 
@@ -234,7 +234,7 @@ class UserAuthController extends Controller
             $searchTerm = $request->search;
             $query->where('nama', 'like', '%' . $searchTerm . '%');
         }
-        $pesan = $query->orderBy('created_at', 'asc')
+        $pesan = $query->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
         return view('user.pesanpeg', compact('user', 'pesan'));
