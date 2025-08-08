@@ -29,99 +29,190 @@
         </div>
         <div class="max-w-4xl mx-auto px-6 py-8">
             <!-- Search and Filter Form -->
-            <form method="GET" action="{{ route('pesan.user') }}" class="mb-6">
-                <div class="flex flex-col gap-4">
-                    <!-- Search Input -->
-                    <div class="flex flex-row sm:flex-row gap-4 items-start sm:items-center justify-between">
-                        <div class="flex-1 max-w-md">
+            <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow mb-6">
+                <div class="card-body">
+                    <h2 class="card-title text-lg mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
+                        </svg>
+                        Filter Pesan Pemohon
+                    </h2>
+
+                    <form method="GET" action="{{ route('pesan.user') }}" class="space-y-4">
+                        <!-- Search and Date Filters Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                            <!-- Search Input -->
                             <div class="form-control">
-                                <div class="input-group">
+                                <label class="text-black">
+                                    <span class="label-text font-medium">No Permohonan</span>
+                                </label>
+                                <label class="input input-bordered input-primary flex items-center gap-2">
+                                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
                                     <input type="text" name="search" value="{{ request('search') }}"
-                                        placeholder="Cari No Permohonan..."
-                                        class="input input-bordered input-primary flex-1" />
-                                    <button type="submit" class="btn btn-primary">
+                                        placeholder="Ex: Sicantik123" class="grow" />
+                                </label>
+                            </div>
+
+                            <!-- Start Date -->
+                            <div class="form-control">
+                                <label class="text-black">
+                                    <span class="label-text font-medium">Dari Tanggal</span>
+                                </label>
+                                <label class="input input-bordered input-primary flex items-center gap-2">
+                                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <input type="date" name="start_date"
+                                        value="{{ request('start_date', \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d')) }}"
+                                        class="grow" />
+                                </label>
+                            </div>
+
+                            <!-- End Date -->
+                            <div class="form-control">
+                                <label class="text-black">
+                                    <span class="label-text font-medium">Sampai Tanggal</span>
+                                </label>
+                                <label class="input input-bordered input-primary flex items-center gap-2">
+                                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <input type="date" name="end_date"
+                                        value="{{ request('end_date', \Carbon\Carbon::now()->endOfMonth()->format('Y-m-d')) }}"
+                                        class="grow" />
+                                </label>
+                            </div>
+
+                            <!-- Status Filter -->
+                            <div class="form-control flex flex-col">
+                                <label class="text-black">
+                                    <span class="label-text font-medium">Status</span>
+                                </label>
+                                <select name="status" class="select select-bordered select-primary">
+                                    <option value="">Semua Status</option>
+                                    <option value="terkirim" {{ request('status') == 'terkirim' ? 'selected' : '' }}>
+                                        Terkirim
+                                    </option>
+                                    <option value="gagal" {{ request('status') == 'gagal' ? 'selected' : '' }}>Gagal
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text font-medium opacity-0">Actions</span>
+                                </label>
+                                <div class="join w-full flex flex-row gap-1">
+                                    <button type="submit" class="btn btn-primary join-item flex-1">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                         </svg>
+                                        Cari
                                     </button>
-                                    @if (request('search') || request('status'))
-                                        <a href="{{ route('pesan.user') }}" class="btn btn-outline">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    @if (request()->hasAny(['search', 'start_date', 'end_date', 'status']))
+                                        <a href="{{ route('pesan.user') }}" class="btn btn-outline btn-secondary join-item">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                                    d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                         </a>
                                     @endif
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Status Filter -->
-                    <div class="flex flex-wrap gap-2 items-center">
-                        <span class="text-sm font-medium text-base-content/70">Filter Status:</span>
-                        <div class="flex flex-wrap gap-2">
-                            <!-- All Status -->
-                            <button type="submit" name="status" value=""
-                                class="btn btn-sm {{ !request('status') ? 'btn-primary' : 'btn-outline' }}">
-                                Semua
-                            </button>
-                            <!-- Terkirim -->
-                            <button type="submit" name="status" value="terkirim"
-                                class="btn btn-sm {{ request('status') == 'terkirim' ? 'btn-success' : 'btn-outline' }}">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Terkirim
-                            </button>
-                            <!-- Gagal -->
-                            <button type="submit" name="status" value="gagal"
-                                class="btn btn-sm {{ request('status') == 'gagal' ? 'btn-error' : 'btn-outline' }}">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                                Gagal
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </form>
+                        <!-- Quick Filter Badges (Optional Enhancement) -->
+                        @if (request()->hasAny(['search', 'start_date', 'end_date', 'status']))
+                            <div class="divider">Filter Aktif</div>
+                            <div class="flex flex-wrap gap-2">
+                                @if (request('search'))
+                                    <div class="badge badge-primary badge-lg gap-2">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        No: {{ request('search') }}
+                                        <a href="{{ request()->fullUrlWithQuery(['search' => null]) }}"
+                                            class="btn btn-ghost btn-xs btn-circle">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                @endif
 
-            <!-- Search/Filter Results Info -->
-            @if (request('search') || request('status'))
-                <div class="mb-4 p-3 bg-info/20 rounded-lg border border-info/50">
-                    <div class="flex items-center gap-2 text-black">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span class="text-sm">
-                            @if ($pesan->count() > 0)
-                                Ditemukan {{ $pesan->total() }} hasil
-                                @if (request('search'))
-                                    untuk "<strong>{{ request('search') }}</strong>"
+                                @if (request('start_date'))
+                                    <div class="badge badge-secondary badge-lg gap-2">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        Dari: {{ \Carbon\Carbon::parse(request('start_date'))->format('d M Y') }}
+                                        <a href="{{ request()->fullUrlWithQuery(['start_date' => null]) }}"
+                                            class="btn btn-ghost btn-xs btn-circle">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </div>
                                 @endif
+
+                                @if (request('end_date'))
+                                    <div class="badge badge-accent badge-lg gap-2">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        Sampai: {{ \Carbon\Carbon::parse(request('end_date'))->format('d M Y') }}
+                                        <a href="{{ request()->fullUrlWithQuery(['end_date' => null]) }}"
+                                            class="btn btn-ghost btn-xs btn-circle">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                @endif
+
                                 @if (request('status'))
-                                    dengan status
-                                    "<strong>{{ ucfirst(request('status') == 'sent' ? 'Terkirim' : (request('status') == 'failed' ? 'Gagal' : request('status'))) }}</strong>"
+                                    <div class="badge badge-warning badge-lg gap-2">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Status: {{ request('status') == 'terkirim' ? 'Terkirim' : 'Gagal' }}
+                                        <a href="{{ request()->fullUrlWithQuery(['status' => null]) }}"
+                                            class="btn btn-ghost btn-xs btn-circle">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </div>
                                 @endif
-                            @else
-                                Tidak ada hasil ditemukan
-                                @if (request('search'))
-                                    untuk "<strong>{{ request('search') }}</strong>"
-                                @endif
-                                @if (request('status'))
-                                    dengan status
-                                    "<strong>{{ ucfirst(request('status') == 'sent' ? 'Terkirim' : (request('status') == 'failed' ? 'Gagal' : request('status'))) }}</strong>"
-                                @endif
-                            @endif
-                        </span>
-                    </div>
+                            </div>
+                        @endif
+                    </form>
                 </div>
-            @endif
+            </div>
 
             <!-- Table -->
             <div class="overflow-x-auto bg-base-100 rounded-lg shadow">
@@ -172,18 +263,18 @@
                                     </div>
                                 </td>
                                 <td class="py-2 sm:py-4 text-center">
-                                    <div class="flex justify-center">
+                                    <div class="flex justify-center font-bold">
                                         @php
                                             $statusClass = match ($p->status) {
-                                                'sent' => 'badge-success',
+                                                'terkirim' => 'badge-success',
                                                 'pending' => 'badge-warning',
-                                                'failed' => 'badge-error',
+                                                'gagal' => 'badge-error',
                                                 default => 'badge-neutral',
                                             };
                                             $statusText = match ($p->status) {
-                                                'sent' => 'Terkirim',
+                                                'terkirim' => 'Terkirim',
                                                 'pending' => 'Pending',
-                                                'failed' => 'Gagal',
+                                                'gagal' => 'Gagal',
                                                 default => ucfirst($p->status),
                                             };
                                         @endphp
@@ -212,15 +303,15 @@
                                         </svg>
                                         <div class="text-center">
                                             <p class="font-medium">
-                                                @if (request('search') || request('status'))
+                                                @if (request()->hasAny(['search', 'start_date', 'end_date', 'status']))
                                                     Tidak ada pesan yang ditemukan
                                                 @else
                                                     Belum ada pesan
                                                 @endif
                                             </p>
                                             <p class="text-sm">
-                                                @if (request('search') || request('status'))
-                                                    Coba ubah kata kunci pencarian atau filter status Anda
+                                                @if (request()->hasAny(['search', 'start_date', 'end_date', 'status']))
+                                                    Coba ubah kata kunci pencarian atau filter Anda
                                                 @else
                                                     Pesan akan muncul di sini setelah dikirim
                                                 @endif

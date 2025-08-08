@@ -212,21 +212,42 @@ class UserAuthController extends Controller
         $user = Auth::guard('user')->user();
         $query = Pesan::where('user_id', $user->id)
             ->with('pemohon');
+
+        // Search by no_permohonan
         if ($request->filled('search')) {
             $searchTerm = $request->search;
             $query->whereHas('pemohon', function ($q) use ($searchTerm) {
                 $q->where('no_permohonan', 'like', '%' . $searchTerm . '%');
             });
         }
+
+        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
+
+        // Filter by date range
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        // If no date filters are provided, default to current month
+        if (!$request->filled('start_date') && !$request->filled('end_date')) {
+            $query->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year);
+        }
+
         $pesan = $query->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
 
         return view('user.pesan', compact('user', 'pesan'));
     }
+
     public function pesanPegawai(Request $request)
     {
         $user = Auth::guard('user')->user();

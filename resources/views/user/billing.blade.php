@@ -239,7 +239,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center py-16">
+                                        <td colspan="6" class="text-center py-16">
                                             <div class="flex flex-col items-center gap-4 text-base-content">
                                                 <div
                                                     class="w-24 h-24 rounded-full bg-base-300 flex items-center justify-center">

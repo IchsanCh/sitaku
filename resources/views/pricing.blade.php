@@ -11,10 +11,11 @@
             <div class="max-w-7xl mx-auto">
                 <!-- Header Section -->
                 <div class="text-center mb-16">
-                    <h1 class="text-3xl lg:text-6xl font-black c1 mb-8">
+                    <h1 class="text-3xl lg:text-6xl font-black c1 mb-8" data-aos="fade-up" data-aos-duration="700">
                         Paket Langganan Sitaku
                     </h1>
-                    <p class="text-xl font-semibold lg:text-2xl mb-8 text-black max-w-3xl mx-auto leading-relaxed">
+                    <p class="text-xl font-semibold lg:text-2xl mb-8 text-black max-w-3xl mx-auto leading-relaxed"
+                        data-aos="fade-up" data-aos-duration="800">
                         Sesuaikan paket dengan kebutuhan instansi Anda. Semua paket mendukung notifikasi WhatsApp otomatis
                         dan integrasi sistem eksternal.
                     </p>
@@ -23,7 +24,7 @@
                 <!-- Pricing Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
                     @forelse ($packages as $index => $p)
-                        <div class="group">
+                        <div class="group" data-aos="flip-right" data-aos-duration="500">
                             <div
                                 class="card bg-base-100 shadow-xl border border-base-300 hover:shadow-2xl hover:border-primary/30 transition-all duration-300 group-hover:-translate-y-2 relative overflow-hidden">
                                 <div class="card-body p-8">
@@ -92,7 +93,7 @@
                             </div>
                         </div>
                     @empty
-                        <div class="col-span-full">
+                        <div class="col-span-full" data-aos="fade-up" data-aos-duration="700">
                             <div class="card bg-base-100 shadow-xl border border-base-300 max-w-md mx-auto">
                                 <div class="card-body text-center p-12">
                                     <div
