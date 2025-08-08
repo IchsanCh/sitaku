@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Pesan;
 use App\Models\Pegawai;
 use App\Models\Announcement;
@@ -229,16 +230,39 @@ class UserAuthController extends Controller
     public function pesanPegawai(Request $request)
     {
         $user = Auth::guard('user')->user();
+
         $query = NotifPegawai::where('user_id', $user->id);
+
+        // Filter by nama
         if ($request->filled('search')) {
-            $searchTerm = $request->search;
-            $query->where('nama', 'like', '%' . $searchTerm . '%');
+            $query->where('nama', 'like', '%' . $request->search . '%');
         }
+
+        // Default: filter bulan ini kalau start/end date tidak diisi
+        if (!$request->filled('start_date') && !$request->filled('end_date')) {
+            $startOfMonth = Carbon::now()->startOfMonth();
+            $endOfMonth = Carbon::now()->endOfMonth();
+
+            $query->whereBetween('created_at', [$startOfMonth, $endOfMonth]);
+        } else {
+            // Filter by start date
+            if ($request->filled('start_date')) {
+                $query->whereDate('created_at', '>=', Carbon::parse($request->start_date));
+            }
+
+            // Filter by end date
+            if ($request->filled('end_date')) {
+                $query->whereDate('created_at', '<=', Carbon::parse($request->end_date));
+            }
+        }
+
         $pesan = $query->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
+
         return view('user.pesanpeg', compact('user', 'pesan'));
     }
+
     public function profile()
     {
         $user = Auth::guard('user')->user();

@@ -28,61 +28,157 @@
         </div>
         <div class="max-w-4xl mx-auto px-6 py-8">
             <!-- Search and Filter Form -->
-            <form method="GET" action="{{ route('pesan.pegawai') }}" class="mb-6">
-                <div class="flex flex-col gap-4">
-                    <!-- Search Input -->
-                    <div class="flex flex-row sm:flex-row gap-4 items-start sm:items-center justify-between">
-                        <div class="flex-1 max-w-md">
+            <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow mb-6">
+                <div class="card-body">
+                    <h2 class="card-title text-lg mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
+                        </svg>
+                        Filter Pesan Pegawai
+                    </h2>
+
+                    <form method="GET" action="{{ route('pesan.pegawai') }}" class="space-y-4">
+                        <!-- Search and Date Filters Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Search Input -->
                             <div class="form-control">
-                                <div class="input-group">
+                                <label class="text-black">
+                                    <span class="label-text font-medium">Nama Pegawai</span>
+                                </label>
+                                <label class="input input-bordered input-primary flex items-center gap-2">
+                                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
                                     <input type="text" name="search" value="{{ request('search') }}"
-                                        placeholder="Cari Nama Pegawai..."
-                                        class="input input-bordered input-primary flex-1" />
-                                    <button type="submit" class="btn btn-primary">
+                                        placeholder="Ex: Ic     hsan" class="grow" />
+                                </label>
+                            </div>
+
+                            <!-- Start Date -->
+                            <div class="form-control">
+                                <label class="text-black">
+                                    <span class="label-text font-medium">Dari Tanggal</span>
+                                </label>
+                                <label class="input input-bordered input-primary flex items-center gap-2">
+                                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <input type="date" name="start_date"
+                                        value="{{ request('start_date', \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d')) }}"
+                                        class="grow" />
+                                </label>
+                            </div>
+
+                            <!-- End Date -->
+                            <div class="form-control">
+                                <label class="text-black">
+                                    <span class="label-text font-medium">Sampai Tanggal</span>
+                                </label>
+                                <label class="input input-bordered input-primary flex items-center gap-2">
+                                    <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <input type="date" name="end_date"
+                                        value="{{ request('end_date', \Carbon\Carbon::now()->endOfMonth()->format('Y-m-d')) }}"
+                                        class="grow" />
+                                </label>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text font-medium opacity-0">Actions</span>
+                                </label>
+                                <div class="join w-full flex flex-row gap-1">
+                                    <button type="submit" class="btn btn-primary join-item flex-1">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                         </svg>
+                                        Cari
                                     </button>
-                                    @if (request('search'))
-                                        <a href="{{ route('pesan.pegawai') }}" class="btn btn-outline">
+                                    @if (request()->hasAny(['search', 'start_date', 'end_date']))
+                                        <a href="{{ route('pesan.pegawai') }}"
+                                            class="btn btn-outline btn-secondary join-item">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                                    d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                         </a>
                                     @endif
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </form>
 
-            <!-- Search/Filter Results Info -->
-            @if (request('search'))
-                <div class="mb-4 p-3 bg-info/20 rounded-lg border border-info/50">
-                    <div class="flex items-center gap-2 text-black">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span class="text-sm">
-                            @if ($pesan->count() > 0)
-                                Ditemukan {{ $pesan->total() }} hasil
+                        <!-- Quick Filter Badges (Optional Enhancement) -->
+                        @if (request()->hasAny(['search', 'start_date', 'end_date']))
+                            <div class="divider">Filter Aktif</div>
+                            <div class="flex flex-wrap gap-2">
                                 @if (request('search'))
-                                    untuk "<strong>{{ request('search') }}</strong>"
+                                    <div class="badge badge-primary badge-lg gap-2">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        Nama: {{ request('search') }}
+                                        <a href="{{ request()->fullUrlWithQuery(['search' => null]) }}"
+                                            class="btn btn-ghost btn-xs btn-circle">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </div>
                                 @endif
-                            @else
-                                Tidak ada hasil ditemukan
-                                @if (request('search'))
-                                    untuk "<strong>{{ request('search') }}</strong>"
+
+                                @if (request('start_date'))
+                                    <div class="badge badge-secondary badge-lg gap-2">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        Dari: {{ \Carbon\Carbon::parse(request('start_date'))->format('d M Y') }}
+                                        <a href="{{ request()->fullUrlWithQuery(['start_date' => null]) }}"
+                                            class="btn btn-ghost btn-xs btn-circle">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </div>
                                 @endif
-                            @endif
-                        </span>
-                    </div>
+
+                                @if (request('end_date'))
+                                    <div class="badge badge-accent badge-lg gap-2">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        Sampai: {{ \Carbon\Carbon::parse(request('end_date'))->format('d M Y') }}
+                                        <a href="{{ request()->fullUrlWithQuery(['end_date' => null]) }}"
+                                            class="btn btn-ghost btn-xs btn-circle">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+                    </form>
                 </div>
-            @endif
+            </div>
 
             <!-- Table -->
             <div class="overflow-x-auto bg-base-100 rounded-lg shadow">
