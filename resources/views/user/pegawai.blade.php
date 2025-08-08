@@ -146,9 +146,8 @@
                         d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                 </svg>
                 <span class="font-semibold">
-                    Mohon maaf, untuk saat ini maksimal satu pegawai per posisi.
-                    Jika ada lebih dari satu, silakan pilih salah satu saja. <span class="font-bold">Tidak boleh ada
-                        duplikasi posisi!!!</span>
+                    Mulai 8 Agustus 2025, pegawai dengan posisi yang sama kini dapat dimasukkan sekaligus ke dalam Sitaku,
+                    sehingga semua pegawai akan menerima notifikasi secara bersamaan.
                 </span>
             </div>
             <div class="alert alert-warning text-sm mb-6">
