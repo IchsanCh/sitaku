@@ -105,13 +105,14 @@
                     <pre data-prefix="7"><code><span class="invisible">______</span>"no_hp": "08xxxxxxx",</code></pre>
                     <pre data-prefix="8"><code><span class="invisible">______</span>"no_permohonan": "siimutdia123",</code></pre>
                     <pre data-prefix="9"><code><span class="invisible">______</span>"jenis_izin": "Izin Jadi Pesan yang Selalu Datang Tepat Waktu",</code></pre>
-                    <pre data-prefix="10"><code><span class="invisible">______</span>"nama_proses": "Dikirim dengan Perasaan, Dibaca dengan Senyuman",</code></pre>
-                    <pre data-prefix="11"><code><span class="invisible">______</span>"status": "proses",</code></pre>
-                    <pre data-prefix="12"><code><span class="invisible">______</span>"tgl_pengajuan": "2025-07-08T00:00:00Z"</code></pre>
-                    <pre data-prefix="13"><code><span class="invisible">____</span>},</code></pre>
-                    <pre data-prefix="13"><code><span class="invisible">____</span>// other applicant data...</code></pre>
-                    <pre data-prefix="14"><code><span class="invisible">__</span>]</code></pre>
-                    <pre data-prefix="15"><code>}</code></pre>
+                    <pre data-prefix="10"><code><span class="invisible">______</span>"link_izin": "https://example.com/file/izinmencintainya.pdf",</code></pre>
+                    <pre data-prefix="11"><code><span class="invisible">______</span>"nama_proses": "Dikirim dengan Perasaan, Dibaca dengan Senyuman",</code></pre>
+                    <pre data-prefix="12"><code><span class="invisible">______</span>"status": "proses",</code></pre>
+                    <pre data-prefix="13"><code><span class="invisible">______</span>"tgl_pengajuan": "2025-07-08T00:00:00Z"</code></pre>
+                    <pre data-prefix="14"><code><span class="invisible">____</span>},</code></pre>
+                    <pre data-prefix="15"><code><span class="invisible">____</span>// other applicant data...</code></pre>
+                    <pre data-prefix="16"><code><span class="invisible">__</span>]</code></pre>
+                    <pre data-prefix="17"><code>}</code></pre>
                 </div>
                 <p class="text-base-content font-semibold mt-4">
                     Contoh struktur JSON yang lain sebagai berikut:
@@ -128,20 +129,21 @@
                     <pre data-prefix="7"><code>        "no_hp": "08xxxxxxxxx",</code></pre>
                     <pre data-prefix="8"><code>        "no_permohonan": "siimutdia124",</code></pre>
                     <pre data-prefix="9"><code>        "jenis_izin": "Izin Shutdown Koneksi Hati",</code></pre>
-                    <pre data-prefix="10"><code>        "nama_proses": "waiting for ACK... but it never came",</code></pre>
-                    <pre data-prefix="11"><code>        "status": "proses",</code></pre>
-                    <pre data-prefix="12"><code>        "tgl_pengajuan": "2025-07-08T00:00:00Z",</code></pre>
-                    <pre data-prefix="13"><code>        "alamat": "Jalan Kenangan No. 404",</code></pre>
-                    <pre data-prefix="14"><code>        "email": example@ex.com,</code></pre>
-                    <pre data-prefix="15"><code>        "end_date": "2025-07-08T00:00:00Z"</code></pre>
-                    <pre data-prefix="16"><code>      },</code></pre>
-                    <pre data-prefix="17"><code>      // other applicant data...</code></pre>
-                    <pre data-prefix="18"><code>    ]</code></pre>
-                    <pre data-prefix="19"><code>  },</code></pre>
-                    <pre data-prefix="20"><code>  "message": "Berhasil",</code></pre>
-                    <pre data-prefix="21"><code>  "success": true,</code></pre>
-                    <pre data-prefix="22"><code>  "code": 200</code></pre>
-                    <pre data-prefix="23"><code>}</code></pre>
+                    <pre data-prefix="10"><code>        "link_izin": "https://example.com/file/izinmencintainya.pdf",</code></pre>
+                    <pre data-prefix="11"><code>        "nama_proses": "waiting for ACK... but it never came",</code></pre>
+                    <pre data-prefix="12"><code>        "status": "proses",</code></pre>
+                    <pre data-prefix="13"><code>        "tgl_pengajuan": "2025-07-08T00:00:00Z",</code></pre>
+                    <pre data-prefix="14"><code>        "alamat": "Jalan Kenangan No. 404",</code></pre>
+                    <pre data-prefix="15"><code>        "email": example@ex.com,</code></pre>
+                    <pre data-prefix="16"><code>        "end_date": "2025-07-08T00:00:00Z"</code></pre>
+                    <pre data-prefix="17"><code>      },</code></pre>
+                    <pre data-prefix="18"><code>      // other applicant data...</code></pre>
+                    <pre data-prefix="19"><code>    ]</code></pre>
+                    <pre data-prefix="20"><code>  },</code></pre>
+                    <pre data-prefix="21"><code>  "message": "Berhasil",</code></pre>
+                    <pre data-prefix="22"><code>  "success": true,</code></pre>
+                    <pre data-prefix="23"><code>  "code": 200</code></pre>
+                    <pre data-prefix="24"><code>}</code></pre>
                 </div>
             </div>
         </div>
@@ -196,6 +198,12 @@
                                 <td><span class="badge bgc5 text-white">string</span></td>
                                 <td>Jenis Izin Pemohon</td>
                                 <td>Izin Jadi Pesan yang Selalu Datang Tepat Waktu</td>
+                            </tr>
+                            <tr>
+                                <td><code class="badge badge-ghost">link_izin</code></td>
+                                <td><span class="badge bgc5 text-white">string</span></td>
+                                <td>Link soft copy document izin</td>
+                                <td>https://example.com/file/izinmencintainya.pdf</td>
                             </tr>
                             <tr>
                                 <td><code class="badge badge-ghost">nama_proses</code></td>
