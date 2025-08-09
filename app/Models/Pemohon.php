@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pemohon extends Model
 {
-    protected $fillable = ['external_id', 'user_id', 'nama', 'no_permohonan', 'nama_izin', 'tahapan', 'status', 'payload_hash', 'created_at', 'last_notified_tahapan', 'notified_at', 'updated_at'];
+    protected $fillable = ['external_id', 'user_id', 'nama', 'no_permohonan', 'nama_izin', 'tahapan', 'status', 'payload_hash', 'created_at', 'last_notified_tahapan', 'notified_at', 'updated_at', 'link_izin'];
 
     public function pesan()
     {
