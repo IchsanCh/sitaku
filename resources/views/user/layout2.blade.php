@@ -169,6 +169,61 @@
                             </details>
                         </li>
                         <li>
+                            <details class="group" {{ request()->routeIs('custom.pesan.*') ? 'open' : '' }}>
+                                <summary
+                                    class="flex items-center gap-3 p-3 rounded-lg transition-all duration-200 colorss1 cursor-pointer {{ request()->routeIs('pesan.*') ? '' : '' }}">
+                                    <!-- Main menu icon -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
+                                    <span class="font-medium">Custom Pesan</span>
+                                </summary>
+
+                                <ul class="ml-6 mt-2 border-l-2 border-base-300 pl-4">
+                                    <li class="mt-4 mb-2">
+                                        <a href="{{ route('custom.pesan.pemohon') }}"
+                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('pesan.user') ? 'colors1 border-b-2 border-black' : '' }}">
+                                            <!-- User icon for pemohon -->
+                                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+                                            </svg>
+                                            <span class="text-sm">Pesan Pemohon</span>
+                                        </a>
+                                    </li>
+                                    <li class="mt-4 mb-2">
+                                        <a href="{{ route('custom.pesan.penyerahan') }}"
+                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('pesan.user') ? 'colors1 border-b-2 border-black' : '' }}">
+                                            <!-- User icon for pemohon -->
+                                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+                                            </svg>
+                                            <span class="text-sm">Pesan Penyerahan</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('custom.pesan.pegawai') }}"
+                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('pesan.pegawai') ? 'colors1 border-b-2 border-black' : '' }}">
+                                            <!-- Badge icon for pegawai -->
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                            </svg>
+                                            <span class="text-sm">Pesan Pegawai</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li>
                             <a href="{{ route('user.billing') }}"
                                 class="flex items-center gap-3 p-3 rounded-lg colorss1 transition-all duration-200 colorss1 {{ request()->routeIs('user.billing') ? 'colors1 border-b-2 border-black' : '' }}">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -37,6 +37,9 @@ class UserDataController extends Controller
                 'unit_id' => $user->unit_id,
                 'api_url' => $user->api_url,
                 'fonnte_token' => $user->fonnte,
+                'pesan_pemohon' => " ini pesan pemohon Hai Saudara/Saudari {nama}, dokumen permohonan perizinan *{nama_izin}* dengan Nomor Permohonan : {no_permohonan} saat ini sudah pada tahap {tahapan}.\n\n_Pesan ini dikirim oleh {username}_",
+                'pesan_penyerahan' => " ini pesan penyerahan Hai Saudara/Saudari {nama}, dokumen permohonan perizinan *{nama_izin}* dengan Nomor Permohonan : {no_permohonan} saat ini sudah pada tahap *{tahapan}*.\n\nSilakan mengambil dokumen Anda sesuai prosedur yang berlaku.\n\n_Softfile Document_: {link_izin}.\n\n_Pesan ini dikirim oleh {username}_",
+                'pesan_pegawai' => " ini pesan pegawai Notifikasi Permohonan *{tahapan}*\nNama: {nama_pemohon}\nPerihal: {nama_izin}\nNomor: {no_permohonan}\nTgl. Pengajuan: {created_at_wib}\n\nSilakan login ke website sicantik.go.id untuk {tahapan}.\n\n_Pesan ini dikirim oleh {username}_",
                 'pegawais' => $user->pegawais->map(function ($pegawai) {
                     return [
                         'nama' => $pegawai->nama,

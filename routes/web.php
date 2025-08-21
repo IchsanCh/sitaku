@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\UserAuthController;
+use App\Http\Controllers\CustomPesanController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 
@@ -31,6 +32,9 @@ Route::get('/login', [UserAuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [UserAuthController::class, 'login'])->name('login.user');
 
 Route::middleware('auth:user')->group(function () {
+    Route::match(['get', 'post'], '/user/pesan/pemohon', [CustomPesanController::class, 'pesanPemohon'])->name('custom.pesan.pemohon');
+    Route::match(['get', 'post'], '/user/pesan/penyerahan', [CustomPesanController::class, 'pesanPenyerahan'])->name('custom.pesan.penyerahan');
+    Route::match(['get', 'post'], '/user/pesan/pegawai', [CustomPesanController::class, 'pesanPegawai'])->name('custom.pesan.pegawai');
     Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout.user');
     Route::get('/dashboard', [UserAuthController::class, 'index'])->name('dashboard.user');
     Route::get('/profile', [UserAuthController::class, 'profile'])->name('profile.user');
