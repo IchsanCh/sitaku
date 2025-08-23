@@ -21,8 +21,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-3xl font-bold text-base-content">Pesan Custom Pegawai</h1>
-                        <p class="text-base-content/70">Configure Custom Message for Employee</p>
+                        <h1 class="text-3xl font-bold text-base-content">Pesan Custom Pemohon</h1>
+                        <p class="text-base-content/70">Configure Custom Message for Applicant</p>
                     </div>
                 </div>
             </div>
@@ -60,14 +60,16 @@
                                     class="badge badge-primary badge-lg cursor-pointer hover:scale-105 transition-transform"
                                     onclick="insertVariable('{nama}')">{nama}</span>
                                 <span
-                                    class="badge badge-secondary badge-lg cursor-pointer hover:scale-105 transition-transform"
+                                    class="badge badge-primary badge-lg cursor-pointer hover:scale-105 transition-transform"
                                     onclick="insertVariable('{no_permohonan}')">{no_permohonan}</span>
                                 <span
-                                    class="badge badge-accent badge-lg cursor-pointer hover:scale-105 transition-transform"
+                                    class="badge badge-primary badge-lg cursor-pointer hover:scale-105 transition-transform"
                                     onclick="insertVariable('{tahapan}')">{tahapan}</span>
-                                <span class="badge badge-info badge-lg cursor-pointer hover:scale-105 transition-transform"
+                                <span
+                                    class="badge badge-primary badge-lg cursor-pointer hover:scale-105 transition-transform"
                                     onclick="insertVariable('{nama_izin}')">{nama_izin}</span>
-                                <span class="badge badge-info badge-lg cursor-pointer hover:scale-105 transition-transform"
+                                <span
+                                    class="badge badge-primary badge-lg cursor-pointer hover:scale-105 transition-transform"
                                     onclick="insertVariable('{username}')">{username}</span>
                             </div>
                             <p class="text-md mt-2 font-semibold">Klik variabel untuk menambahkan ke pesan</p>
@@ -82,8 +84,8 @@
                                     <span class="text-md font-bold">Gunakan \n untuk baris baru</span>
                                 </label>
                                 <textarea name="isi_pesan" id="isi_pesan" rows="8" maxlength="500"
-                                    class="textarea textarea-bordered textarea-lg w-full resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
-                                    placeholder="Halo {nama},\n\nPermohonan Anda dengan nomor {nomor_permohonan} saat ini berada di tahap {tahap} di unit {unit}.\n\nTerima kasih atas kesabaran Anda.">{{ $user->pesan_pemohon }}</textarea>
+                                    class="textarea textarea-bordered textarea-lg w-full resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
+                                    placeholder="Halo {nama},\n\nPermohonan Anda dengan nomor {no_permohonan} saat ini berada di tahap {tahapan}.\n\nTerima kasih atas kesabaran Anda.">{{ $user->pesan_pemohon }}</textarea>
                                 <label class="label">
                                     <span class="label-text-alt text-md" id="charCountLabel">
                                         <span id="charCount">0</span>/500 karakter
@@ -102,8 +104,8 @@
                                 </div>
                             </div>
 
-                            <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4">
-                                <button type="submit" name="reset" class="btn btn-outline btn-lg">
+                            <div class="flex flex-col flex-wrap sm:flex-row justify-end gap-3 pt-4">
+                                <button type="submit" name="reset" class="btn btn-outline">
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -111,7 +113,7 @@
                                     </svg>
                                     Reset Template
                                 </button>
-                                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg">
+                                <button type="submit" id="submitBtn" class="btn btn-primary">
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -156,24 +158,22 @@
                                         </div>
                                         <div>
                                             <h3 class="font-semibold">SITAKU Official</h3>
-                                            <p class="text-xs opacity-90">online</p>
+                                            <p class="text-xs font-semibold">online</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Chat Area -->
                                 <div class="bg-green-50 min-h-80 p-4 space-y-4"
                                     style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%221%22 fill=%22%23ffffff%22 opacity=%220.1%22/></svg>'); background-size: 20px;">
-                                    <!-- Message Bubble -->
                                     <div class="flex justify-start">
-                                        <div class="max-w-xs">
+                                        <div class="w-full">
                                             <div
                                                 class="bg-white rounded-2xl rounded-tl-md p-4 shadow-md border border-gray-100">
                                                 <div id="whatsapp-preview" class="text-sm text-gray-800 leading-relaxed">
                                                     <em class="text-gray-500">Pratinjau pesan akan muncul di sini...</em>
                                                 </div>
                                                 <div class="flex justify-end mt-2">
-                                                    <span class="text-xs text-gray-400" id="preview-time">12:34</span>
+                                                    <span class="text-xs text-black" id="preview-time">12:34</span>
                                                 </div>
                                             </div>
                                             <div class="text-xs text-center mt-1 text-gray-500">SITAKU Official</div>
@@ -181,15 +181,18 @@
                                     </div>
                                 </div>
 
-                                <!-- Input Area (Disabled) -->
-                                <div class="bg-gray-100 p-3 flex items-center gap-3">
-                                    <div class="flex-1 bg-white rounded-full px-4 py-2 opacity-50">
-                                        <span class="text-gray-400 text-sm">Ketik pesan...</span>
+                                <div class="bg-gray-200 p-3 flex items-center gap-3">
+                                    <div class="flex-1 bg-white rounded-full px-4 py-2 flex flex-row items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z" />
+                                        </svg>
+                                        <span class="text-gray-800 text-sm">Ketik pesan...</span>
                                     </div>
-                                    <div
-                                        class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center opacity-50">
+                                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
                                         <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                                         </svg>
@@ -222,7 +225,6 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
     <div class="toast toast-top toast-end z-50" id="toastContainer"></div>
 
     <script>
@@ -237,14 +239,12 @@
             const messageForm = document.getElementById("messageForm");
             const previewTime = document.getElementById("preview-time");
 
-            // Set current time for preview
             const now = new Date();
             previewTime.textContent = now.toLocaleTimeString('id-ID', {
                 hour: '2-digit',
                 minute: '2-digit'
             });
 
-            // Session messages
             @if (session('error'))
                 showToast('error', "{{ session('error') }}");
             @endif
@@ -259,12 +259,10 @@
                 @endforeach
             @endif
 
-            // Validate character limit
             function validateCharacterLimit() {
                 const length = textarea.value.length;
                 const isOverLimit = length > 500;
 
-                // Update character count color based on limit
                 if (length >= 450) {
                     charCountLabel.classList.remove('text-base-content');
                     charCountLabel.classList.add('text-warning');
@@ -276,7 +274,6 @@
                     charCountLabel.classList.add('text-base-content');
                 }
 
-                // Show/hide warning and error messages
                 if (length >= 490 && length <= 500) {
                     limitWarning.classList.remove('hidden');
                 } else {
@@ -298,15 +295,12 @@
                 return !isOverLimit;
             }
 
-            // Update preview and character count
             function updatePreview() {
                 let text = textarea.value.trim();
                 const length = textarea.value.length;
 
-                // Update character count
                 charCount.textContent = length;
 
-                // Validate character limit
                 validateCharacterLimit();
 
                 if (!text) {
@@ -314,20 +308,20 @@
                     return;
                 }
 
-                // Replace variables with sample data
                 text = text.replace(/{nama}/g, "Sitaku");
                 text = text.replace(/{no_permohonan}/g, "REG-2024-001");
                 text = text.replace(/{tahapan}/g, "Verifikasi Dokumen");
                 text = text.replace(/{nama_izin}/g, "Izin Reklame");
                 text = text.replace(/{username}/g, "Instansi Anda");
 
-                // Convert \n to <br> for HTML display
                 text = text.replace(/\\n/g, '<br>');
-
+                text = text.replace(/\*_(.*?)_\*/g, '<strong><em>$1</em></strong>');
+                text = text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+                text = text.replace(/_(.*?)_/g, '<em>$1</em>');
+                text = text.replace(/```(.*?)```/gs, '<code>$1</code>');
                 preview.innerHTML = text;
             }
 
-            // Prevent input if over limit (for paste events)
             function handleInput(e) {
                 setTimeout(() => {
                     if (textarea.value.length > 500) {
@@ -338,7 +332,6 @@
                 }, 0);
             }
 
-            // Handle paste events specifically
             function handlePaste(e) {
                 setTimeout(() => {
                     if (textarea.value.length > 500) {
@@ -350,7 +343,6 @@
                 }, 0);
             }
 
-            // Form submission validation
             function handleSubmit(e) {
                 if (textarea.value.length > 500) {
                     e.preventDefault();
@@ -360,16 +352,10 @@
                 }
                 return true;
             }
-
-            // Initial preview update
             updatePreview();
-
-            // Event listeners
             textarea.addEventListener("input", handleInput);
             textarea.addEventListener("paste", handlePaste);
             messageForm.addEventListener("submit", handleSubmit);
-
-            // Prevent typing when at character limit
             textarea.addEventListener("keypress", (e) => {
                 if (textarea.value.length >= 500 && e.key !== 'Backspace' && e.key !== 'Delete') {
                     e.preventDefault();
@@ -378,7 +364,6 @@
             });
         });
 
-        // Function to insert variables with character limit check
         function insertVariable(variable) {
             const textarea = document.getElementById("isi_pesan");
             const start = textarea.selectionStart;
@@ -386,7 +371,6 @@
             const text = textarea.value;
             const newText = text.substring(0, start) + variable + text.substring(end);
 
-            // Check if inserting variable would exceed limit
             if (newText.length > 500) {
                 showToast('error',
                     `Tidak dapat menambahkan variabel. Akan melebihi batas 500 karakter (${newText.length} karakter)`);
@@ -395,11 +379,9 @@
 
             textarea.value = newText;
 
-            // Set cursor position after inserted variable
             textarea.setSelectionRange(start + variable.length, start + variable.length);
             textarea.focus();
 
-            // Trigger input event to update preview
             textarea.dispatchEvent(new Event('input'));
         }
 
@@ -437,7 +419,6 @@
 
             toastContainer.appendChild(toast);
 
-            // Auto remove after 5 seconds
             setTimeout(() => {
                 if (toast.parentElement) {
                     toast.style.transform = 'translateX(100%)';

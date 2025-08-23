@@ -125,6 +125,57 @@
                                 <span class="font-medium">Pegawai</span>
                             </a>
                         </li>
+                        <li>
+                            <details class="group" {{ request()->routeIs('custom.pesan.*') ? 'open' : '' }}>
+                                <summary
+                                    class="flex items-center gap-3 p-3 rounded-lg transition-all duration-200 colorss1 cursor-pointer {{ request()->routeIs('custom.pesan.*') ? '' : '' }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                                    </svg>
+                                    <span class="font-medium">Custom Pesan</span>
+                                </summary>
+                                <ul class="ml-6 mt-2 border-l-2 border-base-300 pl-4">
+                                    <li class="mt-4 mb-2">
+                                        <a href="{{ route('custom.pesan.pemohon') }}"
+                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('custom.pesan.pemohon') ? 'colors1 border-b-2 border-black' : '' }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="h-4 w-4"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                                            </svg>
+                                            <span class="text-sm">Pesan Pemohon</span>
+                                        </a>
+                                    </li>
+                                    <li class="mt-4 mb-2">
+                                        <a href="{{ route('custom.pesan.penyerahan') }}"
+                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('custom.pesan.penyerahan') ? 'colors1 border-b-2 border-black' : '' }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="h-4 w-4"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                                            </svg>
+                                            <span class="text-sm">Pesan Penyerahan</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('custom.pesan.pegawai') }}"
+                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('custom.pesan.pegawai') ? 'colors1 border-b-2 border-black' : '' }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="h-4 w-4"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                                            </svg>
+                                            <span class="text-sm">Pesan Pegawai</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </details>
+                        </li>
                         <!-- Log Pesan -->
                         <li>
                             <details class="group" {{ request()->routeIs('pesan.*') ? 'open' : '' }}>
@@ -155,61 +206,6 @@
                                     </li>
                                     <li>
                                         <a href="{{ route('pesan.pegawai') }}"
-                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('pesan.pegawai') ? 'colors1 border-b-2 border-black' : '' }}">
-                                            <!-- Badge icon for pegawai -->
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                                            </svg>
-                                            <span class="text-sm">Pesan Pegawai</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </details>
-                        </li>
-                        <li>
-                            <details class="group" {{ request()->routeIs('custom.pesan.*') ? 'open' : '' }}>
-                                <summary
-                                    class="flex items-center gap-3 p-3 rounded-lg transition-all duration-200 colorss1 cursor-pointer {{ request()->routeIs('pesan.*') ? '' : '' }}">
-                                    <!-- Main menu icon -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                    </svg>
-                                    <span class="font-medium">Custom Pesan</span>
-                                </summary>
-
-                                <ul class="ml-6 mt-2 border-l-2 border-base-300 pl-4">
-                                    <li class="mt-4 mb-2">
-                                        <a href="{{ route('custom.pesan.pemohon') }}"
-                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('pesan.user') ? 'colors1 border-b-2 border-black' : '' }}">
-                                            <!-- User icon for pemohon -->
-                                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
-                                            </svg>
-                                            <span class="text-sm">Pesan Pemohon</span>
-                                        </a>
-                                    </li>
-                                    <li class="mt-4 mb-2">
-                                        <a href="{{ route('custom.pesan.penyerahan') }}"
-                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('pesan.user') ? 'colors1 border-b-2 border-black' : '' }}">
-                                            <!-- User icon for pemohon -->
-                                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
-                                            </svg>
-                                            <span class="text-sm">Pesan Penyerahan</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('custom.pesan.pegawai') }}"
                                             class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('pesan.pegawai') ? 'colors1 border-b-2 border-black' : '' }}">
                                             <!-- Badge icon for pegawai -->
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
@@ -307,14 +303,13 @@
 
     <script>
         AOS.init();
-        // Auto-close mobile menu when clicking a link
         document.addEventListener('DOMContentLoaded', function() {
             const drawerToggle = document.getElementById('drawer-toggle');
             const menuLinks = document.querySelectorAll('.drawer-side a');
 
             menuLinks.forEach(link => {
                 link.addEventListener('click', function() {
-                    if (window.innerWidth < 1024) { // Only on mobile
+                    if (window.innerWidth < 1024) {
                         drawerToggle.checked = false;
                     }
                 });
