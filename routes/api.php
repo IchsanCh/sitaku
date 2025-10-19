@@ -7,6 +7,7 @@ use App\Http\Controllers\BillingController;
 use App\Http\Middleware\SubscriptionTokenAuth;
 use App\Http\Controllers\Api\UserDataController;
 use App\Http\Controllers\Api\UserTokenDataController;
+use App\Http\Controllers\MidNotif;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -16,3 +17,4 @@ Route::get('/v1/ichsan', [UserDataController::class, 'index'])
 Route::get('/v1/user', [UserTokenDataController::class, 'show'])
     ->middleware(SubscriptionTokenAuth::class);
 Route::post('/midtrans/callback', [BillingController::class, 'handleCallback']);
+Route::post('/midtrans/notification', [MidNotif::class, 'notif']);

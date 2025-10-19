@@ -27,7 +27,6 @@
             </div>
         </div>
         <div class="max-w-4xl mx-auto px-6 py-8">
-            <!-- Search and Filter Form -->
             <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow mb-6">
                 <div class="card-body">
                     <h2 class="card-title text-lg mb-4">
@@ -39,9 +38,7 @@
                     </h2>
 
                     <form method="GET" action="{{ route('pesan.pegawai') }}" class="space-y-4">
-                        <!-- Search and Date Filters Row -->
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <!-- Search Input -->
                             <div class="form-control">
                                 <label class="text-black">
                                     <span class="label-text font-medium">Nama Pegawai</span>
@@ -56,8 +53,6 @@
                                         placeholder="Ex: Ic     hsan" class="grow" />
                                 </label>
                             </div>
-
-                            <!-- Start Date -->
                             <div class="form-control">
                                 <label class="text-black">
                                     <span class="label-text font-medium">Dari Tanggal</span>
@@ -73,8 +68,6 @@
                                         class="grow" />
                                 </label>
                             </div>
-
-                            <!-- End Date -->
                             <div class="form-control">
                                 <label class="text-black">
                                     <span class="label-text font-medium">Sampai Tanggal</span>
@@ -90,8 +83,6 @@
                                         class="grow" />
                                 </label>
                             </div>
-
-                            <!-- Action Buttons -->
                             <div class="form-control">
                                 <label class="label">
                                     <span class="label-text font-medium opacity-0">Actions</span>
@@ -116,8 +107,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Quick Filter Badges (Optional Enhancement) -->
                         @if (request()->hasAny(['search', 'start_date', 'end_date']))
                             <div class="divider">Filter Aktif</div>
                             <div class="flex flex-wrap gap-2">
@@ -179,8 +168,6 @@
                     </form>
                 </div>
             </div>
-
-            <!-- Table -->
             <div class="overflow-x-auto bg-base-100 rounded-lg shadow">
                 <table class="table table-zebra w-full">
                     <thead>
@@ -262,12 +249,9 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
             @if ($pesan->hasPages())
                 <div class="mt-6 flex justify-center">
                     <div class="join">
-                        {{-- Previous Page Link --}}
                         @if ($pesan->onFirstPage())
                             <button class="join-item btn btn-disabled">«</button>
                         @else
@@ -275,16 +259,38 @@
                                 class="join-item btn">«</a>
                         @endif
 
-                        {{-- Pagination Elements --}}
-                        @foreach ($pesan->appends(request()->query())->getUrlRange(1, $pesan->lastPage()) as $page => $url)
-                            @if ($page == $pesan->currentPage())
+                        @php
+                            $currentPage = $pesan->currentPage();
+                            $lastPage = $pesan->lastPage();
+                            $showPages = [];
+
+                            $showPages[] = 1;
+
+                            for ($i = max(2, $currentPage - 1); $i <= min($lastPage - 1, $currentPage + 1); $i++) {
+                                $showPages[] = $i;
+                            }
+
+                            if ($lastPage > 1) {
+                                $showPages[] = $lastPage;
+                            }
+
+                            $showPages = array_unique($showPages);
+                            sort($showPages);
+                        @endphp
+
+                        @foreach ($showPages as $index => $page)
+                            @if ($index > 0 && $page - $showPages[$index - 1] > 1)
+                                <button class="join-item btn btn-disabled">...</button>
+                            @endif
+
+                            @if ($page == $currentPage)
                                 <button class="join-item btn btn-active">{{ $page }}</button>
                             @else
-                                <a href="{{ $url }}" class="join-item btn">{{ $page }}</a>
+                                <a href="{{ $pesan->appends(request()->query())->url($page) }}"
+                                    class="join-item btn">{{ $page }}</a>
                             @endif
                         @endforeach
 
-                        {{-- Next Page Link --}}
                         @if ($pesan->hasMorePages())
                             <a href="{{ $pesan->appends(request()->query())->nextPageUrl() }}"
                                 class="join-item btn">»</a>
@@ -294,7 +300,6 @@
                     </div>
                 </div>
 
-                <!-- Pagination Info -->
                 <div class="mt-4 text-center text-sm text-base-content/70">
                     Menampilkan {{ $pesan->firstItem() }} - {{ $pesan->lastItem() }} dari {{ $pesan->total() }} hasil
                 </div>

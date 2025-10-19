@@ -242,7 +242,7 @@ class UserAuthController extends Controller
         }
 
         $pesan = $query->orderBy('created_at', 'desc')
-            ->paginate(10)
+            ->paginate(1)
             ->withQueryString();
 
         return view('user.pesan', compact('user', 'pesan'));
@@ -278,7 +278,7 @@ class UserAuthController extends Controller
         }
 
         $pesan = $query->orderBy('created_at', 'desc')
-            ->paginate(10)
+            ->paginate(1)
             ->withQueryString();
 
         return view('user.pesanpeg', compact('user', 'pesan'));

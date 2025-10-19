@@ -12,15 +12,11 @@
 
 @section('content')
     <div class="container mx-auto p-6 max-w-5xl">
-        <!-- Header Section -->
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold mb-2">Jadwal Cronjob & Sinkronisasi Data</h1>
             <p class="text-base-content/70 text-lg">Sistem otomatisasi dan penjadwalan untuk efisiensi maksimal</p>
         </div>
-
-        <!-- Cards Grid -->
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-            <!-- Pengiriman Otomatis ke Pegawai -->
             <div
                 class="card bg-base-100 shadow-xl border-0 ring-1 ring-base-300/30 hover:ring-primary/20 hover:shadow-2xl transition-all duration-300">
                 <div class="card-body">
@@ -48,19 +44,18 @@
                         <div class="divider">Jadwal Harian</div>
 
                         <div class="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
-                            <div class="badge badge-warning">07:00 WIB</div>
+                            <div class="badge badge-warning">07:00</div>
                             <span class="text-sm">Reset status pengiriman</span>
                         </div>
 
                         <div class="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
-                            <div class="badge badge-success">07:00 WIB</div>
+                            <div class="badge badge-success">07:07</div>
                             <span class="text-sm">Kirim pesan pengingat rutin</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Pengiriman Otomatis Pemohon -->
             <div
                 class="card bg-base-100 shadow-xl border-0 ring-1 ring-base-300/30 hover:ring-primary/20 hover:shadow-2xl transition-all duration-300">
                 <div class="card-body">
@@ -89,8 +84,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Sinkronisasi Data -->
             <div
                 class="card bg-base-100 shadow-xl border-0 ring-1 ring-base-300/30 hover:ring-primary/20 hover:shadow-2xl transition-all duration-300">
                 <div class="card-body">
@@ -98,14 +91,15 @@
                         <div class="bg-accent/10 p-3 rounded-full">
                             <span class="text-2xl"><i class="fa-solid fa-arrows-rotate text-primary"></i></span>
                         </div>
-                        <h2 class="card-title text-xl">Sinkronisasi Data</h2>
+                        <h2 class="card-title text-xl">Uptime 99,9%</h2>
                     </div>
 
                     <div class="space-y-4 font-semibold">
                         <div class="stat bg-base-300 rounded-lg">
-                            <div class="stat-title text-black">Sinkronisasi API Pemohon</div>
-                            <div class="stat-value text-2xl text-accent">15 Menit</div>
-                            <div class="stat-desc text-black">Pembaruan dari endpoint API Pemohon</div>
+                            <div class="stat-title text-black">Ketersediaan Sistem
+                            </div>
+                            <div class="stat-value text-2xl text-accent">High Availability</div>
+                            <div class="stat-desc text-black">Layanan hanya berhenti saat proses maintenance</div>
                         </div>
 
                         <div class="alert alert-warning">
@@ -115,7 +109,8 @@
                                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z">
                                 </path>
                             </svg>
-                            <span class="text-sm">Pastikan endpoint API aktif dan valid</span>
+                            <span class="text-sm">Sistem beroperasi secara berkelanjutan dengan tingkat ketersediaan
+                                tinggi.</span>
                         </div>
                     </div>
                 </div>
@@ -157,8 +152,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Important Notes -->
         <div class="mt-8">
             <div
                 class="card bg-base-100 shadow-xl border-0 ring-1 ring-base-300/30 hover:ring-primary/20 hover:shadow-2xl transition-all duration-300">
@@ -184,18 +177,6 @@
                         </svg>
                         <div class="flex items-center gap-2">
                             <span class="font-semibold">Zona Waktu: <span class="font-bold">WIB (UTC+7)</span></span>
-                        </div>
-                    </div>
-                    <div class="alert alert-warning">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            class="stroke-current shrink-0 w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z">
-                            </path>
-                        </svg>
-                        <div class="flex items-center gap-2">
-                            <span class="font-semibold">Data pemohon dihapus jika berusia lebih dari <span
-                                    class="font-bold">6 Bulan</span></span>
                         </div>
                     </div>
                 </div>
