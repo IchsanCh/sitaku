@@ -48,6 +48,16 @@ class PackageResource extends Resource
                             ->numeric()
                             ->required()
                             ->placeholder('Enter Duration in Days'),
+                        Forms\Components\Select::make('visible')
+                            ->label('Visibility')
+                            ->options([
+                                'public' => 'Public',
+                                'private' => 'Private',
+                            ])
+                            ->default('public')
+                            ->required()
+                            ->columnSpanFull()
+                            ->helperText('Choose whether this package is visible to everyone or private.'),
                     ]),
             ]);
     }
@@ -71,7 +81,10 @@ class PackageResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('duration_days')
                     ->label('Duration (Days)')
-                    ->sortable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('visible')
+                    ->label('Visibility')
+                    ->sortable(),
             ])
             ->filters([
                 //

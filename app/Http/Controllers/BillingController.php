@@ -22,7 +22,7 @@ class BillingController extends Controller
             ->latest()
             ->paginate(10)
             ->withQueryString();
-        $packages = Package::all();
+        $packages = Package::where('visible', 'public')->get();
 
         return view('user.billing', compact('user', 'billing', 'packages'));
     }

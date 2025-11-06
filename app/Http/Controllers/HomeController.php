@@ -116,7 +116,7 @@ class HomeController extends Controller
     }
     public function pricing()
     {
-        $packages = Package::all();
+        $packages = Package::where('visible', 'public')->get();
         return view('pricing', compact('packages'));
     }
 }
