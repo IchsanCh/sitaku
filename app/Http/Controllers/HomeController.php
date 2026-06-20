@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Mail\OtpMail;
+use App\Rules\Recaptcha;
 use Illuminate\Http\Request;
 use App\Models\EmailVerification;
 use App\Models\Package;
@@ -29,6 +30,7 @@ class HomeController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email',
             'password' => 'required|string|min:6|confirmed',
+            'g-recaptcha-response' => ['required', new Recaptcha()],
         ]);
         $user = User::where('email', $request->email)->first();
         if ($user) {

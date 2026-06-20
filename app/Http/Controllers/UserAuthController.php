@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Pesan;
+use App\Rules\Recaptcha;
 use App\Models\Pegawai;
 use App\Models\Announcement;
 use App\Models\NotifPegawai;
@@ -28,7 +29,10 @@ class UserAuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
+            'g-recaptcha-response' => ['required', new Recaptcha()],
         ]);
+
+        unset($credentials['g-recaptcha-response']);
 
         $user = \App\Models\User::where('email', $credentials['email'])->first();
 

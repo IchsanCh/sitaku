@@ -54,6 +54,7 @@
                         </div>
 
                         <!-- Send Reset Link Button -->
+                        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
                         <button type="submit" id="resetButton" title="Send Reset Link"
                             class="btn btn-primary w-full h-12 text-base font-medium transition-all duration-200">
                             <span id="resetBtnText" class="flex items-center gap-2">
@@ -190,6 +191,25 @@
                     resetBtn.classList.add('btn-disabled');
                     resetBtnText.classList.add('hidden');
                     resetBtnLoading.classList.remove('hidden');
+
+                    @if (config('services.recaptcha.site_key'))
+                        e.preventDefault();
+
+                        grecaptcha.ready(function() {
+                            grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {
+                                action: 'forgot_password'
+                            }).then(function(token) {
+                                document.getElementById('g-recaptcha-response').value =
+                                    token;
+                                resetForm.submit();
+                            }).catch(function() {
+                                resetBtn.disabled = false;
+                                resetBtn.classList.remove('btn-disabled');
+                                resetBtnText.classList.remove('hidden');
+                                resetBtnLoading.classList.add('hidden');
+                            });
+                        });
+                    @endif
 
                     // Show immediate feedback
                     showToast('info', 'Processing your request...', 'Please Wait');

@@ -85,6 +85,7 @@
                             @enderror
                         </div>
                         <!-- Login Button -->
+                        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
                         <button type="submit" id="loginButton" class="btn btn-primary w-full h-12 text-base font-medium"
                             title="Sign In" data-aos="fade-in" data-aos-duration="1100">
                             <span id="btnText" class="flex items-center gap-2">
@@ -147,10 +148,34 @@
             // Form submission handling
             if (form && btn) {
                 form.addEventListener('submit', function(e) {
-                    btn.disabled = true;
-                    btn.classList.add('btn-disabled');
-                    btnText.classList.add('hidden');
-                    btnLoading.classList.remove('hidden');
+                    @if (config('services.recaptcha.site_key'))
+                        e.preventDefault();
+
+                        btn.disabled = true;
+                        btn.classList.add('btn-disabled');
+                        btnText.classList.add('hidden');
+                        btnLoading.classList.remove('hidden');
+
+                        grecaptcha.ready(function() {
+                            grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {
+                                action: 'login'
+                            }).then(function(token) {
+                                document.getElementById('g-recaptcha-response').value =
+                                    token;
+                                form.submit();
+                            }).catch(function() {
+                                btn.disabled = false;
+                                btn.classList.remove('btn-disabled');
+                                btnText.classList.remove('hidden');
+                                btnLoading.classList.add('hidden');
+                            });
+                        });
+                    @else
+                        btn.disabled = true;
+                        btn.classList.add('btn-disabled');
+                        btnText.classList.add('hidden');
+                        btnLoading.classList.remove('hidden');
+                    @endif
                 });
             }
 

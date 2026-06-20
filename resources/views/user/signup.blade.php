@@ -228,6 +228,7 @@
                             @enderror
                         </div>
                         <!-- Signup Button -->
+                        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
                         <button type="submit" id="signupButton" title="Sign Up"
                             class="btn btn-primary w-full h-12 text-base font-medium">
                             <span id="btnText" class="flex items-center gap-2">
@@ -505,6 +506,31 @@
                         showToast('error', 'Passwords do not match', 'Validation Error');
                         return;
                     }
+
+                    @if (config('services.recaptcha.site_key'))
+                        e.preventDefault();
+
+                        btn.disabled = true;
+                        btn.classList.add('btn-disabled');
+                        btnText.classList.add('hidden');
+                        btnLoading.classList.remove('hidden');
+
+                        grecaptcha.ready(function() {
+                            grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {
+                                action: 'signup'
+                            }).then(function(token) {
+                                document.getElementById('g-recaptcha-response').value =
+                                    token;
+                                form.submit();
+                            }).catch(function() {
+                                btn.disabled = false;
+                                btn.classList.remove('btn-disabled');
+                                btnText.classList.remove('hidden');
+                                btnLoading.classList.add('hidden');
+                            });
+                        });
+                        return;
+                    @endif
 
                     btn.disabled = true;
                     btn.classList.add('btn-disabled');
