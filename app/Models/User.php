@@ -37,7 +37,7 @@ class User extends Authenticatable
         'email_verified_at',
         'unit_id',
         'fonnte',
-        'subcription_token',
+        'subscription_token',
         'subscription_expires_at',
         'active_package_id',
     ];

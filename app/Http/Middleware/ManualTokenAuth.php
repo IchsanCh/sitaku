@@ -16,8 +16,9 @@ class ManualTokenAuth
     public function handle(Request $request, Closure $next): Response
     {
         $token = $request->header('Authorization');
+        $expected = config('services.manual_api.access_token');
 
-        if (!$token || $token !== env('API_ACCESS_TOKEN')) {
+        if (!$token || !$expected || !hash_equals($expected, $token)) {
             return response()->json([
                 'status' => 'unauthorized',
                 'message' => 'forbidden',

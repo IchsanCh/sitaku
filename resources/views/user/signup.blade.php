@@ -478,14 +478,25 @@
             // Form submission handling
             if (form && btn) {
                 form.addEventListener('submit', function(e) {
-                    const termsCheckbox = document.getElementById('terms');
-                    if (!termsCheckbox.checked) {
+                  try {
+                    // Validate name
+                    const nameValue = nameInput.value.trim();
+                    if (nameValue.length < 2 || !/^[a-zA-Z\s]+$/.test(nameValue)) {
                         e.preventDefault();
-                        showToast('error', 'Please agree to the Terms of Service and Privacy Policy',
-                            'Required');
+                        nameInput.classList.add('input-error');
+                        showToast('error', 'Please enter a valid name', 'Validation Error');
                         return;
                     }
 
+                    // Validate email
+                    const emailValue = emailInput.value.trim();
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(emailValue)) {
+                        e.preventDefault();
+                        emailInput.classList.add('input-error');
+                        showToast('error', 'Please enter a valid email address', 'Validation Error');
+                        return;
+                    }
                     // Validate password strength
                     const password = passwordInput.value;
                     const requirements = validatePassword(password);
@@ -516,18 +527,27 @@
                         btnLoading.classList.remove('hidden');
 
                         grecaptcha.ready(function() {
-                            grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {
-                                action: 'signup'
-                            }).then(function(token) {
-                                document.getElementById('g-recaptcha-response').value =
-                                    token;
-                                form.submit();
-                            }).catch(function() {
+                            try {
+                                grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {
+                                    action: 'signup'
+                                }).then(function(token) {
+                                    document.getElementById('g-recaptcha-response').value =
+                                        token;
+                                    form.submit();
+                                }).catch(function(err) {
+                                    btn.disabled = false;
+                                    btn.classList.remove('btn-disabled');
+                                    btnText.classList.remove('hidden');
+                                    btnLoading.classList.add('hidden');
+                                    alert('[DEBUG] grecaptcha.execute gagal: ' + (err && err.message ? err.message : JSON.stringify(err)));
+                                });
+                            } catch (innerErr) {
                                 btn.disabled = false;
                                 btn.classList.remove('btn-disabled');
                                 btnText.classList.remove('hidden');
                                 btnLoading.classList.add('hidden');
-                            });
+                                alert('[DEBUG] Error di dalam grecaptcha.ready: ' + innerErr.message + '\n\nStack: ' + innerErr.stack);
+                            }
                         });
                         return;
                     @endif
@@ -536,6 +556,10 @@
                     btn.classList.add('btn-disabled');
                     btnText.classList.add('hidden');
                     btnLoading.classList.remove('hidden');
+                  } catch (err) {
+                    e.preventDefault();
+                    alert('[DEBUG] Uncaught error di submit handler: ' + err.message + '\n\nStack: ' + err.stack);
+                  }
                 });
             }
 
@@ -671,59 +695,6 @@
                     firstError.focus();
                 }
             }
-
-            // Enhanced form validation on submit
-            form.addEventListener('submit', function(e) {
-                const nameValue = nameInput.value.trim();
-                const emailValue = emailInput.value.trim();
-                const passwordValue = passwordInput.value;
-                const confirmPasswordValue = passwordConfirmInput.value;
-                const termsChecked = document.getElementById('terms').checked;
-
-                let hasErrors = false;
-
-                // Validate name
-                if (nameValue.length < 2 || !/^[a-zA-Z\s]+$/.test(nameValue)) {
-                    nameInput.classList.add('input-error');
-                    hasErrors = true;
-                }
-
-                // Validate email
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(emailValue)) {
-                    emailInput.classList.add('input-error');
-                    hasErrors = true;
-                }
-
-                // Validate password strength
-                const requirements = validatePassword(passwordValue);
-                const {
-                    strength
-                } = calculateStrength(requirements);
-                if (strength < 60) {
-                    passwordInput.classList.add('input-error');
-                    hasErrors = true;
-                }
-
-                // Validate password match
-                if (passwordValue !== confirmPasswordValue) {
-                    passwordConfirmInput.classList.add('input-error');
-                    hasErrors = true;
-                }
-
-                // Validate terms
-                if (!termsChecked) {
-                    hasErrors = true;
-                }
-
-                if (hasErrors) {
-                    e.preventDefault();
-                    scrollToFirstError();
-                    showToast('error', 'Please fix the highlighted errors before submitting',
-                        'Form Validation');
-                    return;
-                }
-            });
 
             // Keyboard navigation enhancement
             document.addEventListener('keydown', function(e) {

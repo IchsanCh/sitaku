@@ -40,9 +40,13 @@ return [
         'client_key'    => env('MIDTRANS_CLIENT_KEY'),
         'is_production' => env('MIDTRANS_PRODUCTION', false),
     ],
+
     'recaptcha' => [
         'site_key'   => env('RECAPTCHA_SITE_KEY'),
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),
     ],
-
+    
+    'manual_api' => [
+        'access_token' => env('API_ACCESS_TOKEN'),
+    ],
 ];
