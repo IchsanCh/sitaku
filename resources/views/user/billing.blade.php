@@ -26,10 +26,10 @@
                 </div>
             </div>
         </div>
-        <!-- Enhanced Modal for Package Selection -->
+        <!-- Modal Pilih Paket -->
         <input type="checkbox" id="buy-package-modal" class="modal-toggle" />
         <div class="modal modal-bottom sm:modal-middle">
-            <div class="modal-box max-w-4xl bg-base-100 shadow-2xl">
+            <div class="modal-box max-w-5xl bg-base-100 shadow-2xl">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-2xl font-bold text-base-content flex items-center gap-2">
                         <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,49 +47,60 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @forelse ($packages as $index => $package)
+                    @php $topPrice = $packages->max('price'); @endphp
+                    @forelse ($packages as $package)
+                        @php $isFeatured = $topPrice > 0 && (int) $package->price === (int) $topPrice; @endphp
                         <div
-                            class="card bg-gradient-to-br from-base-100 to-base-200 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-base-300">
-                            <div class="card-body relative overflow-hidden">
-                                <!-- Decorative elements -->
-                                <div class="absolute -top-4 -right-4 w-20 h-20 bg-primary/10 rounded-full"></div>
-                                <div class="absolute -bottom-6 -left-6 w-16 h-16 bg-secondary/10 rounded-full"></div>
+                            class="relative flex flex-col rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1
+                                {{ $isFeatured ? 'border-transparent shadow-xl' : 'border-base-300 bg-base-100 shadow-sm hover:shadow-lg' }}"
+                            @if ($isFeatured) style="background: linear-gradient(180deg, #e4f9f5 0%, #ffffff 60%);" @endif>
 
-                                <div class="flex items-center gap-3 mb-4">
-                                    <div class="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="{{ $index % 2 == 0 ? 'M13 10V3L4 14h7v7l9-11h-7z' : 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z' }}" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-xl font-bold text-base-content">{{ $package->name }}</h4>
-                                        <div class="badge badge-primary badge-sm">Popular</div>
-                                    </div>
+                            <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #11999e, #30e3ca);"></div>
+
+                            @if ($isFeatured)
+                                <span
+                                    class="absolute top-4 right-4 text-[11px] font-bold uppercase tracking-wide text-white px-3 py-1 rounded-full"
+                                    style="background-color:#236961;">
+                                    Paling Lengkap
+                                </span>
+                            @endif
+
+                            <div class="p-6 flex flex-col flex-1">
+                                @if ($package->tier)
+                                    <span class="text-xs font-bold uppercase tracking-widest mb-1"
+                                        style="color:#11999e;">{{ $package->tier->name }}</span>
+                                @endif
+
+                                <h4 class="text-2xl font-bold mb-1" style="color:#40514e;">{{ $package->name }}</h4>
+
+                                @if ($package->description)
+                                    <p class="text-sm text-base-content/60 mb-5">{{ $package->description }}</p>
+                                @endif
+
+                                <div class="mb-6">
+                                    <span class="text-3xl font-black" style="color:#40514e;">Rp
+                                        {{ number_format($package->price, 0, ',', '.') }}</span>
+                                    <span class="text-sm text-base-content/50">/ {{ $package->duration_days }} hari</span>
                                 </div>
 
-                                <p class="text-base-content/70 mb-4">{{ $package->description }}</p>
-
-                                <div class="flex items-baseline gap-1 mb-6">
-                                    <span class="text-3xl font-bold text-primary">Rp
-                                        {{ number_format($package->price) }}</span>
-                                    <span class="text-base-content/60">/ {{ $package->duration_days }} hari</span>
+                                <div class="space-y-2.5 flex-1 mb-6">
+                                    @include('partials.tier-features', ['tier' => $package->tier])
                                 </div>
 
-                                <div class="card-actions justify-end">
-                                    <form method="POST" action="{{ route('billing.pay') }}">
-                                        @csrf
-                                        <input type="hidden" name="package_id" value="{{ $package->id }}">
-                                        <button
-                                            class="btn btn-primary btn-block shadow-lg hover:shadow-xl transition-all duration-300">Langganan
-                                            Sekarang</button>
-                                    </form>
-                                </div>
+                                <form method="POST" action="{{ route('billing.pay') }}">
+                                    @csrf
+                                    <input type="hidden" name="package_id" value="{{ $package->id }}">
+                                    <button type="submit" class="btn w-full font-bold border-0 text-white transition-colors"
+                                        style="background-color: {{ $isFeatured ? '#11999e' : '#40514e' }};"
+                                        onmouseover="this.style.backgroundColor='#236961'"
+                                        onmouseout="this.style.backgroundColor='{{ $isFeatured ? '#11999e' : '#40514e' }}'">
+                                        Langganan Sekarang
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     @empty
-                        <p>Paket tidak tersedia</p>
+                        <p class="col-span-full text-center text-base-content/60 py-8">Paket tidak tersedia</p>
                     @endforelse
                 </div>
 
@@ -350,6 +361,10 @@
                 showToast('success', "{{ session('success') }}");
             @endif
 
+            @if (session('info'))
+                showToast('info', "{{ session('info') }}");
+            @endif
+
             @if ($errors->any())
                 @foreach ($errors->all() as $error)
                     showToast('error', "{{ $error }}");
@@ -361,10 +376,12 @@
             const toastContainer = document.getElementById('toastContainer');
             if (!toastContainer) return;
 
-            const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+            const alertClass = type === 'error' ? 'alert-error' : (type === 'info' ? 'alert-info' : 'alert-success');
             const icon = type === 'error' ?
                 '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>' :
-                '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                (type === 'info' ?
+                    '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' :
+                    '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>');
 
             const toast = document.createElement('div');
             toast.className = `alert ${alertClass} shadow-2xl mb-4 border-0 backdrop-blur-sm`;

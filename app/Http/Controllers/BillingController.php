@@ -22,7 +22,7 @@ class BillingController extends Controller
             ->latest()
             ->paginate(10)
             ->withQueryString();
-        $packages = Package::where('visible', 'public')->get();
+        $packages = Package::where('visible', 'public')->with('tier.features')->get();
 
         return view('user.billing', compact('user', 'billing', 'packages'));
     }
@@ -113,9 +113,6 @@ class BillingController extends Controller
 
     public function paymentSuccess(Request $request)
     {
-        do {
-            $kodeInvoice = str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
-        } while (Subscription::where('id', $kodeInvoice)->exists());
         $user = Auth::guard('user')->user();
         $packageId = $request->query('package_id');
         $orderId = $request->query('order_id');
@@ -139,42 +136,44 @@ class BillingController extends Controller
         }
 
         try {
-            // Ambil data paket
-            $package = Package::findOrFail($packageId);
+            // Pastikan package-nya valid
+            Package::findOrFail($packageId);
 
-            // Cek apakah transaksi sudah ada untuk menghindari duplikasi
-            $existingSubscription = Subscription::where('user_id', $user->id)
+            $subscription = Subscription::where('user_id', $user->id)
                 ->where('payment_token', $orderId)
                 ->first();
 
-            if ($existingSubscription) {
-                Log::info('Subscription already exists:', [
-                    'subscription_id' => $existingSubscription->id,
-                    'status' => $existingSubscription->status,
-                    'order_id' => $orderId
+            if (!$subscription) {
+                Log::error('Subscription not found on success page:', [
+                    'order_id' => $orderId,
+                    'user_id' => $user->id,
                 ]);
 
-                $message = match ($existingSubscription->status) {
-                    'success' => 'Pembayaran sudah berhasil diproses sebelumnya.',
-                    'pending' => 'Pembayaran sedang diproses.',
-                    'failed' => 'Pembayaran gagal. Silakan coba lagi.',
-                    default => 'Transaksi ini sudah tercatat.'
-                };
-
-                return redirect()->route('user.billing')->with('info', $message);
+                return redirect()->route('user.billing')
+                    ->with('error', 'Data transaksi tidak ditemukan.');
             }
 
-            // Verify payment status with Midtrans (optional but recommended)
-            $isPaymentVerified = $this->verifyPaymentStatus($orderId);
+            // Kalau webhook Midtrans udah lebih dulu masuk & sukses, gak perlu
+            // verify ulang -- tinggal baca status yang udah final.
+            if ($subscription->status !== 'success') {
+                $isPaymentVerified = $this->verifyPaymentStatus($orderId);
+                $this->applySubscriptionStatus($subscription, $isPaymentVerified ? 'success' : 'pending');
+                $subscription->refresh();
+            }
 
-            // Create subscription record
-            $subscriptionStatus = $isPaymentVerified ? 'success' : 'pending';
+            Log::info('Payment success page - final status:', [
+                'subscription_id' => $subscription->id,
+                'order_id' => $orderId,
+                'status' => $subscription->status,
+            ]);
 
-            $message = $isPaymentVerified
-                ? 'Pembayaran berhasil! Paket telah diaktifkan.'
-                : 'Pembayaran berhasil! Paket sedang diproses.';
+            [$type, $message] = match ($subscription->status) {
+                'success' => ['success', 'Pembayaran berhasil! Paket telah diaktifkan.'],
+                'pending' => ['info', 'Pembayaran sedang diproses. Paket akan aktif otomatis setelah dikonfirmasi.'],
+                default => ['error', 'Pembayaran gagal. Silakan coba lagi.'],
+            };
 
-            return redirect()->route('user.billing')->with('success', $message);
+            return redirect()->route('user.billing')->with($type, $message);
         } catch (\Exception $e) {
             Log::error('Error in payment success:', [
                 'order_id' => $orderId,
@@ -228,35 +227,53 @@ class BillingController extends Controller
 
         $oldStatus = $subscription->status;
         $newStatus = $this->determineSubscriptionStatus($transactionStatus, $request->fraud_status);
+        $applied = $this->applySubscriptionStatus($subscription, $newStatus);
 
-        // Prevent downgrade
-        $statusPriority = ['failed' => 0, 'pending' => 1, 'success' => 2];
-        if ($statusPriority[$newStatus] < $statusPriority[$oldStatus]) {
-            Log::info('Preventing status downgrade', [
-                'order_id' => $orderId,
-                'old_status' => $oldStatus,
-                'attempted_status' => $newStatus
-            ]);
-            return response()->json(['message' => 'Status downgrade prevented'], 200);
-        }
-
-        // Update fields
-        $subscription->status = $newStatus;
-        $subscription->updated_at = now();
-        $subscription->save();
-        $this->updateSubscription($subscription);
         Log::info('Subscription updated via Midtrans callback:', [
             'subscription_id' => $subscription->id,
             'user_id' => $subscription->user_id,
             'order_id' => $orderId,
-            'new_status' => $newStatus
+            'old_status' => $oldStatus,
+            'attempted_status' => $newStatus,
+            'applied' => $applied,
         ]);
 
         return response()->json([
-            'message' => 'Notification handled successfully',
+            'message' => $applied ? 'Notification handled successfully' : 'Ignored (already final / status not advancing)',
             'order_id' => $orderId,
-            'status' => $newStatus
+            'status' => $subscription->status,
         ], 200);
+    }
+
+    /**
+     * Terapkan status baru ke subscription. Aturannya cuma 1: begitu subscription
+     * udah 'success', itu FINAL -- gak boleh diubah ke status apapun lagi (nyegah
+     * notifikasi Midtrans yang telat/dobel bikin balik ke pending/failed, atau
+     * updateSubscription() kepanggil 2x -> durasi/tier ke-apply dobel buat 1
+     * pembelian yang sama).
+     *
+     * Selain itu (pending<->failed, failed->success, dst) bebas ganti, soalnya
+     * itu semua transisi yang valid (mis. transaksi pending yang di-expire/deny
+     * Midtrans emang harus bisa jadi failed).
+     *
+     * Dipake bareng oleh handleCallback() (webhook Midtrans) dan paymentSuccess()
+     * (redirect langsung abis user bayar), jadi tier ke-apply walau salah satu
+     * jalur itu gak/telat kepanggil.
+     */
+    protected function applySubscriptionStatus(Subscription $subscription, string $newStatus): bool
+    {
+        if ($subscription->status === 'success') {
+            return false;
+        }
+
+        $subscription->status = $newStatus;
+        $subscription->save();
+
+        if ($newStatus === 'success') {
+            $this->updateSubscription($subscription);
+        }
+
+        return true;
     }
 
     public function updateSubscription(Subscription $subscription)
