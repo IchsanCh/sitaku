@@ -25,7 +25,6 @@ class UserTokenDataController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'unit_id' => $user->unit_id,
-                'api_url' => $user->api_url,
                 'status' => $user->status,
                 'subscription_expires_at' => $formattedDate,
                 'pegawais' => $pegawais,

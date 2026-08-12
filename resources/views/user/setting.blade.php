@@ -57,18 +57,6 @@
                             </label>
                         </div>
                         <div class="form-control">
-                            <label class="label mb-1" for="apirul">
-                                <span class="label-text font-medium text-black">API URL (Pemohon)</span>
-                                <span class="badge badge-primary badge-sm">Required</span>
-                            </label>
-                            <input type="url" id="apirul" name="apirul"
-                                class="input input-bordered border-primary focus:input-primary w-full"
-                                placeholder="Ex: https://lotusaja.com/api/pemohon" value="{{ $user->api_url }}" required>
-                            <div class="">
-                                <span class="text-black">Enter the complete API endpoint URL</span>
-                            </div>
-                        </div>
-                        <div class="form-control">
                             <label class="label mb-1" for="fonnte">
                                 <span class="label-text font-medium text-black">Token Fonnte</span>
                                 <span class="badge badge-primary badge-sm">Required</span>

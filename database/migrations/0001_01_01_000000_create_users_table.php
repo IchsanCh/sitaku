@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('unit_id')->unique()->nullable();
-            $table->string('api_url')->nullable();
             $table->string('fonnte')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');

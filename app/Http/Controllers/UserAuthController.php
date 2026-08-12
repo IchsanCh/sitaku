@@ -144,12 +144,10 @@ class UserAuthController extends Controller
         $user = Auth::guard('user')->user();
 
         $validator = Validator::make($request->all(), [
-            'apirul' => ['nullable', 'url'],
             'fonnte' => ['nullable', 'string'],
             'unit' => ['nullable', 'integer', 'unique:users,unit_id,' . $user->id],
         ], [
             'unit.unique' => 'Unit sudah digunakan oleh pengguna lain.',
-            'apirul.url' => 'Format URL tidak valid.',
         ]);
 
         if ($validator->fails()) {
@@ -159,7 +157,6 @@ class UserAuthController extends Controller
                 ->with('error', 'Gagal memperbarui konfigurasi!');
         }
 
-        $user->api_url = $request->filled('apirul') ? $request->apirul : $user->api_url;
         $user->fonnte = $request->filled('fonnte') ? $request->fonnte : $user->fonnte;
         $user->unit_id = $request->filled('unit') ? $request->unit : $user->unit_id;
         $user->status = $request->has('active') ? 'active' : 'inactive';

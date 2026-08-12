@@ -11,8 +11,8 @@ class UserDataController extends Controller
 {
     public function index()
     {
-        // Ambil semua user dengan relasi pegawais
-        $users = User::with(['pegawais:id,user_id,nama,no_hp,posisi'])->get();
+        // Ambil semua user dengan relasi pegawais + api key
+        $users = User::with(['pegawais:id,user_id,nama,no_hp,posisi', 'apiKey'])->get();
 
         // Filter hanya user yang aktif dan langganannya belum kedaluwarsa
         $filteredUsers = $users->filter(function ($user) {
@@ -35,10 +35,13 @@ class UserDataController extends Controller
                 'id' => $user->id,
                 'username' => $user->name,
                 'unit_id' => $user->unit_id,
-                'api_url' => $user->api_url,
+                'api_url' => $user->apiKey?->api_url,
                 'gateway' => 'avera',
                 'fonnte_token' => $user->fonnte,
-                'avera_token' => '$2b$10$UOx6Tyduns.dX7kX1YYXvu7QP_fiGWWIeDTANtSb.zWSqvxvzYRuW',
+                'avera_token' => $user->apiKey?->bearer_token,
+                'avera_apikey' => $user->apiKey?->apikey,
+                'avera_key_uuid' => $user->apiKey?->key_uuid,
+                'avera_salt_key' => $user->apiKey?->salt_key,
                 'pesan_pemohon' => str_replace('\\n', "\n", $user->pesan_pemohon),
                 'pesan_penyerahan' => str_replace('\\n', "\n", $user->pesan_penyerahan),
                 'pesan_pegawai' => str_replace('\\n', "\n", $user->pesan_pegawai),

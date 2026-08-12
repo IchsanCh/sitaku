@@ -37,7 +37,6 @@ class User extends Authenticatable
         'email_verified_at',
         'unit_id',
         'fonnte',
-        'api_url',
         'subcription_token',
         'subscription_expires_at',
         'active_package_id',
@@ -45,6 +44,11 @@ class User extends Authenticatable
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function apiKey()
+    {
+        return $this->hasOne(ApiKey::class);
     }
 
     public function activePackage()

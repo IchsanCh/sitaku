@@ -29,6 +29,13 @@ class PackageResource extends Resource
                     ->columns(2)
                     ->description('Please Fill in the package details')
                     ->schema([
+                        Forms\Components\Select::make('tier_id')
+                            ->label('Tier')
+                            ->relationship('tier', 'name', fn ($query) => $query->where('is_active', true))
+                            ->searchable()
+                            ->preload()
+                            ->nullable()
+                            ->helperText('Hak akses fitur yang didapat user kalau beli package ini.'),
                         Forms\Components\TextInput::make('name')
                             ->label('Package Name')
                             ->required()
@@ -66,6 +73,11 @@ class PackageResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('tier.name')
+                    ->label('Tier')
+                    ->badge()
+                    ->sortable()
+                    ->placeholder('—'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Package Name')
                     ->sortable()

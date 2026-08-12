@@ -72,10 +72,6 @@ class UserResource extends Resource
                             ->label('Unit ID')
                             ->maxLength(255)
                             ->placeholder('Enter Unit ID'),
-                        TextInput::make('api_url')
-                            ->label('API URL')
-                            ->maxLength(255)
-                            ->placeholder('Enter API URL'),
                         TextInput::make('fonnte')
                             ->label('Fonnte')
                             ->maxLength(255)
