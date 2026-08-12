@@ -95,7 +95,7 @@ class BillingController extends Controller
                 'status' => "failed",
                 'total' => $package->price,
                 'start_date' => Carbon::now(),
-                'end_date' => Carbon::now()->addDays($package->duration ?? 30),
+                'end_date' => Carbon::now()->addDays($package->duration_days ?? 30),
                 'payment_token' => $orderId,
             ]);
 
@@ -273,17 +273,35 @@ class BillingController extends Controller
             return;
         }
 
-        $duration = $subscription->package->duration ?? 30;
+        $newPackage = $subscription->package;
+        $duration = $newPackage->duration_days ?? 30;
 
-        // Inisialisasi tanggal expired sekarang atau sekarang() jika null
-        $currentExpiration = $user->subscription_expires_at ?? now();
+        // Tier yg lagi aktif SEBELUM subscription ini diproses (buat dibandingin)
+        $previousTierId = $user->activePackage?->tier_id;
+        $isSameTier = $user->hasActiveSubscription()
+            && $previousTierId !== null
+            && $previousTierId === $newPackage->tier_id;
 
-        // Hitung tanggal baru
-        $newExpiration = $currentExpiration->greaterThan(now())
-            ? $currentExpiration->copy()->addDays($duration)
-            : now()->addDays($duration);
+        if ($isSameTier) {
+            // Renewal di tier yang sama -> masa aktif numpuk kayak biasa
+            $currentExpiration = $user->subscription_expires_at ?? now();
+            $newExpiration = $currentExpiration->greaterThan(now())
+                ? $currentExpiration->copy()->addDays($duration)
+                : now()->addDays($duration);
+        } else {
+            // Ganti tier (upgrade/downgrade) atau pembelian pertama
+            // -> sisa masa aktif tier lama HANGUS, expired_at direset dari sekarang
+            $newExpiration = now()->addDays($duration);
+
+            Log::info('Tier changed, previous remaining duration forfeited:', [
+                'user_id' => $user->id,
+                'previous_tier_id' => $previousTierId,
+                'new_tier_id' => $newPackage->tier_id,
+            ]);
+        }
 
         $user->subscription_expires_at = $newExpiration;
+        $user->active_package_id = $newPackage->id;
         $user->save();
 
         Log::info('User subscription extended:', [

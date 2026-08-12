@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Package;
 use App\Models\Pesan;
 use Illuminate\Support\Str;
 use App\Models\Subscription;
@@ -39,16 +40,62 @@ class User extends Authenticatable
         'api_url',
         'subcription_token',
         'subscription_expires_at',
+        'active_package_id',
     ];
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
     }
 
+    public function activePackage()
+    {
+        return $this->belongsTo(Package::class, 'active_package_id');
+    }
+
     public function pesan()
     {
         return $this->hasMany(Pesan::class);
     }
+
+    /**
+     * Apakah masa langganan user masih aktif (belum expired).
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->subscription_expires_at !== null
+            && $this->subscription_expires_at->isFuture();
+    }
+
+    /**
+     * Tier yang lagi aktif buat user ini, null kalau langganan udah expired
+     * atau belum pernah punya active package.
+     */
+    public function currentTier(): ?Tier
+    {
+        if (! $this->hasActiveSubscription()) {
+            return null;
+        }
+
+        return $this->activePackage?->tier;
+    }
+
+    /**
+     * Cek apakah user (lewat tier aktifnya) punya akses ke suatu fitur.
+     */
+    public function hasFeature(string $slug): bool
+    {
+        return $this->currentTier()?->hasFeature($slug) ?? false;
+    }
+
+    /**
+     * Ambil limit angka fitur bertipe `limit` dari tier aktif user.
+     * Null = unlimited ATAU tier-nya emang gak ada (cek hasFeature dulu buat mastiin).
+     */
+    public function featureLimit(string $slug): ?int
+    {
+        return $this->currentTier()?->featureLimit($slug);
+    }
+
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPassword($token));
