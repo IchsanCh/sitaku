@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('packages', function (Blueprint $table) {
+        Schema::create('tiers', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Basic / Premium / dll
-            $table->text('description')->nullable(); // Boleh kosong
-            $table->integer('price'); // dalam rupiah (misal 100000)
-            $table->integer('duration_days'); // berapa lama aktifnya (misal 30 hari)
+            $table->string('name'); // Basic / Premium / Enterprise
+            $table->string('slug')->unique(); // basic / premium / enterprise
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('packages');
+        Schema::dropIfExists('tiers');
     }
 };
