@@ -20,13 +20,4 @@ class ApiKey extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    protected function casts(): array
-    {
-        return [
-            'bearer_token' => 'encrypted',
-            'apikey' => 'encrypted',
-            'salt_key' => 'encrypted',
-        ];
-    }
 }

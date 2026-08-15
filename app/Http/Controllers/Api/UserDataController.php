@@ -36,7 +36,7 @@ class UserDataController extends Controller
                 'username' => $user->name,
                 'unit_id' => $user->unit_id,
                 'api_url' => $user->apiKey?->api_url,
-                'gateway' => 'avera',
+                'version' => 'v3',
                 'fonnte_token' => $user->fonnte,
                 'avera_token' => $user->apiKey?->bearer_token,
                 'avera_apikey' => $user->apiKey?->apikey,
