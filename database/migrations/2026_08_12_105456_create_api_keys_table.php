@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('api_keys', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete(); // 1 user = 1 api key aktif
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // 1 user = 1 api key aktif
             $table->string('api_url'); // pindahan dari users.api_url
-            $table->string('version')->default('v3')->unique();
+            $table->string('version');
             $table->string('bearer_token'); // dikirim di header Authorization: Bearer <token>
             $table->string('apikey'); // dikirim di header apikey
             $table->uuid('key_uuid'); // api key uuid dari sisi API/integrasi eksternal

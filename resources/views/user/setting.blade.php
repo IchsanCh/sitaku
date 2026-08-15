@@ -56,6 +56,20 @@
                                     {{ $user->status === 'active' ? 'checked' : '' }}>
                             </label>
                         </div>
+                        <div class="form-control mb-4">
+                            <label class="cursor-pointer label">
+                                <span class="label-text font-medium text-black">Notifikasi ke Pegawai</span>
+                                <input type="checkbox" name="notif_pegawai" class="toggle toggle-primary"
+                                    {{ $user->notif_pegawai === 'aktif' ? 'checked' : '' }}>
+                            </label>
+                        </div>
+                        <div class="form-control mb-4">
+                            <label class="cursor-pointer label">
+                                <span class="label-text font-medium text-black">Notifikasi ke Pemohon</span>
+                                <input type="checkbox" name="notif_pemohon" class="toggle toggle-primary"
+                                    {{ $user->notif_pemohon === 'aktif' ? 'checked' : '' }}>
+                            </label>
+                        </div>
                         <div class="form-control">
                             <label class="label mb-1" for="fonnte">
                                 <span class="label-text font-medium text-black">Token Fonnte</span>

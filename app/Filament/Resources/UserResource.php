@@ -76,6 +76,18 @@ class UserResource extends Resource
                             ->label('Fonnte')
                             ->maxLength(255)
                             ->placeholder('Enter Fonnte'),
+                        Forms\Components\Toggle::make('notif_pegawai')
+                            ->label('Notifikasi ke Pegawai')
+                            ->helperText('Kirim WA otomatis ke pegawai terkait tahapan permohonan.')
+                            ->default(true)
+                            ->formatStateUsing(fn (?string $state) => $state === 'aktif')
+                            ->dehydrateStateUsing(fn (bool $state) => $state ? 'aktif' : 'nonaktif'),
+                        Forms\Components\Toggle::make('notif_pemohon')
+                            ->label('Notifikasi ke Pemohon')
+                            ->helperText('Kirim WA otomatis ke pemohon tiap tahapan berubah.')
+                            ->default(true)
+                            ->formatStateUsing(fn (?string $state) => $state === 'aktif')
+                            ->dehydrateStateUsing(fn (bool $state) => $state ? 'aktif' : 'nonaktif'),
                     ])
             ]);
     }
@@ -100,6 +112,16 @@ class UserResource extends Resource
                     ->sortable()
                     ->toggleable()
                     ->dateTime('d M Y H:i:s'),
+                Tables\Columns\IconColumn::make('notif_pegawai')
+                    ->label('Notif Pegawai')
+                    ->boolean()
+                    ->getStateUsing(fn (User $record): bool => $record->notif_pegawai === 'aktif')
+                    ->toggleable(),
+                Tables\Columns\IconColumn::make('notif_pemohon')
+                    ->label('Notif Pemohon')
+                    ->boolean()
+                    ->getStateUsing(fn (User $record): bool => $record->notif_pemohon === 'aktif')
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->sortable()
@@ -107,7 +129,12 @@ class UserResource extends Resource
                     ->dateTime('d M Y')
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('notif_pegawai')
+                    ->label('Notif Pegawai')
+                    ->options(['aktif' => 'Aktif', 'nonaktif' => 'Nonaktif']),
+                Tables\Filters\SelectFilter::make('notif_pemohon')
+                    ->label('Notif Pemohon')
+                    ->options(['aktif' => 'Aktif', 'nonaktif' => 'Nonaktif']),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

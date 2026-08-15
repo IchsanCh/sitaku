@@ -11,9 +11,11 @@ class UserDataController extends Controller
 {
     public function index()
     {
-        // Ambil semua user dengan relasi pegawais + api key yang lagi aktif
-        // (ditentukan dari users.active_api_version, lihat User::activeApiKey()).
-        $users = User::with(['pegawais:id,user_id,nama,no_hp,posisi', 'activeApiKey'])->get();
+        // Ambil semua user dengan relasi pegawais + SEMUA api key (bukan cuma yang
+        // aktif) -- versi yang lagi aktif difilter di PHP lewat User::activeApiKey(),
+        // soalnya relasi yang constraint-nya gantung ke kolom user (active_api_version)
+        // gak aman di-eager-load langsung (lihat komentar di User::activeApiKey()).
+        $users = User::with(['pegawais:id,user_id,nama,no_hp,posisi', 'apiKeys'])->get();
 
         // Filter: akun harus aktif (lolos verifikasi email) + langganan belum
         // kedaluwarsa + minimal salah satu dari notif_pegawai/notif_pemohon aktif.
@@ -39,17 +41,19 @@ class UserDataController extends Controller
 
         // Format data
         $data = $filteredUsers->map(function ($user) {
+            $apiKey = $user->activeApiKey();
+
             return [
                 'id' => $user->id,
                 'username' => $user->name,
                 'unit_id' => $user->unit_id,
-                'api_url' => $user->activeApiKey?->api_url,
-                'version' => $user->activeApiKey?->version ?? $user->active_api_version,
+                'api_url' => $apiKey?->api_url,
+                'version' => $apiKey?->version ?? $user->active_api_version,
                 'fonnte_token' => $user->fonnte,
-                'avera_token' => $user->activeApiKey?->bearer_token,
-                'avera_apikey' => $user->activeApiKey?->apikey,
-                'avera_key_uuid' => $user->activeApiKey?->key_uuid,
-                'avera_salt_key' => $user->activeApiKey?->salt_key,
+                'avera_token' => $apiKey?->bearer_token,
+                'avera_apikey' => $apiKey?->apikey,
+                'avera_key_uuid' => $apiKey?->key_uuid,
+                'avera_salt_key' => $apiKey?->salt_key,
                 'notif_pegawai' => $user->notif_pegawai,
                 'notif_pemohon' => $user->notif_pemohon,
                 'pesan_pemohon' => str_replace('\\n', "\n", $user->pesan_pemohon),

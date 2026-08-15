@@ -58,10 +58,19 @@ class User extends Authenticatable
      * Baris api_keys yang lagi aktif dipakai user ini, ditentukan dari
      * kolom users.active_api_version. Switch versi = ganti kolom ini aja,
      * gak perlu utak-atik data credential-nya.
+     *
+     * SENGAJA method biasa (bukan relasi Eloquent hasOne) -- relasi yang
+     * constraint-nya bergantung ke $this->active_api_version TIDAK aman
+     * di-eager-load (->with('activeApiKey')): Eloquent nyusun query eager
+     * load-nya pake instance User KOSONG, jadi $this->active_api_version
+     * selalu null di titik itu, hasilnya query "WHERE version = NULL" yg
+     * sama buat semua user, bukan per-user. Cara amannya: eager-load
+     * apiKeys() (hasMany biasa, gak ada dynamic constraint) terus filter
+     * di PHP dari collection yang udah ke-load.
      */
-    public function activeApiKey()
+    public function activeApiKey(): ?ApiKey
     {
-        return $this->hasOne(ApiKey::class)->where('version', $this->active_api_version);
+        return $this->apiKeys->firstWhere('version', $this->active_api_version);
     }
 
     public function activePackage()

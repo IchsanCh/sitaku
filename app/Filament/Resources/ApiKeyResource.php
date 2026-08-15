@@ -6,6 +6,7 @@ use App\Filament\Resources\ApiKeyResource\Pages;
 use App\Models\ApiKey;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -34,8 +35,20 @@ class ApiKeyResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->unique(ignoreRecord: true)
-                            ->helperText('1 user cuma boleh punya 1 API key aktif.')
+                            ->helperText('1 user boleh punya beberapa credential (misal v2 & v3 bareng) -- pilih yang aktif lewat aksi "Jadikan Aktif" di tabel.')
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('version')
+                            ->label('Version')
+                            ->required()
+                            ->default('v3')
+                            ->maxLength(255)
+                            ->unique(
+                                table: 'api_keys',
+                                column: 'version',
+                                ignoreRecord: true,
+                                modifyRuleUsing: fn (\Illuminate\Validation\Rules\Unique $rule, Get $get) => $rule->where('user_id', $get('user_id')),
+                            )
+                            ->helperText('1 user gak boleh punya 2 credential versi yang sama (mis. dua-duanya "v3").')
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('api_url')
                             ->label('API URL')
@@ -62,8 +75,7 @@ class ApiKeyResource extends Resource
                             ->label('Key UUID')
                             ->required()
                             ->maxLength(255)
-                            ->unique(ignoreRecord: true)
-                            ->helperText('UUID dari sisi API/integrasi eksternal (bukan digenerate sistem ini).'),
+                            ->helperText('UUID dari sisi API/integrasi eksternal (bukan digenerate sistem ini). Gak wajib unik -- boleh sama antar baris.'),
                         Forms\Components\TextInput::make('salt_key')
                             ->label('Salt Key')
                             ->required()
@@ -83,6 +95,15 @@ class ApiKeyResource extends Resource
                     ->label('User')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('version')
+                    ->label('Version')
+                    ->badge()
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->label('Aktif')
+                    ->boolean()
+                    ->state(fn (ApiKey $record): bool => $record->version === $record->user?->active_api_version),
                 Tables\Columns\TextColumn::make('api_url')
                     ->label('API URL')
                     ->limit(40)
@@ -105,6 +126,16 @@ class ApiKeyResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('setActive')
+                    ->label('Jadikan Aktif')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->visible(fn (ApiKey $record): bool => $record->version !== $record->user?->active_api_version)
+                    ->action(function (ApiKey $record) {
+                        $record->user?->update(['active_api_version' => $record->version]);
+                    })
+                    ->successNotificationTitle('Versi aktif user berhasil diganti'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

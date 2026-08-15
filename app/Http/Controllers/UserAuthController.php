@@ -160,6 +160,8 @@ class UserAuthController extends Controller
         $user->fonnte = $request->filled('fonnte') ? $request->fonnte : $user->fonnte;
         $user->unit_id = $request->filled('unit') ? $request->unit : $user->unit_id;
         $user->status = $request->has('active') ? 'active' : 'inactive';
+        $user->notif_pegawai = $request->has('notif_pegawai') ? 'aktif' : 'nonaktif';
+        $user->notif_pemohon = $request->has('notif_pemohon') ? 'aktif' : 'nonaktif';
         $user->save();
 
         return redirect()->back()->with('success', 'Konfigurasi berhasil diperbarui!');
