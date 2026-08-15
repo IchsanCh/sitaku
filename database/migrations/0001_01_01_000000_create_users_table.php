@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('unit_id')->unique()->nullable();
+            $table->string('active_api_version')->default('v3');
+            $table->enum('notif_pegawai', ['aktif', 'nonaktif'])->default('aktif');
+            $table->enum('notif_pemohon', ['aktif', 'nonaktif'])->default('aktif');
             $table->string('fonnte')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');

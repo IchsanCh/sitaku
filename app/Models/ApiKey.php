@@ -9,6 +9,7 @@ class ApiKey extends Model
 {
     protected $fillable = [
         'user_id',
+        'version',
         'api_url',
         'bearer_token',
         'apikey',

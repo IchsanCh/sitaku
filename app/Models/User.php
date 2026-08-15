@@ -36,6 +36,9 @@ class User extends Authenticatable
         'status',
         'email_verified_at',
         'unit_id',
+        'active_api_version',
+        'notif_pegawai',
+        'notif_pemohon',
         'fonnte',
         'subscription_token',
         'subscription_expires_at',
@@ -46,9 +49,19 @@ class User extends Authenticatable
         return $this->hasMany(Subscription::class);
     }
 
-    public function apiKey()
+    public function apiKeys()
     {
-        return $this->hasOne(ApiKey::class);
+        return $this->hasMany(ApiKey::class);
+    }
+
+    /**
+     * Baris api_keys yang lagi aktif dipakai user ini, ditentukan dari
+     * kolom users.active_api_version. Switch versi = ganti kolom ini aja,
+     * gak perlu utak-atik data credential-nya.
+     */
+    public function activeApiKey()
+    {
+        return $this->hasOne(ApiKey::class)->where('version', $this->active_api_version);
     }
 
     public function activePackage()

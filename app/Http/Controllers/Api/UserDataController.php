@@ -11,13 +11,21 @@ class UserDataController extends Controller
 {
     public function index()
     {
-        // Ambil semua user dengan relasi pegawais + api key
-        $users = User::with(['pegawais:id,user_id,nama,no_hp,posisi', 'apiKey'])->get();
+        // Ambil semua user dengan relasi pegawais + api key yang lagi aktif
+        // (ditentukan dari users.active_api_version, lihat User::activeApiKey()).
+        $users = User::with(['pegawais:id,user_id,nama,no_hp,posisi', 'activeApiKey'])->get();
 
-        // Filter hanya user yang aktif dan langganannya belum kedaluwarsa
+        // Filter: akun harus aktif (lolos verifikasi email) + langganan belum
+        // kedaluwarsa + minimal salah satu dari notif_pegawai/notif_pemohon aktif.
+        // Kalau dua-duanya nonaktif, user gak usah muncul di response sama sekali
+        // -- gak ada gunanya buat cron kalau emang gak ada notif yang mau dikirim.
         $filteredUsers = $users->filter(function ($user) {
-            return $user->status === 'active' &&
+            $akunAktif = $user->status === 'active' &&
                 Carbon::parse($user->subscription_expires_at)->isFuture();
+
+            $adaNotifAktif = $user->notif_pegawai === 'aktif' || $user->notif_pemohon === 'aktif';
+
+            return $akunAktif && $adaNotifAktif;
         });
 
         // Jika tidak ada user yang valid
@@ -35,13 +43,15 @@ class UserDataController extends Controller
                 'id' => $user->id,
                 'username' => $user->name,
                 'unit_id' => $user->unit_id,
-                'api_url' => $user->apiKey?->api_url,
-                'version' => 'v3',
+                'api_url' => $user->activeApiKey?->api_url,
+                'version' => $user->activeApiKey?->version ?? $user->active_api_version,
                 'fonnte_token' => $user->fonnte,
-                'avera_token' => $user->apiKey?->bearer_token,
-                'avera_apikey' => $user->apiKey?->apikey,
-                'avera_key_uuid' => $user->apiKey?->key_uuid,
-                'avera_salt_key' => $user->apiKey?->salt_key,
+                'avera_token' => $user->activeApiKey?->bearer_token,
+                'avera_apikey' => $user->activeApiKey?->apikey,
+                'avera_key_uuid' => $user->activeApiKey?->key_uuid,
+                'avera_salt_key' => $user->activeApiKey?->salt_key,
+                'notif_pegawai' => $user->notif_pegawai,
+                'notif_pemohon' => $user->notif_pemohon,
                 'pesan_pemohon' => str_replace('\\n', "\n", $user->pesan_pemohon),
                 'pesan_penyerahan' => str_replace('\\n', "\n", $user->pesan_penyerahan),
                 'pesan_pegawai' => str_replace('\\n', "\n", $user->pesan_pegawai),
