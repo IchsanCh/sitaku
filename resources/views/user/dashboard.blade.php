@@ -20,7 +20,7 @@
                     </h1>
                     <p class="text-base-content mt-2">Selamat datang kembali di Dashboard SITAKU</p>
                 </div>
-                <div class="flex items-center gap-2">
+                {{-- <div class="flex items-center gap-2">
                     <div
                         class="badge px-3 py-2 text-white font-semibold transition-all duration-300 
         {{ $user->status === 'active' ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-400 hover:bg-gray-500' }}">
@@ -35,7 +35,7 @@
                         </svg>
                         {{ $user->status === 'active' ? 'Online' : 'Offline' }}
                     </div>
-                </div>
+                </div> --}}
 
             </div>
         </div>
@@ -292,103 +292,6 @@
                     }
                 }, 5000);
             }
-
-            // Chart.js initialization with improved styling
-            const ctx1 = document.getElementById('messagesChart').getContext('2d');
-            const messagesChart = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov',
-                        'Des'
-                    ],
-                    datasets: [{
-                        label: 'Pesan Terkirim',
-                        data: [120, 190, 300, 500, 200, 300, 450, 300, 250, 400, 350, 200],
-                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                        borderColor: 'rgba(37, 99, 235, 1)',
-                        borderWidth: 2,
-                        borderRadius: 5,
-                        borderSkipped: false,
-
-                        // Hover effects
-                        hoverBackgroundColor: 'rgba(37, 99, 235, 0.9)',
-                        hoverBorderColor: 'rgba(29, 78, 216, 1)',
-                        hoverBorderWidth: 3,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)', // Dark background
-                            titleColor: '#ffffff',
-                            bodyColor: '#ffffff',
-                            borderColor: 'rgba(59, 130, 246, 0.5)',
-                            borderWidth: 1,
-                            cornerRadius: 12,
-                            displayColors: false,
-                            titleFont: {
-                                size: 14,
-                                weight: 'bold'
-                            },
-                            bodyFont: {
-                                size: 13
-                            },
-                            padding: 12,
-                            // Custom tooltip format
-                            callbacks: {
-                                label: function(context) {
-                                    return `Pesan: ${context.parsed.y.toLocaleString('id-ID')}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(148, 163, 184, 0.3)', // Light gray grid
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: 'rgba(71, 85, 105, 0.8)', // Slate color
-                                font: {
-                                    size: 12
-                                },
-                                // Format numbers with Indonesian locale
-                                callback: function(value) {
-                                    return value.toLocaleString('id-ID');
-                                }
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                color: 'rgba(71, 85, 105, 0.8)', // Slate color
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
-                                }
-                            }
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    // Add smooth animations
-                    animation: {
-                        duration: 1000,
-                        easing: 'easeInOutQuart'
-                    }
-                }
-            });
 
             // Auto-refresh data every 30 seconds (optional)
             setInterval(() => {

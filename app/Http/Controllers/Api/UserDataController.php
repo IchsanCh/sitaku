@@ -15,19 +15,28 @@ class UserDataController extends Controller
         // aktif) -- versi yang lagi aktif difilter di PHP lewat User::activeApiKey(),
         // soalnya relasi yang constraint-nya gantung ke kolom user (active_api_version)
         // gak aman di-eager-load langsung (lihat komentar di User::activeApiKey()).
-        $users = User::with(['pegawais:id,user_id,nama,no_hp,posisi', 'apiKeys'])->get();
+        // 'activePackage.tier.features' di-eager-load sekalian biar hasFeature() di
+        // bawah gak nembak query baru per-user (N+1).
+        $users = User::with([
+            'pegawais:id,user_id,nama,no_hp,posisi',
+            'apiKeys',
+            'activePackage.tier.features',
+        ])->get();
 
         // Filter: akun harus aktif (lolos verifikasi email) + langganan belum
-        // kedaluwarsa + minimal salah satu dari notif_pegawai/notif_pemohon aktif.
-        // Kalau dua-duanya nonaktif, user gak usah muncul di response sama sekali
-        // -- gak ada gunanya buat cron kalau emang gak ada notif yang mau dikirim.
+        // kedaluwarsa + tier-nya punya akses fitur "api_access" (paket Basic gak
+        // dapet integrasi otomatis) + minimal salah satu dari notif_pegawai/
+        // notif_pemohon aktif. Kalau salah satu syarat gak kepenuhi, user gak
+        // usah muncul di response sama sekali.
         $filteredUsers = $users->filter(function ($user) {
             $akunAktif = $user->status === 'active' &&
                 Carbon::parse($user->subscription_expires_at)->isFuture();
 
+            $adaAksesApi = $user->hasFeature('api_access');
+
             $adaNotifAktif = $user->notif_pegawai === 'aktif' || $user->notif_pemohon === 'aktif';
 
-            return $akunAktif && $adaNotifAktif;
+            return $akunAktif && $adaAksesApi && $adaNotifAktif;
         });
 
         // Jika tidak ada user yang valid

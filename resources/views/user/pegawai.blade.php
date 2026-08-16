@@ -146,7 +146,7 @@
                         d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                 </svg>
                 <span class="font-semibold">
-                    Mulai 8 Agustus 2025, pegawai dengan posisi yang sama kini dapat dimasukkan sekaligus ke dalam Sitaku,
+                    Pegawai dengan posisi yang sama dapat dimasukkan sekaligus ke dalam Sitaku,
                     sehingga semua pegawai akan menerima notifikasi secara bersamaan.
                 </span>
             </div>
@@ -173,13 +173,26 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="document.getElementById('modal-tambah').showModal()">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Tambah Pegawai
-                </button>
+                @if ($pegawaiLimitReached)
+                    <button class="btn btn-primary opacity-60"
+                        style="cursor: not-allowed;"
+                        onclick="showToast('error', 'Anda tidak diizinkan menambah pegawai lagi — batas paket Anda ({{ $pegawaiLimit }} pegawai) sudah tercapai. Upgrade paket untuk menambah slot.')">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        Tambah Pegawai (Batas Tercapai)
+                    </button>
+                @else
+                    <button class="btn btn-primary" onclick="document.getElementById('modal-tambah').showModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Tambah Pegawai
+                    </button>
+                @endif
             </div>
             <div id="searchInfo" class="mb-4 text-sm text-base-content/70 hidden">
                 <span id="searchResults"></span>

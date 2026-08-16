@@ -126,6 +126,14 @@
                             </a>
                         </li>
                         <li>
+                            @php
+                                // Custom Pesan itu fitur toggle -- kalau tier user gak
+                                // punya ini nyala, menu-nya tetep keliatan (biar user tau
+                                // fiturnya ada) tapi dikunci + munculin ajakan upgrade.
+                                // Enforcement beneran tetep di middleware 'feature:custom_pesan'
+                                // di routes/web.php -- ini cuma UX, bukan security.
+                                $customPesanLocked = ! (auth('user')->user()?->hasFeature('custom_pesan') ?? false);
+                            @endphp
                             <details class="group" {{ request()->routeIs('custom.pesan.*') ? 'open' : '' }}>
                                 <summary
                                     class="flex items-center gap-3 p-3 rounded-lg transition-all duration-200 colorss1 cursor-pointer {{ request()->routeIs('custom.pesan.*') ? '' : '' }}">
@@ -138,7 +146,8 @@
                                 </summary>
                                 <ul class="ml-6 mt-2 border-l-2 border-base-300 pl-4">
                                     <li class="mt-4 mb-2">
-                                        <a href="{{ route('custom.pesan.pemohon') }}"
+                                        <a href="{{ $customPesanLocked ? '#' : route('custom.pesan.pemohon') }}"
+                                            @if ($customPesanLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" style="opacity: 0.5; cursor: not-allowed;" @endif
                                             class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('custom.pesan.pemohon') ? 'colors1 border-b-2 border-black' : '' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="h-4 w-4"
                                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -150,7 +159,8 @@
                                         </a>
                                     </li>
                                     <li class="mt-4 mb-2">
-                                        <a href="{{ route('custom.pesan.penyerahan') }}"
+                                        <a href="{{ $customPesanLocked ? '#' : route('custom.pesan.penyerahan') }}"
+                                            @if ($customPesanLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" style="opacity: 0.5; cursor: not-allowed;" @endif
                                             class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('custom.pesan.penyerahan') ? 'colors1 border-b-2 border-black' : '' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="h-4 w-4"
                                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -162,7 +172,8 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('custom.pesan.pegawai') }}"
+                                        <a href="{{ $customPesanLocked ? '#' : route('custom.pesan.pegawai') }}"
+                                            @if ($customPesanLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" style="opacity: 0.5; cursor: not-allowed;" @endif
                                             class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 colorss1 {{ request()->routeIs('custom.pesan.pegawai') ? 'colors1 border-b-2 border-black' : '' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="h-4 w-4"
                                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -315,6 +326,23 @@
                 });
             });
         });
+
+        // Dipanggil dari menu/tombol yang dikunci fitur tier (mis. Custom Pesan
+        // di sidebar). SweetAlert2 udah dimuat global di layout ini.
+        function showFeatureLockedAlert() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Anda Tidak Diizinkan',
+                text: 'Fitur ini tidak tersedia di paket Anda saat ini. Upgrade paket untuk membuka akses.',
+                confirmButtonText: 'Lihat Paket',
+                showCancelButton: true,
+                cancelButtonText: 'Tutup',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '{{ route('pricing') }}';
+                }
+            });
+        }
     </script>
 </body>
 

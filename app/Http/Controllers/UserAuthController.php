@@ -171,7 +171,6 @@ class UserAuthController extends Controller
 
         $user->fonnte = $request->filled('fonnte') ? $request->fonnte : $user->fonnte;
         $user->unit_id = $request->filled('unit') ? $request->unit : $user->unit_id;
-        $user->status = $request->has('active') ? 'active' : 'inactive';
         $user->notif_pegawai = $request->has('notif_pegawai') ? 'aktif' : 'nonaktif';
         $user->notif_pemohon = $request->has('notif_pemohon') ? 'aktif' : 'nonaktif';
         $user->save();
@@ -182,7 +181,11 @@ class UserAuthController extends Controller
     {
         $user = Auth::guard('user')->user();
         $pegawai = Pegawai::where('user_id', $user->id)->get();
-        return view('user.pegawai', compact('user', 'pegawai'));
+
+        $pegawaiLimit = $user->featureLimit('max_pegawai'); // null = unlimited
+        $pegawaiLimitReached = $pegawaiLimit !== null && $pegawai->count() >= $pegawaiLimit;
+
+        return view('user.pegawai', compact('user', 'pegawai', 'pegawaiLimit', 'pegawaiLimitReached'));
     }
     public function store(Request $request)
     {
@@ -192,6 +195,21 @@ class UserAuthController extends Controller
             'posisi' => 'required|string|max:255',
             'user_id' => 'required|exists:users,id',
         ]);
+
+        $user = Auth::guard('user')->user();
+        $limit = $user->featureLimit('max_pegawai'); // null = unlimited
+
+        if ($limit !== null) {
+            $currentCount = Pegawai::where('user_id', $validated['user_id'])->count();
+
+            if ($currentCount >= $limit) {
+                return back()->with(
+                    'error',
+                    "Batas maksimal {$limit} pegawai untuk paket Anda sudah tercapai. Upgrade paket untuk menambah slot."
+                );
+            }
+        }
+
         Pegawai::create($validated);
         return back()->with('success', 'Pegawai berhasil ditambahkan!');
     }

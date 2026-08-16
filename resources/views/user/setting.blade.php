@@ -51,13 +51,6 @@
                         @csrf
                         <div class="form-control mb-4">
                             <label class="cursor-pointer label">
-                                <span class="label-text font-medium text-black">Service Status</span>
-                                <input type="checkbox" name="active" class="toggle toggle-primary"
-                                    {{ $user->status === 'active' ? 'checked' : '' }}>
-                            </label>
-                        </div>
-                        <div class="form-control mb-4">
-                            <label class="cursor-pointer label">
                                 <span class="label-text font-medium text-black">Notifikasi ke Pegawai</span>
                                 <input type="checkbox" name="notif_pegawai" class="toggle toggle-primary"
                                     {{ $user->notif_pegawai === 'aktif' ? 'checked' : '' }}>
