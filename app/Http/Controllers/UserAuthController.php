@@ -46,6 +46,18 @@ class UserAuthController extends Controller
         }
 
         if (Auth::guard('user')->attempt($credentials)) {
+            // Cek status DISINI (setelah kredensial terbukti valid), bukan sebelum
+            // Auth::attempt() -- biar orang yang belum tentu tau password-nya bener
+            // gak bisa nebak-nebak status akun (aktif/di-banned) dari respons login.
+            if ($user->status !== 'active') {
+                Auth::guard('user')->logout();
+
+                return back()->with(
+                    'error',
+                    'Akun Anda dinonaktifkan oleh admin. Silakan hubungi admin untuk mengaktifkan kembali akun Anda.'
+                );
+            }
+
             $request->session()->regenerate();
             return redirect()->route('dashboard.user')->with('success', 'Login berhasil! Selamat datang kembali.');
         }
