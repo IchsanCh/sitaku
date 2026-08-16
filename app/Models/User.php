@@ -39,6 +39,8 @@ class User extends Authenticatable
         'active_api_version',
         'notif_pegawai',
         'notif_pemohon',
+        'state_machine_pemohon',
+        'state_machine_pegawai',
         'fonnte',
         'subscription_token',
         'subscription_expires_at',
@@ -122,6 +124,30 @@ class User extends Authenticatable
         return $this->currentTier()?->featureLimit($slug);
     }
 
+    /**
+     * Daftar action_type yang boleh dipake user ini buat custom menu WA-nya.
+     * Base actions (cek_status, riwayat_tahapan, exit) otomatis kebuka asal
+     * tier-nya punya feature 'state_machine' (master gate custom menu).
+     * Premium actions (pesan_custom, submenu) baru nambah kalau tier-nya
+     * punya feature spesifik masing-masing.
+     */
+    public function allowedMenuActionTypes(): array
+    {
+        if (! $this->hasFeature('state_machine')) {
+            return [];
+        }
+
+        $allowed = \App\Models\MenuItem::BASE_ACTIONS;
+
+        foreach (\App\Models\MenuItem::PREMIUM_ACTIONS as $actionType => $featureSlug) {
+            if ($this->hasFeature($featureSlug)) {
+                $allowed[] = $actionType;
+            }
+        }
+
+        return $allowed;
+    }
+
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPassword($token));
@@ -150,6 +176,7 @@ class User extends Authenticatable
     {
         static::creating(function ($user) {
             $user->subscription_token = Str::random(20);
+            $user->webhook_token = Str::random(32);
         });
     }
 }

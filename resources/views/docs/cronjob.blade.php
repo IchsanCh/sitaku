@@ -61,7 +61,12 @@
                 <div class="card-body">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="bg-secondary/10 p-3 rounded-full">
-                            <span class="text-2xl"><i class="fa-solid fa-paper-plane text-primary"></i></span>
+                            <span class="text-2xl"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                    fill="currentColor" class="w-6 h-6 text-primary inline-block">
+                                    <path fill-rule="evenodd"
+                                        d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z"
+                                        clip-rule="evenodd" />
+                                </svg></span>
                         </div>
                         <h2 class="card-title text-xl">Pengiriman ke Pemohon</h2>
                     </div>
@@ -89,7 +94,12 @@
                 <div class="card-body">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="bg-accent/10 p-3 rounded-full">
-                            <span class="text-2xl"><i class="fa-solid fa-arrows-rotate text-primary"></i></span>
+                            <span class="text-2xl"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                    fill="currentColor" class="w-6 h-6 text-primary inline-block">
+                                    <path fill-rule="evenodd"
+                                        d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z"
+                                        clip-rule="evenodd" />
+                                </svg></span>
                         </div>
                         <h2 class="card-title text-xl">Uptime 99,9%</h2>
                     </div>

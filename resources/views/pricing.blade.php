@@ -21,11 +21,10 @@
                     </span>
                     <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] mb-5"
                         style="color:#40514e;" data-aos="fade-up" data-aos-duration="700">
-                        Satu paket buat<br class="hidden md:block"> tiap tahap instansi Anda
+                        Solusi yang tumbuh<br class="hidden md:block"> bersama kebutuhan anda
                     </h1>
                     <p class="text-lg text-base-content/60 leading-relaxed" data-aos="fade-up" data-aos-duration="800">
-                        Semua paket mendukung notifikasi WhatsApp otomatis dan integrasi sistem eksternal —
-                        tinggal sesuaikan sama kebutuhan instansi Anda.
+                        Pilih paket layanan yang fleksibel dan sesuaikan dengan kebutuhan notifikasi instansi Anda.
                     </p>
                 </div>
 
@@ -96,7 +95,9 @@
                                 <p class="text-base-content/60 mb-6">Silakan hubungi admin untuk informasi lebih lanjut.</p>
                                 <a href="https://wa.me/6285175112406" target="_blank" title="Hubungi Admin"
                                     class="btn btn-outline" style="border-color:#11999e; color:#11999e;">
-                                    <i class="fa-brands fa-whatsapp"></i> Hubungi Admin
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 inline-block mr-1">
+                                        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.87 9.87 0 004.75 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.06a8.1 8.1 0 01-4.14-1.13l-.3-.18-3.14.82.84-3.06-.19-.32a8.15 8.15 0 01-1.25-4.28c0-4.49 3.66-8.15 8.16-8.15 4.49 0 8.15 3.66 8.15 8.15 0 4.5-3.66 8.15-8.13 8.15zm4.47-6.1c-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.02-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.32-.75-1.81-.2-.48-.4-.41-.55-.42h-.47c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.13 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28z" />
+                                    </svg> Hubungi Admin
                                 </a>
                             </div>
                         </div>
@@ -122,7 +123,9 @@
                         </a>
                         <a href="https://wa.me/6285175112406" target="_blank" class="btn px-8 border-white/30 text-white"
                             style="background-color:transparent;" title="Konsultasi Gratis">
-                            <i class="fa-brands fa-whatsapp"></i> Konsultasi Gratis
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 inline-block mr-1">
+                                        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.87 9.87 0 004.75 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.06a8.1 8.1 0 01-4.14-1.13l-.3-.18-3.14.82.84-3.06-.19-.32a8.15 8.15 0 01-1.25-4.28c0-4.49 3.66-8.15 8.16-8.15 4.49 0 8.15 3.66 8.15 8.15 0 4.5-3.66 8.15-8.13 8.15zm4.47-6.1c-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.02-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.32-.75-1.81-.2-.48-.4-.41-.55-.42h-.47c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.13 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28z" />
+                                    </svg> Konsultasi Gratis
                         </a>
                     </div>
                 </div>

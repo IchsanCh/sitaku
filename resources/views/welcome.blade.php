@@ -33,7 +33,11 @@
                                 Pelajari Lebih Lanjut
                             </a>
                             <a href="/docs/getting-started" title="documentation" class="btn btn-outline btn-lg">
-                                <i class="fa-solid fa-book mr-2"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-5 h-5 mr-2">
+                                    <path
+                                        d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A8.237 8.237 0 016 18.75c1.995 0 3.823.707 5.25 1.886V4.533zM12.75 20.636A8.214 8.214 0 0118 18.75c.966 0 1.89.166 2.75.47a.75.75 0 001-.708V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533v16.103z" />
+                                </svg>
                                 Lihat Dokumentasi
                             </a>
                         </div>
@@ -191,7 +195,7 @@
                 </div>
                 <div class="space-y-4">
                     <div class="collapse collapse-plus bg-base-300 hoversan rounded-box shadow-md hover:shadow-lg">
-                        <input type="checkbox" class="peer" name="faq1" />
+                        <input type="checkbox" class="peer" name="faq1" aria-label="Apa itu SITAKU?" />
                         <div class="collapse-title text-base md:text-lg font-semibold">
                             <div class="flex items-center">
                                 <span class="badge bgc1 text-white mr-3">Umum</span>
@@ -209,7 +213,7 @@
 
 
                     <div class="collapse collapse-plus bg-base-300 hoversan rounded-box shadow-md">
-                        <input type="checkbox" class="peer" name="faq2" />
+                        <input type="checkbox" class="peer" name="faq2" aria-label="Apa fitur utama dari Sitaku?" />
                         <div class="collapse-title text-base md:text-lg font-semibold">
                             <div class="flex items-center">
                                 <span class="badge bgc1 text-white mr-3">Fitur</span>
@@ -230,7 +234,7 @@
                     </div>
 
                     <div class="collapse collapse-plus bg-base-300 hoversan rounded-box shadow-md">
-                        <input type="checkbox" class="peer" name="faq3" />
+                        <input type="checkbox" class="peer" name="faq3" aria-label="Bagaimana proses integrasi Sitaku ke sistem saya?" />
                         <div class="collapse-title text-base md:text-lg font-semibold">
                             <div class="flex items-center">
                                 <span class="badge bgc1 text-white mr-3">Proses</span>
@@ -247,7 +251,7 @@
                     </div>
 
                     <div class="collapse collapse-plus bg-base-300 hoversan rounded-box shadow-md">
-                        <input type="checkbox" class="peer" name="faq4" />
+                        <input type="checkbox" class="peer" name="faq4" aria-label="Apakah Sitaku berbayar? Bagaimana sistem pembayarannya?" />
                         <div class="collapse-title text-base font-semibold">
                             <div class="flex items-center">
                                 <span class="badge bgc1 text-white mr-3">Biaya</span>
@@ -264,7 +268,7 @@
                     </div>
 
                     <div class="collapse collapse-plus bg-base-300 hoversan rounded-box shadow-md">
-                        <input type="checkbox" class="peer" name="faq5" />
+                        <input type="checkbox" class="peer" name="faq5" aria-label="Bagaimana cara menghubungi tim Sitaku?" />
                         <div class="collapse-title text-base font-semibold">
                             <div class="flex items-center">
                                 <span class="badge bgc1 text-white mr-3">Kontak</span>
@@ -280,7 +284,13 @@
                                                 <div class="avatar placeholder">
                                                     <div
                                                         class="c1 text-white text-center rounded-full w-12 text-3xl items-center flex justify-items-center content-center">
-                                                        <i class="fa-solid fa-envelope"></i>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                            fill="currentColor" class="w-7 h-7">
+                                                            <path
+                                                                d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
+                                                            <path
+                                                                d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
+                                                        </svg>
                                                     </div>
                                                 </div>
                                                 <div>
@@ -324,7 +334,14 @@
                                                 <div class="avatar placeholder">
                                                     <div
                                                         class="c1 text-white rounded-full w-12 text-4xl text-center items-center flex justify-items-center content-center">
-                                                        <i class="fa-brands fa-instagram"></i>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                            fill="currentColor" class="w-8 h-8">
+                                                            <path
+                                                                d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.24 2.22.4.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.35 1.05.4 2.22.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.24 1.8-.4 2.22-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.05.35-2.22.4-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.24-2.22-.4a3.74 3.74 0 01-1.38-.9 3.74 3.74 0 01-.9-1.38c-.16-.42-.35-1.05-.4-2.22-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.24-1.8.4-2.22.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.05-.35 2.22-.4 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56a5.9 5.9 0 00-2.14 1.4A5.9 5.9 0 00.6 4.17c-.3.76-.5 1.63-.56 2.91C0 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91a5.9 5.9 0 001.4 2.14 5.9 5.9 0 002.14 1.4c.76.3 1.63.5 2.91.56C8.33 24 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 002.14-1.4 5.9 5.9 0 001.4-2.14c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 00-1.4-2.14A5.9 5.9 0 0019.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0z" />
+                                                            <path
+                                                                d="M12 5.84A6.16 6.16 0 1012 18.16 6.16 6.16 0 0012 5.84zm0 10.16a4 4 0 110-8 4 4 0 010 8z" />
+                                                            <circle cx="18.41" cy="5.59" r="1.44" />
+                                                        </svg>
                                                     </div>
                                                 </div>
                                                 <div>

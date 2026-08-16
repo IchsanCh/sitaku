@@ -63,6 +63,25 @@
                                     {{ $user->notif_pemohon === 'aktif' ? 'checked' : '' }}>
                             </label>
                         </div>
+
+                        @if ($user->hasFeature('state_machine'))
+                            <div class="divider text-xs text-black/40">Menu WA Interaktif (State Machine)</div>
+                            <div class="form-control mb-4">
+                                <label class="cursor-pointer label">
+                                    <span class="label-text font-medium text-black">Aktif untuk Pemohon</span>
+                                    <input type="checkbox" name="state_machine_pemohon" class="toggle toggle-primary"
+                                        {{ $user->state_machine_pemohon === 'aktif' ? 'checked' : '' }}>
+                                </label>
+                            </div>
+                            <div class="form-control mb-4">
+                                <label class="cursor-pointer label">
+                                    <span class="label-text font-medium text-black">Aktif untuk Pegawai</span>
+                                    <input type="checkbox" name="state_machine_pegawai" class="toggle toggle-primary"
+                                        {{ $user->state_machine_pegawai === 'aktif' ? 'checked' : '' }}>
+                                </label>
+                                <p class="text-xs text-black/50 mt-1">Kalau dua-duanya nonaktif, bot gak akan balas chat apapun -- diem total.</p>
+                            </div>
+                        @endif
                         <div class="form-control">
                             <label class="label mb-1" for="fonnte">
                                 <span class="label-text font-medium text-black">Token Fonnte</span>

@@ -8,6 +8,7 @@ use App\Rules\Recaptcha;
 use Illuminate\Http\Request;
 use App\Models\EmailVerification;
 use App\Models\Package;
+use App\Models\Subscription;
 use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
@@ -88,6 +89,38 @@ class HomeController extends Controller
         User::where('email', $request->email)->update([
             'email_verified_at' => now(),
         ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        // Kasih trial 7 hari otomatis buat user yang baru pertama kali verifikasi
+        // (belum pernah punya package aktif sama sekali). Package-nya visible=private
+        // jadi gak nongol di halaman pricing publik.
+        if ($user && ! $user->active_package_id) {
+            $trialPackage = Package::where('name', 'Trial 7 Hari')->first();
+
+            if ($trialPackage) {
+                $user->update([
+                    'active_package_id' => $trialPackage->id,
+                    'subscription_expires_at' => now()->addDays($trialPackage->duration_days),
+                ]);
+
+                do {
+                    $kodeInvoice = str_pad((string) mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
+                } while (Subscription::where('id', $kodeInvoice)->exists());
+
+                Subscription::create([
+                    'id' => $kodeInvoice,
+                    'user_id' => $user->id,
+                    'package_id' => $trialPackage->id,
+                    'status' => 'trial',
+                    'total' => 0,
+                    'start_date' => now(),
+                    'end_date' => now()->addDays($trialPackage->duration_days),
+                    'payment_token' => null,
+                ]);
+            }
+        }
+
         $otp->delete();
         return redirect()->route('login')->with('success', 'Verifikasi berhasil! Silakan login.');
     }

@@ -41,15 +41,24 @@ class DatabaseSeeder extends Seeder
             'tier_id' => $basicTier?->id,
             'name' => 'Basic',
             'description' => 'Langganan 1 Bulan',
-            'price' => '5',
+            'price' => '150000',
             'duration_days' => '30',
+        ]);
+
+        Package::create([
+            'tier_id' => $basicTier?->id,
+            'name' => 'Trial 7 Hari',
+            'description' => 'Trial otomatis 7 hari buat user baru',
+            'price' => '0',
+            'duration_days' => '7',
+            'visible'=> 'private',
         ]);
 
         Package::create([
             'tier_id' => $premiumTier?->id,
             'name' => 'Premium',
-            'description' => 'Langganan 1 Bulan - Full Access',
-            'price' => '150000',
+            'description' => 'Langganan 1 Bulan - Premium',
+            'price' => '175000',
             'duration_days' => '30',
         ]);
     }

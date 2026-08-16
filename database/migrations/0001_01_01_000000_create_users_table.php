@@ -18,8 +18,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('unit_id')->unique()->nullable();
             $table->string('active_api_version')->default('v3');
-            $table->enum('notif_pegawai', ['aktif', 'nonaktif'])->default('aktif');
-            $table->enum('notif_pemohon', ['aktif', 'nonaktif'])->default('aktif');
+            $table->string('webhook_token', 40)->nullable()->unique();
+            $table->enum('notif_pegawai', ['aktif', 'nonaktif'])->default('nonaktif');
+            $table->enum('notif_pemohon', ['aktif', 'nonaktif'])->default('nonaktif');
+            $table->enum('state_machine_pemohon', ['aktif', 'nonaktif'])->default('nonaktif');
+            $table->enum('state_machine_pegawai', ['aktif', 'nonaktif'])->default('nonaktif');
             $table->string('fonnte')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
