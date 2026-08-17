@@ -4,6 +4,12 @@
 @section('meta_description', 'Daftar akun SITAKU untuk mengelola notifikasi otomatis ke pemohon dan pegawai.')
 @section('og_description', 'Daftar ke SITAKU dan mulai kirim notifikasi WhatsApp otomatis ke pemohon dan pegawai.')
 
+@if (config('services.recaptcha.site_key'))
+    @push('head-scripts')
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+    @endpush
+@endif
+
 @section('content')
     <div
         class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5 p-4">

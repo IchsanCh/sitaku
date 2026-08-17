@@ -4,6 +4,12 @@
 @section('meta_description', 'Reset password akun SITAKU Anda dengan mudah dan aman.')
 @section('og_description', 'Masukkan email Anda untuk menerima link reset password.')
 
+@if (config('services.recaptcha.site_key'))
+    @push('head-scripts')
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+    @endpush
+@endif
+
 @section('content')
     <div
         class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5 p-4">
