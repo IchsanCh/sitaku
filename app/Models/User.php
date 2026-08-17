@@ -178,5 +178,70 @@ class User extends Authenticatable
             $user->subscription_token = Str::random(20);
             $user->webhook_token = Str::random(32);
         });
+
+        static::created(function ($user) {
+            $user->seedDefaultMenuItems();
+        });
+    }
+
+    /**
+     * 3 menu bawaan (cek status, riwayat tahapan, keluar) buat SEMUA user baru,
+     * gak peduli tier. Ini yang bikin Basic tetep punya bot yang jalan walau
+     * gak bisa custom -- yang di-gate ke tier atas cuma akses EDIT-nya
+     * (lihat middleware 'feature:state_machine' di routes/web.php buat /user/menu),
+     * bukan ada/gaknya menu itu sendiri.
+     */
+    public function seedDefaultMenuItems(): void
+    {
+        if ($this->menuItems()->exists()) {
+            return; // udah pernah di-seed, jangan dobel
+        }
+
+        \App\Models\MenuItem::insert([
+            [
+                'user_id' => $this->id,
+                'audience' => 'both',
+                'parent_id' => null,
+                'trigger' => '1',
+                'label' => 'Cek Status Permohonan',
+                'action_type' => 'cek_status',
+                'action_config' => null,
+                'sort_order' => 1,
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => $this->id,
+                'audience' => 'both',
+                'parent_id' => null,
+                'trigger' => '2',
+                'label' => 'Riwayat Tahapan',
+                'action_type' => 'riwayat_tahapan',
+                'action_config' => null,
+                'sort_order' => 2,
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => $this->id,
+                'audience' => 'both',
+                'parent_id' => null,
+                'trigger' => '3',
+                'label' => 'Keluar',
+                'action_type' => 'exit',
+                'action_config' => null,
+                'sort_order' => 3,
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+    }
+
+    public function menuItems()
+    {
+        return $this->hasMany(\App\Models\MenuItem::class);
     }
 }

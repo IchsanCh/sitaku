@@ -173,6 +173,8 @@ class UserAuthController extends Controller
         $user->unit_id = $request->filled('unit') ? $request->unit : $user->unit_id;
         $user->notif_pegawai = $request->has('notif_pegawai') ? 'aktif' : 'nonaktif';
         $user->notif_pemohon = $request->has('notif_pemohon') ? 'aktif' : 'nonaktif';
+        $user->state_machine_pemohon = $request->has('state_machine_pemohon') ? 'aktif' : 'nonaktif';
+        $user->state_machine_pegawai = $request->has('state_machine_pegawai') ? 'aktif' : 'nonaktif';
         $user->save();
 
         return redirect()->back()->with('success', 'Konfigurasi berhasil diperbarui!');

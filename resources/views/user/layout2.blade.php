@@ -230,6 +230,21 @@
                                 </ul>
                             </details>
                         </li>
+                        <!-- Custom Menu WA -->
+                        <li>
+                            @php
+                                $stateMachineLocked = ! (auth('user')->user()?->hasFeature('state_machine') ?? false);
+                            @endphp
+                            <a href="{{ $stateMachineLocked ? '#' : route('menu.index') }}"
+                                @if ($stateMachineLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" style="opacity: 0.5; cursor: not-allowed;" @endif
+                                class="flex items-center gap-3 p-3 rounded-lg transition-all duration-200 colorss1 {{ request()->routeIs('menu.*') ? 'colors1 border-b-2 border-black' : '' }}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+                                </svg>
+                                <span class="font-medium">Custom Menu WA</span>
+                            </a>
+                        </li>
                         <li>
                             <a href="{{ route('user.billing') }}"
                                 class="flex items-center gap-3 p-3 rounded-lg colorss1 transition-all duration-200 colorss1 {{ request()->routeIs('user.billing') ? 'colors1 border-b-2 border-black' : '' }}">

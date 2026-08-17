@@ -116,7 +116,7 @@ class HomeController extends Controller
                     'total' => 0,
                     'start_date' => now(),
                     'end_date' => now()->addDays($trialPackage->duration_days),
-                    'payment_token' => null,
+                    'payment_token' => 'trial-' . $kodeInvoice,
                 ]);
             }
         }

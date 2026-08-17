@@ -33,6 +33,28 @@
 
         <!-- Main Content -->
         <div class="max-w-4xl mx-auto px-6 py-8">
+            <!-- Webhook URL Card -->
+            <div class="card bg-base-100 shadow-sm borderc1 mb-6">
+                <div class="card-body">
+                    <div class="flex items-center gap-3 mb-4">
+                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                        </svg>
+                        <div>
+                            <h2 class="text-xl font-semibold text-black">Webhook URL</h2>
+                            <p class="text-sm text-black">Pasang URL ini di setting device Fonnte kamu (menu Webhook), biar chat WA masuk ke bot SITAKU</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="webhookUrlField" readonly
+                            value="{{ url('/api/webhook/fonnte/' . $user->webhook_token) }}"
+                            class="input input-bordered w-full font-mono text-sm" onclick="this.select()">
+                        <button type="button" class="btn btn-primary" onclick="copyWebhookUrl()">Copy</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- API Configuration Card -->
             <div class="card bg-base-100 shadow-sm borderc1">
                 <div class="card-body">
@@ -64,24 +86,22 @@
                             </label>
                         </div>
 
-                        @if ($user->hasFeature('state_machine'))
-                            <div class="divider text-xs text-black/40">Menu WA Interaktif (State Machine)</div>
-                            <div class="form-control mb-4">
-                                <label class="cursor-pointer label">
-                                    <span class="label-text font-medium text-black">Aktif untuk Pemohon</span>
-                                    <input type="checkbox" name="state_machine_pemohon" class="toggle toggle-primary"
-                                        {{ $user->state_machine_pemohon === 'aktif' ? 'checked' : '' }}>
-                                </label>
-                            </div>
-                            <div class="form-control mb-4">
-                                <label class="cursor-pointer label">
-                                    <span class="label-text font-medium text-black">Aktif untuk Pegawai</span>
-                                    <input type="checkbox" name="state_machine_pegawai" class="toggle toggle-primary"
-                                        {{ $user->state_machine_pegawai === 'aktif' ? 'checked' : '' }}>
-                                </label>
-                                <p class="text-xs text-black/50 mt-1">Kalau dua-duanya nonaktif, bot gak akan balas chat apapun -- diem total.</p>
-                            </div>
-                        @endif
+                        <div class="divider text-xs text-black/40">Menu WA Interaktif (State Machine)</div>
+                        <div class="form-control mb-4">
+                            <label class="cursor-pointer label">
+                                <span class="label-text font-medium text-black">Aktif untuk Pemohon</span>
+                                <input type="checkbox" name="state_machine_pemohon" class="toggle toggle-primary"
+                                    {{ $user->state_machine_pemohon === 'aktif' ? 'checked' : '' }}>
+                            </label>
+                        </div>
+                        <div class="form-control mb-4">
+                            <label class="cursor-pointer label">
+                                <span class="label-text font-medium text-black">Aktif untuk Pegawai</span>
+                                <input type="checkbox" name="state_machine_pegawai" class="toggle toggle-primary"
+                                    {{ $user->state_machine_pegawai === 'aktif' ? 'checked' : '' }}>
+                            </label>
+                            <p class="text-xs text-black/50 mt-1">Kalau dua-duanya nonaktif, bot gak akan balas chat apapun -- diem total.</p>
+                        </div>
                         <div class="form-control">
                             <label class="label mb-1" for="fonnte">
                                 <span class="label-text font-medium text-black">Token Fonnte</span>
@@ -190,6 +210,16 @@
     <div class="toast toast-top toast-end z-50" id="toastContainer"></div>
 
     <script>
+        function copyWebhookUrl() {
+            const field = document.getElementById('webhookUrlField');
+            field.select();
+            navigator.clipboard.writeText(field.value).then(() => {
+                showToast('success', 'Webhook URL disalin ke clipboard.');
+            }).catch(() => {
+                showToast('error', 'Gagal copy otomatis, silakan copy manual dari kotak teksnya.');
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Laravel flash messages
             @if (session('error'))

@@ -7,6 +7,7 @@ use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\CustomPesanController;
+use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 
@@ -36,6 +37,15 @@ Route::middleware('auth:user')->group(function () {
         Route::match(['get', 'post'], '/user/pesan/pemohon', [CustomPesanController::class, 'pesanPemohon'])->name('custom.pesan.pemohon');
         Route::match(['get', 'post'], '/user/pesan/penyerahan', [CustomPesanController::class, 'pesanPenyerahan'])->name('custom.pesan.penyerahan');
         Route::match(['get', 'post'], '/user/pesan/pegawai', [CustomPesanController::class, 'pesanPegawai'])->name('custom.pesan.pegawai');
+    });
+
+    Route::middleware('feature:state_machine')->group(function () {
+        Route::get('/user/menu', [MenuItemController::class, 'index'])->name('menu.index');
+        Route::get('/user/menu/create', [MenuItemController::class, 'create'])->name('menu.create');
+        Route::post('/user/menu', [MenuItemController::class, 'store'])->name('menu.store');
+        Route::get('/user/menu/{menuItem}/edit', [MenuItemController::class, 'edit'])->name('menu.edit');
+        Route::put('/user/menu/{menuItem}', [MenuItemController::class, 'update'])->name('menu.update');
+        Route::delete('/user/menu/{menuItem}', [MenuItemController::class, 'destroy'])->name('menu.destroy');
     });
     Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout.user');
     Route::get('/dashboard', [UserAuthController::class, 'index'])->name('dashboard.user');
