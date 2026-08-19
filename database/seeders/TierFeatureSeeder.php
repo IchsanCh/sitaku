@@ -72,6 +72,24 @@ class TierFeatureSeeder extends Seeder
             ]
         );
 
+        $maxMenuUtama = Feature::updateOrCreate(
+            ['slug' => 'max_menu_utama'],
+            [
+                'name' => 'Max Menu Utama Baru',
+                'type' => 'limit',
+                'description' => 'Batas jumlah menu utama TAMBAHAN yang bisa dibuat, di luar 3 menu default gratis.',
+            ]
+        );
+
+        $maxSubmenu = Feature::updateOrCreate(
+            ['slug' => 'max_submenu'],
+            [
+                'name' => 'Max Submenu',
+                'type' => 'limit',
+                'description' => 'Batas jumlah submenu yang bisa dibuat.',
+            ]
+        );
+
         // ── Tier: Basic ──────────────────────────────────────────────────
         // Custom Pesan & API access tetep nyala, cuma pegawai dibatasin 15
         // dan belum dapet State Machine.
@@ -91,6 +109,8 @@ class TierFeatureSeeder extends Seeder
             $stateMachine->id => ['value' => '0', 'is_unlimited' => false],
             $menuActionPesanCustom->id => ['value' => '0', 'is_unlimited' => false],
             $menuActionSubmenu->id => ['value' => '0', 'is_unlimited' => false],
+            $maxMenuUtama->id => ['value' => '0', 'is_unlimited' => false],
+            $maxSubmenu->id => ['value' => '0', 'is_unlimited' => false],
         ]);
 
         // ── Tier: Premium ────────────────────────────────────────────────
@@ -109,10 +129,12 @@ class TierFeatureSeeder extends Seeder
         $premium->features()->sync([
             $customPesan->id => ['value' => '1', 'is_unlimited' => false],
             $apiAccess->id => ['value' => '1', 'is_unlimited' => false],
-            $maxPegawai->id => ['value' => null, 'is_unlimited' => true],
+            $maxPegawai->id => ['value' => '25', 'is_unlimited' => false],
             $stateMachine->id => ['value' => '1', 'is_unlimited' => false],
-            $menuActionPesanCustom->id => ['value' => '0', 'is_unlimited' => false],
-            $menuActionSubmenu->id => ['value' => '0', 'is_unlimited' => false],
+            $menuActionPesanCustom->id => ['value' => '1', 'is_unlimited' => false],
+            $menuActionSubmenu->id => ['value' => '1', 'is_unlimited' => false],
+            $maxMenuUtama->id => ['value' => '5', 'is_unlimited' => false],
+            $maxSubmenu->id => ['value' => '5', 'is_unlimited' => false],
         ]);
 
         // ── Tier: Enterprise ─────────────────────────────────────────────
@@ -130,10 +152,12 @@ class TierFeatureSeeder extends Seeder
         $enterprise->features()->sync([
             $customPesan->id => ['value' => '1', 'is_unlimited' => false],
             $apiAccess->id => ['value' => '1', 'is_unlimited' => false],
-            $maxPegawai->id => ['value' => null, 'is_unlimited' => true],
+            $maxPegawai->id => ['value' => '35', 'is_unlimited' => false],
             $stateMachine->id => ['value' => '1', 'is_unlimited' => false],
             $menuActionPesanCustom->id => ['value' => '1', 'is_unlimited' => false],
             $menuActionSubmenu->id => ['value' => '1', 'is_unlimited' => false],
+            $maxMenuUtama->id => ['value' => '20', 'is_unlimited' => false],
+            $maxSubmenu->id => ['value' => '20', 'is_unlimited' => false],
         ]);
     }
 }

@@ -46,94 +46,106 @@
             </a>
         @endif
 
-        @if (empty($allowedActions))
-            <div class="card bg-base-100 shadow-xl border border-base-300">
-                <div class="card-body text-center py-12">
-                    <h2 class="text-xl font-bold">Fitur belum tersedia di paket Anda</h2>
-                    <p class="text-base-content/60 mt-2">Upgrade paket untuk bisa mengatur custom menu WhatsApp.</p>
-                    <a href="{{ route('user.billing') }}" class="btn btn-primary mt-4 mx-auto">Lihat Paket</a>
+        @unless ($canManageStructure)
+            <div class="alert alert-info mb-4">
+                <span>Paket Anda bisa <strong>mengedit</strong> menu yang ada (ganti kata kunci/label/fungsi tiap slot), tapi belum bisa nambah atau hapus slot baru. <a href="{{ route('user.billing') }}" class="link font-medium">Upgrade</a> buat buka itu.</span>
+            </div>
+        @endunless
+
+        <div class="flex justify-between items-center mb-4">
+            <p class="text-sm text-base-content/60">
+                {{ $items->count() }} item di level ini. User WA ketik trigger buat pilih menu ini.
+            </p>
+            @if ($canManageStructure)
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-base-content/50">
+                        Kuota: {{ $quota['used'] }}/{{ $quota['limit'] ?? '∞' }}
+                    </span>
+                    <a href="{{ route('menu.create', ['parent' => $parent?->id]) }}"
+                        class="btn btn-primary btn-sm {{ $quota['limit'] !== null && $quota['used'] >= $quota['limit'] ? 'btn-disabled' : '' }}">
+                        + Tambah Menu Item
+                    </a>
+                </div>
+            @endif
+        </div>
+
+        @if ($items->isEmpty())
+            <div class="card bg-base-100 shadow border border-base-300">
+                <div class="card-body text-center py-10 text-base-content/60">
+                    @if ($canManageStructure)
+                        Belum ada menu item di level ini. Klik "Tambah Menu Item" buat mulai.
+                    @else
+                        Belum ada menu item di level ini.
+                    @endif
                 </div>
             </div>
         @else
-            <div class="flex justify-between items-center mb-4">
-                <p class="text-sm text-base-content/60">
-                    {{ $items->count() }} item di level ini. User WA ketik trigger buat pilih menu ini.
-                </p>
-                <a href="{{ route('menu.create', ['parent' => $parent?->id]) }}" class="btn btn-primary btn-sm">
-                    + Tambah Menu Item
-                </a>
-            </div>
-
-            @if ($items->isEmpty())
-                <div class="card bg-base-100 shadow border border-base-300">
-                    <div class="card-body text-center py-10 text-base-content/60">
-                        Belum ada menu item di level ini. Klik "Tambah Menu Item" buat mulai.
-                    </div>
-                </div>
-            @else
-                <div class="card bg-base-100 shadow-xl border border-base-300">
-                    <div class="overflow-x-auto">
-                        <table class="table">
-                            <thead>
+            <div class="card bg-base-100 shadow-xl border border-base-300">
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Trigger</th>
+                                <th>Label</th>
+                                <th>Untuk</th>
+                                <th>Aksi</th>
+                                <th>Status</th>
+                                <th class="text-right">Kelola</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($items as $item)
                                 <tr>
-                                    <th>Trigger</th>
-                                    <th>Label</th>
-                                    <th>Untuk</th>
-                                    <th>Aksi</th>
-                                    <th>Status</th>
-                                    <th class="text-right">Kelola</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($items as $item)
-                                    <tr>
-                                        <td><span class="badge badge-neutral">{{ $item->trigger }}</span></td>
-                                        <td class="font-medium">{{ $item->label }}</td>
-                                        <td>
-                                            <span class="badge badge-sm {{ match($item->audience) { 'pemohon' => 'badge-info', 'pegawai' => 'badge-warning', default => 'badge-ghost' } }}">
-                                                {{ match($item->audience) { 'pemohon' => 'Pemohon', 'pegawai' => 'Pegawai', default => 'Semua' } }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-outline">
-                                                {{ match($item->action_type) {
-                                                    'cek_status' => 'Cek Status',
-                                                    'riwayat_tahapan' => 'Riwayat Tahapan',
-                                                    'pesan_custom' => 'Pesan Custom',
-                                                    'submenu' => 'Submenu',
-                                                    'exit' => 'Exit',
-                                                    default => $item->action_type,
-                                                } }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            @if ($item->is_active)
-                                                <span class="badge badge-success badge-sm">Aktif</span>
-                                            @else
-                                                <span class="badge badge-ghost badge-sm">Nonaktif</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-right space-x-1">
-                                            @if ($item->action_type === 'submenu')
-                                                <a href="{{ route('menu.index', ['parent' => $item->id]) }}" class="btn btn-xs btn-outline">
-                                                    Kelola Submenu
-                                                </a>
-                                            @endif
-                                            <a href="{{ route('menu.edit', $item) }}" class="btn btn-xs btn-outline">Edit</a>
+                                    <td><span class="badge badge-neutral">{{ $item->trigger }}</span></td>
+                                    <td class="font-medium">{{ $item->label }}</td>
+                                    <td>
+                                        <span class="badge badge-sm {{ match($item->audience) { 'pemohon' => 'badge-info', 'pegawai' => 'badge-warning', default => 'badge-ghost' } }}">
+                                            {{ match($item->audience) { 'pemohon' => 'Pemohon', 'pegawai' => 'Pegawai', default => 'Semua' } }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-outline">
+                                            {{ match($item->action_type) {
+                                                'cek_status' => 'Cek Status',
+                                                'riwayat_tahapan' => 'Riwayat Tahapan',
+                                                'antrian_pegawai' => 'Antrian Saya',
+                                                'info_pegawai' => 'Info Saya',
+                                                'pesan_custom' => 'Pesan Custom',
+                                                'submenu' => 'Submenu',
+                                                'exit' => 'Exit',
+                                                default => $item->action_type,
+                                            } }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if ($item->is_active)
+                                            <span class="badge badge-success badge-sm">Aktif</span>
+                                        @else
+                                            <span class="badge badge-ghost badge-sm">Nonaktif</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-right space-x-1">
+                                        @if ($item->action_type === 'submenu')
+                                            <a href="{{ route('menu.index', ['parent' => $item->id]) }}" class="btn btn-xs btn-outline">
+                                                Kelola Submenu
+                                            </a>
+                                        @endif
+                                        <a href="{{ route('menu.edit', $item) }}" class="btn btn-xs btn-outline">Edit</a>
+                                        @if ($canManageStructure)
                                             <form action="{{ route('menu.destroy', $item) }}" method="POST" class="inline"
                                                 onsubmit="return confirm('Yakin hapus menu item ini? {{ $item->action_type === 'submenu' ? 'Semua submenu di dalamnya juga ikut kehapus.' : '' }}');">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-xs btn-error btn-outline">Hapus</button>
                                             </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-            @endif
+            </div>
         @endif
     </div>
 </div>

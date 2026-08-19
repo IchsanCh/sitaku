@@ -41,6 +41,8 @@ class User extends Authenticatable
         'notif_pemohon',
         'state_machine_pemohon',
         'state_machine_pegawai',
+        'menu_intro_text',
+        'menu_footer_text',
         'fonnte',
         'subscription_token',
         'subscription_expires_at',
@@ -126,17 +128,16 @@ class User extends Authenticatable
 
     /**
      * Daftar action_type yang boleh dipake user ini buat custom menu WA-nya.
-     * Base actions (cek_status, riwayat_tahapan, exit) otomatis kebuka asal
-     * tier-nya punya feature 'state_machine' (master gate custom menu).
-     * Premium actions (pesan_custom, submenu) baru nambah kalau tier-nya
-     * punya feature spesifik masing-masing.
+     * Base actions (cek_status, riwayat_tahapan, exit) SELALU kebuka buat semua
+     * tier -- semua user (termasuk Basic) otomatis punya 3 menu default ini
+     * (lihat User::seedDefaultMenuItems()), jadi minimal bisa di-edit isinya.
+     * Yang di-gate ke tier atas itu kemampuan NAMBAH/HAPUS slot (lihat
+     * middleware 'feature:state_machine' khusus di route create/store/destroy),
+     * bukan kemampuan edit base action-nya.
+     * Premium actions (pesan_custom, submenu) tetep butuh feature spesifik.
      */
     public function allowedMenuActionTypes(): array
     {
-        if (! $this->hasFeature('state_machine')) {
-            return [];
-        }
-
         $allowed = \App\Models\MenuItem::BASE_ACTIONS;
 
         foreach (\App\Models\MenuItem::PREMIUM_ACTIONS as $actionType => $featureSlug) {
@@ -208,6 +209,7 @@ class User extends Authenticatable
                 'action_config' => null,
                 'sort_order' => 1,
                 'is_active' => true,
+                'is_default' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -221,6 +223,7 @@ class User extends Authenticatable
                 'action_config' => null,
                 'sort_order' => 2,
                 'is_active' => true,
+                'is_default' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -234,6 +237,7 @@ class User extends Authenticatable
                 'action_config' => null,
                 'sort_order' => 3,
                 'is_active' => true,
+                'is_default' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

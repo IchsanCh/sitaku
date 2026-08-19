@@ -36,6 +36,8 @@ class MenuItemController extends Controller
             'items' => $items,
             'parent' => $parent,
             'allowedActions' => $user->allowedMenuActionTypes(),
+            'canManageStructure' => $user->hasFeature('state_machine'),
+            'quota' => $this->quotaInfo($user, $parentId ? (int) $parentId : null),
         ]);
     }
 
@@ -52,6 +54,13 @@ class MenuItemController extends Controller
         $parentId = $request->query('parent');
         $parent = $parentId ? MenuItem::where('user_id', $user->id)->findOrFail($parentId) : null;
 
+        $quota = $this->quotaInfo($user, $parentId ? (int) $parentId : null);
+        if ($quota['limit'] !== null && $quota['used'] >= $quota['limit']) {
+            return redirect()
+                ->route('menu.index', ['parent' => $parentId])
+                ->with('error', "Kuota " . ($parentId ? 'submenu' : 'menu utama') . " tambahan udah abis ({$quota['used']}/{$quota['limit']}). Upgrade paket buat nambah lagi.");
+        }
+
         return view('user.menu-items.form', [
             'menuItem' => new MenuItem(['parent_id' => $parentId]),
             'parent' => $parent,
@@ -66,14 +75,53 @@ class MenuItemController extends Controller
 
         $validated = $this->validateRequest($request, $user, $allowed);
 
+        $this->enforceQuota($user, $validated['parent_id']);
+
         MenuItem::create([
             'user_id' => $user->id,
+            'is_default' => false,
             ...$validated,
         ]);
 
         return redirect()
             ->route('menu.index', ['parent' => $validated['parent_id']])
             ->with('success', 'Menu item berhasil ditambahkan.');
+    }
+
+    /**
+     * Kuota nambah menu BARU (di luar 3 default gratis) -- dicek terpisah
+     * antara menu utama (parent_id null) dan submenu (parent_id ada isinya),
+     * masing-masing punya limit sendiri via Feature 'max_menu_utama' /
+     * 'max_submenu'. null dari featureLimit() artinya unlimited.
+     */
+    private function quotaInfo($user, ?int $parentId): array
+    {
+        if ($parentId === null) {
+            return [
+                'limit' => $user->featureLimit('max_menu_utama'),
+                'used' => MenuItem::where('user_id', $user->id)
+                    ->whereNull('parent_id')
+                    ->where('is_default', false)
+                    ->count(),
+            ];
+        }
+
+        return [
+            'limit' => $user->featureLimit('max_submenu'),
+            'used' => MenuItem::where('user_id', $user->id)
+                ->whereNotNull('parent_id')
+                ->count(),
+        ];
+    }
+
+    private function enforceQuota($user, ?int $parentId): void
+    {
+        $quota = $this->quotaInfo($user, $parentId);
+
+        if ($quota['limit'] !== null && $quota['used'] >= $quota['limit']) {
+            $jenis = $parentId ? 'submenu' : 'menu utama';
+            abort(403, "Kuota {$jenis} tambahan udah abis ({$quota['used']}/{$quota['limit']}). Upgrade paket buat nambah lagi.");
+        }
     }
 
     public function edit(MenuItem $menuItem)
@@ -148,15 +196,20 @@ class MenuItemController extends Controller
             'label' => 'required|string|max:255',
             'audience' => ['required', Rule::in(['pemohon', 'pegawai', 'both'])],
             'action_type' => ['required', Rule::in($allowed)],
-            'pesan_custom' => 'nullable|string|max:1000',
+            'template' => 'nullable|string|max:1500',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
         ]);
 
         $actionConfig = null;
         if ($data['action_type'] === 'pesan_custom') {
-            $request->validate(['pesan_custom' => 'required|string|max:1000']);
-            $actionConfig = ['pesan' => $data['pesan_custom']];
+            // pesan_custom WAJIB diisi -- dia langsung dikirim apa adanya, gak ada
+            // fallback default kayak cek_status/riwayat_tahapan.
+            $request->validate(['template' => 'required|string|max:1500']);
+            $actionConfig = ['template' => $data['template']];
+        } elseif (in_array($data['action_type'], ['cek_status', 'riwayat_tahapan'], true) && filled($data['template'] ?? null)) {
+            // Opsional -- kosong = pakai teks default bawaan sistem.
+            $actionConfig = ['template' => $data['template']];
         }
 
         return [

@@ -175,6 +175,12 @@ class UserAuthController extends Controller
         $user->notif_pemohon = $request->has('notif_pemohon') ? 'aktif' : 'nonaktif';
         $user->state_machine_pemohon = $request->has('state_machine_pemohon') ? 'aktif' : 'nonaktif';
         $user->state_machine_pegawai = $request->has('state_machine_pegawai') ? 'aktif' : 'nonaktif';
+
+        if ($user->hasFeature('state_machine')) {
+            $user->menu_intro_text = $request->input('menu_intro_text') ?: null;
+            $user->menu_footer_text = $request->input('menu_footer_text') ?: null;
+        }
+
         $user->save();
 
         return redirect()->back()->with('success', 'Konfigurasi berhasil diperbarui!');

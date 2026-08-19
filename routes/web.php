@@ -39,12 +39,17 @@ Route::middleware('auth:user')->group(function () {
         Route::match(['get', 'post'], '/user/pesan/pegawai', [CustomPesanController::class, 'pesanPegawai'])->name('custom.pesan.pegawai');
     });
 
+    // Lihat & edit slot yang ADA -- kebuka buat semua tier (Basic termasuk),
+    // soalnya semua user otomatis punya 3 menu default sejak signup.
+    Route::get('/user/menu', [MenuItemController::class, 'index'])->name('menu.index');
+    Route::get('/user/menu/{menuItem}/edit', [MenuItemController::class, 'edit'])->name('menu.edit');
+    Route::put('/user/menu/{menuItem}', [MenuItemController::class, 'update'])->name('menu.update');
+
+    // Nambah slot baru / hapus slot -- ini yang tetep eksklusif tier yang punya
+    // feature 'state_machine' (Premium ke atas).
     Route::middleware('feature:state_machine')->group(function () {
-        Route::get('/user/menu', [MenuItemController::class, 'index'])->name('menu.index');
         Route::get('/user/menu/create', [MenuItemController::class, 'create'])->name('menu.create');
         Route::post('/user/menu', [MenuItemController::class, 'store'])->name('menu.store');
-        Route::get('/user/menu/{menuItem}/edit', [MenuItemController::class, 'edit'])->name('menu.edit');
-        Route::put('/user/menu/{menuItem}', [MenuItemController::class, 'update'])->name('menu.update');
         Route::delete('/user/menu/{menuItem}', [MenuItemController::class, 'destroy'])->name('menu.destroy');
     });
     Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout.user');

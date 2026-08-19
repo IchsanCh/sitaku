@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property array|null $action_config
  * @property int $sort_order
  * @property bool $is_active
+ * @property bool $is_default
  */
 class MenuItem extends Model
 {
@@ -30,6 +31,7 @@ class MenuItem extends Model
         'action_config',
         'sort_order',
         'is_active',
+        'is_default',
     ];
 
     protected $casts = [
@@ -39,7 +41,7 @@ class MenuItem extends Model
 
     // Action type yang tersedia di base tier (Standard/Premium ke atas, asal
     // punya feature 'menu_builder'). Gak butuh feature check tambahan.
-    public const BASE_ACTIONS = ['cek_status', 'riwayat_tahapan', 'exit'];
+    public const BASE_ACTIONS = ['cek_status', 'riwayat_tahapan', 'antrian_pegawai', 'info_pegawai', 'exit'];
 
     // Action type yang baru kebuka kalau tier punya feature spesifik ini.
     // Key = action_type, value = slug feature yang di-cek lewat hasFeature().

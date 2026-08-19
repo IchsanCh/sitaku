@@ -102,12 +102,11 @@ class WhatsappStateMachineService
             })(),
 
             'submenu' => (function () use ($user, $session, $sender, $item, $role) {
-                $session->update(['current_state' => 'menu', 'current_menu_id' => $item->id]);
                 $this->showMenu($user, $session, $sender, $item->id, $role, prefixLabel: $item->label);
             })(),
 
             'pesan_custom' => (function () use ($user, $session, $sender, $item, $role) {
-                $pesan = data_get($item->action_config, 'pesan', '');
+                $pesan = data_get($item->action_config, 'template', data_get($item->action_config, 'pesan', ''));
                 if ($pesan !== '') {
                     $this->reply($user, $sender, $pesan);
                 }
@@ -127,6 +126,7 @@ class WhatsappStateMachineService
             'current_state' => 'awaiting_no_permohonan',
             'context_data' => [
                 'intent' => $item->action_type,
+                'menu_item_id' => $item->id,
                 'return_menu_id' => $item->parent_id,
             ],
             'state_expires_at' => now()->addMinutes(self::STATE_TIMEOUT_MINUTES),
@@ -150,6 +150,22 @@ class WhatsappStateMachineService
 
         $context = $session->context_data ?? [];
         $context['pemohon_id'] = $pemohon->id;
+
+        $hpDigits = preg_replace('/\D/', '', (string) $pemohon->nomor_hp);
+        if (strlen($hpDigits) < 4) {
+            // Data nomor HP di permohonan ini gak lengkap/gak valid (misal cuma "0"),
+            // gak akan pernah bisa dicocokin -- daripada muter-muter minta input yang
+            // gak mungkin match, langsung kasih tau aja.
+            $session->update([
+                'current_state' => 'menu',
+                'current_menu_id' => $context['return_menu_id'] ?? null,
+                'context_data' => null,
+                'state_expires_at' => null,
+            ]);
+            $this->reply($user, $sender, 'Data nomor HP untuk permohonan ini belum lengkap di sistem kami, jadi gak bisa diverifikasi otomatis. Silakan hubungi admin instansi buat cek manual.');
+            $this->showMenu($user, $session, $sender, $context['return_menu_id'] ?? null, $this->detectRole($user, $sender));
+            return;
+        }
 
         $session->update([
             'current_state' => 'awaiting_phone_validation',
@@ -182,7 +198,10 @@ class WhatsappStateMachineService
         }
 
         $intent = data_get($context, 'intent', 'cek_status');
-        $this->reply($user, $sender, $this->buildValidationResultMessage($pemohon, $intent));
+        $menuItem = MenuItem::find(data_get($context, 'menu_item_id'));
+        $template = data_get($menuItem?->action_config, 'template');
+
+        $this->reply($user, $sender, $this->buildValidationResultMessage($pemohon, $intent, $template));
 
         // Selesai -- balik ke menu level asal (tempat menu item cek_status/riwayat_tahapan tadi dipencet).
         $returnMenuId = data_get($context, 'return_menu_id');
@@ -196,7 +215,7 @@ class WhatsappStateMachineService
         $this->showMenu($user, $session, $sender, $returnMenuId, $role);
     }
 
-    private function buildValidationResultMessage(Pemohon $pemohon, string $intent): string
+    private function buildValidationResultMessage(Pemohon $pemohon, string $intent, ?string $template = null): string
     {
         if ($intent === 'riwayat_tahapan') {
             $riwayat = Pesan::where('pemohon_id', $pemohon->id)
@@ -207,18 +226,46 @@ class WhatsappStateMachineService
                 return "Belum ada riwayat notifikasi untuk permohonan {$pemohon->no_permohonan}.";
             }
 
+            // Template di sini cuma buat baris PEMBUKA -- format tiap baris riwayat
+            // tetap baku, soalnya itu daftar (bukan satu pesan tunggal kayak cek_status).
+            $intro = filled($template)
+                ? $this->renderTemplate($template, $pemohon)
+                : "Riwayat notifikasi permohonan {$pemohon->no_permohonan}:";
+
             $lines = $riwayat->map(function ($pesan) {
                 $tgl = Carbon::parse($pesan->created_at)->format('d M Y H:i');
                 return "- {$tgl}: " . \Illuminate\Support\Str::limit(strip_tags($pesan->pesan), 80);
             })->implode("\n");
 
-            return "Riwayat notifikasi permohonan {$pemohon->no_permohonan}:\n{$lines}";
+            return "{$intro}\n{$lines}";
         }
 
         // default: cek_status
+        if (filled($template)) {
+            return $this->renderTemplate($template, $pemohon);
+        }
+
         return "Status permohonan {$pemohon->no_permohonan}:\n"
             . "Tahapan: {$pemohon->tahapan}\n"
             . "Status: {$pemohon->status}";
+    }
+
+    /**
+     * Ganti placeholder {nama}, {no_permohonan}, dst di template custom user
+     * dengan data pemohon yang beneran ketemu. Pola sama kayak
+     * pesan_pemohon/pesan_penyerahan yang udah ada di aplikasi ini.
+     */
+    private function renderTemplate(string $template, Pemohon $pemohon): string
+    {
+        return strtr($template, [
+            '{nama}' => $pemohon->nama ?? '-',
+            '{no_permohonan}' => $pemohon->no_permohonan ?? '-',
+            '{nama_izin}' => $pemohon->nama_izin ?? '-',
+            '{tahapan}' => $pemohon->tahapan ?? '-',
+            '{status}' => $pemohon->status ?? '-',
+            '{link_izin}' => $pemohon->link_izin ?? '-',
+            '{no_hp}' => $pemohon->nomor_hp ?? '-',
+        ]);
     }
 
     private function showMenu(User $user, WhatsappSession $session, string $sender, ?int $parentId, string $role, ?string $prefixLabel = null): void
@@ -236,13 +283,22 @@ class WhatsappStateMachineService
             return;
         }
 
+        // Selalu sinkronin state session ke level menu ini -- baik pas masuk dari
+        // idle, masuk submenu, maupun nampilin ulang abis suatu aksi selesai.
+        // Ini dulu kelewat pas jalur "masuk dari idle", makanya trigger abis itu
+        // ke-anggep gak dikenali (session-nya nyangkut di 'idle').
+        $session->update(['current_state' => 'menu', 'current_menu_id' => $parentId]);
+
         $lines = $items->map(fn ($i) => "{$i->trigger}. {$i->label}")->implode("\n");
         $header = $prefixLabel ? "{$prefixLabel}\n" : '';
+
+        $intro = $user->menu_intro_text ?: 'Silakan pilih:';
+        $footer = $user->menu_footer_text ?: '(ketik "keluar" kapan aja buat berhenti)';
 
         $this->reply(
             $user,
             $sender,
-            "{$header}Silakan pilih:\n{$lines}\n\n(ketik \"keluar\" kapan aja buat berhenti)"
+            "{$header}{$intro}\n{$lines}\n\n{$footer}"
         );
     }
 

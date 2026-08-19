@@ -232,11 +232,7 @@
                         </li>
                         <!-- Custom Menu WA -->
                         <li>
-                            @php
-                                $stateMachineLocked = ! (auth('user')->user()?->hasFeature('state_machine') ?? false);
-                            @endphp
-                            <a href="{{ $stateMachineLocked ? '#' : route('menu.index') }}"
-                                @if ($stateMachineLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" style="opacity: 0.5; cursor: not-allowed;" @endif
+                            <a href="{{ route('menu.index') }}"
                                 class="flex items-center gap-3 p-3 rounded-lg transition-all duration-200 colorss1 {{ request()->routeIs('menu.*') ? 'colors1 border-b-2 border-black' : '' }}">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                                     <path stroke-linecap="round" stroke-linejoin="round"

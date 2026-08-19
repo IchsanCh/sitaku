@@ -102,6 +102,20 @@
                             </label>
                             <p class="text-xs text-black/50 mt-1">Kalau dua-duanya nonaktif, bot gak akan balas chat apapun -- diem total.</p>
                         </div>
+
+                        @if ($user->hasFeature('state_machine'))
+                            <div class="form-control mb-4">
+                                <label class="label"><span class="label-text font-medium text-black">Teks Pembuka Menu</span></label>
+                                <textarea name="menu_intro_text" rows="2" class="textarea textarea-bordered w-full"
+                                    placeholder="Silakan pilih:">{{ old('menu_intro_text', $user->menu_intro_text) }}</textarea>
+                            </div>
+                            <div class="form-control mb-4">
+                                <label class="label"><span class="label-text font-medium text-black">Teks Footer Menu</span></label>
+                                <textarea name="menu_footer_text" rows="2" class="textarea textarea-bordered w-full"
+                                    placeholder='(ketik "keluar" kapan aja buat berhenti)'>{{ old('menu_footer_text', $user->menu_footer_text) }}</textarea>
+                                <p class="text-xs text-black/50 mt-1">Kosongin buat pakai teks default. Ini nempel di setiap tampilan menu WA (menu utama maupun submenu).</p>
+                            </div>
+                        @endif
                         <div class="form-control">
                             <label class="label mb-1" for="fonnte">
                                 <span class="label-text font-medium text-black">Token Fonnte</span>

@@ -34,6 +34,7 @@ return new class extends Migration
 
             $table->unsignedInteger('sort_order')->default(0); // urutan tampil di dalam parent yang sama
             $table->boolean('is_active')->default(true); // biar admin bisa nonaktifin sementara tanpa hapus
+            $table->boolean('is_default')->default(false);
 
             $table->timestamps();
 

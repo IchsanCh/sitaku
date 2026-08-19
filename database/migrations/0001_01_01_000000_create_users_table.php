@@ -23,6 +23,8 @@ return new class extends Migration
             $table->enum('notif_pemohon', ['aktif', 'nonaktif'])->default('nonaktif');
             $table->enum('state_machine_pemohon', ['aktif', 'nonaktif'])->default('nonaktif');
             $table->enum('state_machine_pegawai', ['aktif', 'nonaktif'])->default('nonaktif');
+            $table->text('menu_intro_text')->nullable();
+            $table->text('menu_footer_text')->nullable();
             $table->string('fonnte')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
