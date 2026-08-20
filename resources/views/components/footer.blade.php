@@ -63,7 +63,7 @@
     <div class="bg-black border-t border-gray-500">
         <div class="container mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
             <p class="text-gray-400 text-sm">Design by Lotusaja Team</p>
-            <p class="text-gray-400 text-sm">© 2025 Sitaku. All rights reserved.</p>
+            <p class="text-gray-400 text-sm">©{{ now()->year }} Sitaku. All rights reserved.</p>
         </div>
     </div>
     <script>

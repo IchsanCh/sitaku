@@ -118,7 +118,9 @@
                         <li>
                             <a href="/docs/getting-started" title="Getting Started"
                                 class="flex items-center text-white lisa gap-3 p-3 rounded-lg transition-all duration-200 {{ request()->is('docs/getting-started') ? 'bgc2 border-b-2 border-white' : '' }}">
-                                <i class="fa-solid fa-book"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.75 11.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                                </svg>
                                 <span class="font-medium">Getting Started</span>
                             </a>
                         </li>
@@ -176,8 +178,12 @@
                     </ul>
                 </nav>
                 <div class="p-4 bgc1 w-full">
-                    <a href="/login" class="btn btn-success w-full font-bold" title="Login"><i
-                            class="fa-solid fa-arrow-right-to-bracket"></i> Login</a>
+                    <a href="/login" class="btn btn-success w-full font-bold" title="Login">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
+                            </svg>
+                        Login
+                    </a>
                 </div>
             </aside>
         </div>

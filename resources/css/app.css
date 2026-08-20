@@ -1,13 +1,64 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+    themes:
+        light --default,
+        sitaku-panel;
+}
 @plugin "@tailwindcss/typography";
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+/*
+ * Tema khusus panel user (dashboard, sidebar, dkk) -- SENGAJA beda dari
+ * palet teal/mint yang dipake landing/pricing publik. Arahnya indigo +
+ * slate (netral dingin, cocok buat layar data-dense) + amber (aksen hangat
+ * buat CTA/status aktif, biar kebaca jelas di antara netral).
+ * Dipake lewat <html data-theme="sitaku-panel"> di layout2.blade.php.
+ *
+ * color-scheme: light + prefersdark: false + gak didaftarin sebagai
+ * --prefersdark di 'themes:' atas -- jadi murni dipilih via data-theme,
+ * gak akan pernah ketiban preferensi dark mode OS/browser.
+ */
+@plugin "daisyui/theme" {
+    name: "sitaku-panel";
+    default: false;
+    prefersdark: false;
+    color-scheme: light;
+    --color-base-100: #ffffff;
+    --color-base-200: #f7f8fa;
+    --color-base-300: #e4e7ec;
+    --color-base-content: #1e2432;
+    --color-primary: #4f46e5;
+    --color-primary-content: #ffffff;
+    --color-secondary: #64748b;
+    --color-secondary-content: #ffffff;
+    --color-accent: #f59e0b;
+    --color-accent-content: #1e2432;
+    --color-neutral: #1e2432;
+    --color-neutral-content: #ffffff;
+    --color-info: #0ea5e9;
+    --color-info-content: #ffffff;
+    --color-success: #16a34a;
+    --color-success-content: #ffffff;
+    --color-warning: #f59e0b;
+    --color-warning-content: #1e2432;
+    --color-error: #dc2626;
+    --color-error-content: #ffffff;
+    --radius-selector: 0.5rem;
+    --radius-field: 0.5rem;
+    --radius-box: 0.75rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 0;
+    --noise: 0;
+}
+
 @theme {
-    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+    --font-sans:
+        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
 }

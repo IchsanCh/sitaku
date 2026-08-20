@@ -138,6 +138,25 @@
             </form>
         </dialog>
 
+        <dialog id="modal-confirm-delete" class="modal">
+            <div class="modal-box">
+                <h3 class="text-xl font-semibold text-center text-error mb-2">Yakin mau dihapus?</h3>
+                <p class="text-center text-base-content/70 mb-6">Data tidak bisa dikembalikan!</p>
+
+                <form id="form-confirm-delete" method="POST" class="flex justify-end gap-3">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" onclick="document.getElementById('modal-confirm-delete').close()"
+                        class="btn">Batal</button>
+                    <button type="submit" class="btn btn-error">Ya, hapus aja!</button>
+                </form>
+            </div>
+
+            <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+            </form>
+        </dialog>
+
         <div class="max-w-4xl mx-auto px-6 py-8 pt-4">
             <div class="alert alert-info text-sm mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -165,7 +184,12 @@
                     <div class="form-control">
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 z-20 flex items-center pointer-events-none">
-                                <i class="fa-solid fa-magnifying-glass color1"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-4 h-4 color1">
+                                    <path fill-rule="evenodd"
+                                        d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z"
+                                        clip-rule="evenodd" />
+                                </svg>
                             </div>
                             <input type="text" placeholder="Search pegawai..."
                                 class="input input-bordered input-primary w-full pl-10 pr-4 text-sm" id="searchInput"
@@ -349,37 +373,8 @@
         }
 
         function confirmDelete(url) {
-            Swal.fire({
-                title: 'Yakin mau dihapus?',
-                text: "Data tidak bisa dikembalikan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, hapus aja!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    let form = document.createElement('form');
-                    form.action = url;
-                    form.method = 'POST';
-
-                    let csrf = document.createElement('input');
-                    csrf.type = 'hidden';
-                    csrf.name = '_token';
-                    csrf.value = '{{ csrf_token() }}';
-
-                    let method = document.createElement('input');
-                    method.type = 'hidden';
-                    method.name = '_method';
-                    method.value = 'DELETE';
-
-                    form.appendChild(csrf);
-                    form.appendChild(method);
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            });
+            document.getElementById('form-confirm-delete').action = url;
+            document.getElementById('modal-confirm-delete').showModal();
         }
 
         function openModalEdit(pegawai) {
