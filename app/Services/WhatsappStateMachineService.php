@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 class WhatsappStateMachineService
 {
     private const EXIT_KEYWORDS = ['exit', 'keluar', 'selesai', 'batal'];
+    private const BACK_KEYWORDS = ['back', 'kembali', 'balik'];
     private const ENTRY_KEYWORDS = ['menu', 'hai', 'halo', 'hi', 'start'];
     private const STATE_TIMEOUT_MINUTES = 10;
 
@@ -78,6 +79,21 @@ class WhatsappStateMachineService
 
     private function handleMenu(User $user, WhatsappSession $session, string $sender, string $messageTrim, string $role): void
     {
+        $messageLower = strtolower($messageTrim);
+
+        if (in_array($messageLower, self::BACK_KEYWORDS, true)) {
+            if ($session->current_menu_id === null) {
+                // Udah di menu paling atas, gak ada tempat buat naik lagi --
+                // tampilin ulang aja menu utamanya.
+                $this->showMenu($user, $session, $sender, null, $role);
+                return;
+            }
+
+            $currentContainer = MenuItem::find($session->current_menu_id);
+            $this->showMenu($user, $session, $sender, $currentContainer?->parent_id, $role);
+            return;
+        }
+
         $item = MenuItem::where('user_id', $user->id)
             ->where('parent_id', $session->current_menu_id)
             ->where('is_active', true)
@@ -151,22 +167,6 @@ class WhatsappStateMachineService
         $context = $session->context_data ?? [];
         $context['pemohon_id'] = $pemohon->id;
 
-        $hpDigits = preg_replace('/\D/', '', (string) $pemohon->nomor_hp);
-        if (strlen($hpDigits) < 4) {
-            // Data nomor HP di permohonan ini gak lengkap/gak valid (misal cuma "0"),
-            // gak akan pernah bisa dicocokin -- daripada muter-muter minta input yang
-            // gak mungkin match, langsung kasih tau aja.
-            $session->update([
-                'current_state' => 'menu',
-                'current_menu_id' => $context['return_menu_id'] ?? null,
-                'context_data' => null,
-                'state_expires_at' => null,
-            ]);
-            $this->reply($user, $sender, 'Data nomor HP untuk permohonan ini belum lengkap di sistem kami, jadi gak bisa diverifikasi otomatis. Silakan hubungi admin instansi buat cek manual.');
-            $this->showMenu($user, $session, $sender, $context['return_menu_id'] ?? null, $this->detectRole($user, $sender));
-            return;
-        }
-
         $session->update([
             'current_state' => 'awaiting_phone_validation',
             'context_data' => $context,
@@ -188,8 +188,14 @@ class WhatsappStateMachineService
             return;
         }
 
-        $last4Terdaftar = substr((string) $pemohon->nomor_hp, -4);
-        $valid = ctype_digit($messageTrim) && strlen($messageTrim) === 4 && hash_equals($last4Terdaftar, $messageTrim);
+        // Ambil sampe 4 digit terakhir dari yang KESIMPEN -- kalau nomor HP-nya
+        // di database emang cuma pendek/aneh (misal "0"), tetep dicocokin apa
+        // adanya, bukan dipaksa selalu 4 digit.
+        $hpDigitsTerdaftar = preg_replace('/\D/', '', (string) $pemohon->nomor_hp);
+        $tailTerdaftar = substr($hpDigitsTerdaftar, -4);
+        $inputDigits = preg_replace('/\D/', '', $messageTrim);
+
+        $valid = $tailTerdaftar !== '' && hash_equals($tailTerdaftar, $inputDigits);
 
         if (! $valid) {
             $this->reply($user, $sender, '4 digit tidak cocok. Coba lagi, atau ketik "keluar" buat berhenti.');
@@ -293,7 +299,10 @@ class WhatsappStateMachineService
         $header = $prefixLabel ? "{$prefixLabel}\n" : '';
 
         $intro = $user->menu_intro_text ?: 'Silakan pilih:';
-        $footer = $user->menu_footer_text ?: '(ketik "keluar" kapan aja buat berhenti)';
+        $defaultFooter = '(ketik "keluar" kapan aja buat berhenti'
+            . ($parentId !== null ? ', atau "kembali" buat naik satu level' : '')
+            . ')';
+        $footer = $user->menu_footer_text ?: $defaultFooter;
 
         $this->reply(
             $user,
