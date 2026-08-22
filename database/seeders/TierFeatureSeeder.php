@@ -90,6 +90,15 @@ class TierFeatureSeeder extends Seeder
             ]
         );
 
+        $menuActionLiveSupport = Feature::updateOrCreate(
+            ['slug' => 'menu_action_live_support'],
+            [
+                'name' => 'Menu: Live Support',
+                'type' => 'toggle',
+                'description' => 'Buka action_type "live_support" di custom menu builder -- pemohon/pegawai bisa nyambung ke admin support manusia lewat chat langsung.',
+            ]
+        );
+
         // ── Tier: Basic ──────────────────────────────────────────────────
         // Custom Pesan & API access tetep nyala, cuma pegawai dibatasin 15
         // dan belum dapet State Machine.
@@ -111,6 +120,7 @@ class TierFeatureSeeder extends Seeder
             $menuActionSubmenu->id => ['value' => '0', 'is_unlimited' => false],
             $maxMenuUtama->id => ['value' => '0', 'is_unlimited' => false],
             $maxSubmenu->id => ['value' => '0', 'is_unlimited' => false],
+            $menuActionLiveSupport->id => ['value' => '0', 'is_unlimited' => false],
         ]);
 
         // ── Tier: Premium ────────────────────────────────────────────────
@@ -135,6 +145,7 @@ class TierFeatureSeeder extends Seeder
             $menuActionSubmenu->id => ['value' => '1', 'is_unlimited' => false],
             $maxMenuUtama->id => ['value' => '5', 'is_unlimited' => false],
             $maxSubmenu->id => ['value' => '5', 'is_unlimited' => false],
+            $menuActionLiveSupport->id => ['value' => '1', 'is_unlimited' => false],
         ]);
 
         // ── Tier: Enterprise ─────────────────────────────────────────────
@@ -158,6 +169,7 @@ class TierFeatureSeeder extends Seeder
             $menuActionSubmenu->id => ['value' => '1', 'is_unlimited' => false],
             $maxMenuUtama->id => ['value' => '20', 'is_unlimited' => false],
             $maxSubmenu->id => ['value' => '20', 'is_unlimited' => false],
+            $menuActionLiveSupport->id => ['value' => '1', 'is_unlimited' => false],
         ]);
     }
 }

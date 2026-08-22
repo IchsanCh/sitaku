@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
 
         $basicTier = Tier::where('slug', 'basic')->first();
         $premiumTier = Tier::where('slug', 'premium')->first();
+        $enterpriseTier = Tier::where('slug', 'enterprise')->first();
 
         Package::create([
             'tier_id' => $basicTier?->id,
@@ -59,6 +60,14 @@ class DatabaseSeeder extends Seeder
             'name' => 'Premium',
             'description' => 'Langganan 1 Bulan - Premium',
             'price' => '175000',
+            'duration_days' => '30',
+        ]);
+
+        Package::create([
+            'tier_id' => $enterpriseTier?->id,
+            'name' => 'Enterprise',
+            'description' => 'Langganan 1 Bulan - Enterprise',
+            'price' => '200000',
             'duration_days' => '30',
         ]);
     }

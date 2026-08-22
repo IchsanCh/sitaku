@@ -48,6 +48,7 @@ class MenuItem extends Model
     public const PREMIUM_ACTIONS = [
         'pesan_custom' => 'menu_action_pesan_custom',
         'submenu' => 'menu_action_submenu',
+        'live_support' => 'menu_action_live_support',
     ];
 
     public function user(): BelongsTo

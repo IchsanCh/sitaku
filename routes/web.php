@@ -69,5 +69,18 @@ Route::middleware('auth:user')->group(function () {
     Route::get('/billing/status/{payToken}', [BillingController::class, 'paketStatus'])->name('billing.status');
     Route::get('/billing/success', [BillingController::class, 'paymentSuccess'])->name('billing.success');
 });
+
+Route::prefix('support')->name('support.')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\Support\SupportAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [\App\Http\Controllers\Support\SupportAuthController::class, 'login'])->name('login.submit');
+
+    Route::middleware('auth:support')->group(function () {
+        Route::post('/logout', [\App\Http\Controllers\Support\SupportAuthController::class, 'logout'])->name('logout');
+        Route::get('/', [\App\Http\Controllers\Support\LiveChatSupportController::class, 'index'])->name('inbox');
+        Route::get('/chat/{liveChat}', [\App\Http\Controllers\Support\LiveChatSupportController::class, 'show'])->name('chat.show');
+        Route::post('/chat/{liveChat}/reply', [\App\Http\Controllers\Support\LiveChatSupportController::class, 'reply'])->name('chat.reply');
+    });
+});
+
 // Route::get('/test-error/{code}', [ErrorController::class, 'show'])
 //     ->whereNumber('code');

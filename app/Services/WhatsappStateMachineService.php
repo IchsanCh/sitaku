@@ -17,8 +17,19 @@ class WhatsappStateMachineService
     private const ENTRY_KEYWORDS = ['menu', 'hai', 'halo', 'hi', 'start'];
     private const STATE_TIMEOUT_MINUTES = 10;
 
-    public function __construct(private FonnteService $fonnte)
+    public function __construct(private FonnteService $fonnte, private LiveChatService $liveChat)
     {
+    }
+
+    /**
+     * Dipakai bareng sama FonnteWebhookController -- pas session lagi di state
+     * 'live_support', webhook gak lewat handle() di sini sama sekali (langsung
+     * ke LiveChatService), tapi tetep butuh cek exit keyword yang SAMA biar
+     * pemohon bisa keluar dari live chat pakai kata kunci yang konsisten.
+     */
+    public function isExitCommand(string $message): bool
+    {
+        return in_array(strtolower(trim($message)), self::EXIT_KEYWORDS, true);
     }
 
     public function handle(User $user, string $rawSender, string $message): void
@@ -131,6 +142,17 @@ class WhatsappStateMachineService
             })(),
 
             'cek_status', 'riwayat_tahapan' => $this->startValidationFlow($user, $session, $sender, $item),
+
+            'live_support' => (function () use ($user, $session, $sender) {
+                $this->liveChat->openRoom($user, $sender);
+                $session->update([
+                    'current_state' => 'live_support',
+                    'current_menu_id' => null,
+                    'context_data' => null,
+                    'state_expires_at' => null,
+                ]);
+                $this->reply($user, $sender, 'Anda akan terhubung dengan admin kami. Silakan sampaikan pertanyaan Anda, admin akan membalas sesegera mungkin. (ketik "keluar" kapan aja buat mengakhiri sesi ini)');
+            })(),
 
             default => $this->reply($user, $sender, 'Aksi menu ini belum didukung.'),
         };
@@ -324,7 +346,7 @@ class WhatsappStateMachineService
      * Normalisasi nomor ke format 62xxxxxxxxxx biar matching gak meleset gara-gara
      * beda format (08xx / +628xx / 628xx / ada spasi-strip).
      */
-    private function normalizePhone(string $number): string
+    public function normalizePhone(string $number): string
     {
         $digits = preg_replace('/\D/', '', $number);
 
