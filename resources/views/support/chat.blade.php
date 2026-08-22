@@ -46,6 +46,7 @@
 
 @section('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function () {
     const liveChatId = {{ $liveChat->id }};
     const messageList = document.getElementById('messageList');
     const replyForm = document.getElementById('replyForm');
@@ -137,5 +138,6 @@
             messageInput.focus();
         }
     });
+});
 </script>
 @endsection

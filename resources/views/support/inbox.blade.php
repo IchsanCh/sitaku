@@ -46,6 +46,7 @@
 
 @section('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function () {
     const pusher = new Pusher('{{ config('broadcasting.connections.reverb.key') }}', {
         wsHost: '{{ config('broadcasting.connections.reverb.options.host') }}',
         wsPort: {{ config('broadcasting.connections.reverb.options.port') }},
@@ -62,5 +63,6 @@
     channel.bind('room.updated', function () {
         window.location.reload();
     });
+});
 </script>
 @endsection

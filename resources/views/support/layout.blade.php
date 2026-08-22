@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Support Panel')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pusher-js/8.4.0/pusher.min.js"></script>
+    @vite(['resources/css/support.css', 'resources/js/support.js'])
 </head>
 <body class="bg-base-200 min-h-screen">
     @auth('support')

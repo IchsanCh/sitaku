@@ -14,11 +14,13 @@
         "daisyui": "^5.0.43",
         "laravel-echo": "^2.4.0",
         "laravel-vite-plugin": "^1.2.0",
+        "playwright": "^1.62.1",
         "pusher-js": "^8.6.0",
         "tailwindcss": "^4.0.0",
         "vite": "^6.2.4"
     },
     "dependencies": {
-        "aos": "^2.3.4"
+        "aos": "^2.3.4",
+        "pusher-js": "^8.4.0"
     }
 }
