@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withBroadcasting(
         __DIR__ . '/../routes/channels.php',
-        ['middleware' => ['auth:support']],
+        ['middleware' => ['web', 'auth:support']],
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([

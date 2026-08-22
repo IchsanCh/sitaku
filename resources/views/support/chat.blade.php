@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const pusher = new Pusher('{{ config('broadcasting.connections.reverb.key') }}', {
+        cluster: '',
         wsHost: '{{ config('broadcasting.connections.reverb.options.host') }}',
         wsPort: {{ config('broadcasting.connections.reverb.options.port') }},
         wssPort: {{ config('broadcasting.connections.reverb.options.port') }},

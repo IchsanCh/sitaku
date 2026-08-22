@@ -47,7 +47,7 @@ class LiveChatService
         ]);
 
         broadcast(new LiveChatMessageSent($chatMessage));
-        broadcast(new LiveChatRoomUpdated($liveChat->user_id));
+        broadcast(new LiveChatRoomUpdated($liveChat));
     }
 
     /**
