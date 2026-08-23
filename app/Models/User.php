@@ -248,4 +248,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\MenuItem::class);
     }
+
+    public function quickReplies()
+    {
+        return $this->hasMany(\App\Models\QuickReply::class);
+    }
 }

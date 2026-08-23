@@ -78,7 +78,6 @@ class FonnteWebhookController extends Controller
                     $request->input('url'),
                     $request->input('filename'),
                     $request->input('extension'),
-                    $request->filled('inboxid') ? (string) $request->input('inboxid') : null,
                 );
             }
 

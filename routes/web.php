@@ -52,6 +52,16 @@ Route::middleware('auth:user')->group(function () {
         Route::post('/user/menu', [MenuItemController::class, 'store'])->name('menu.store');
         Route::delete('/user/menu/{menuItem}', [MenuItemController::class, 'destroy'])->name('menu.destroy');
     });
+
+    // Balasan cepat buat admin support -- numpang di feature yang sama kayak
+    // live_support (satu kesatuan: gak ada gunanya punya quick reply kalau
+    // instansi-nya gak punya live support), tapi model & migration-nya sendiri.
+    Route::middleware('feature:menu_action_live_support')->group(function () {
+        Route::resource('user/quick-replies', \App\Http\Controllers\QuickReplyController::class)
+            ->except(['show'])
+            ->names('quick-reply')
+            ->parameters(['user/quick-replies' => 'quickReply']);
+    });
     Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout.user');
     Route::get('/dashboard', [UserAuthController::class, 'index'])->name('dashboard.user');
     Route::get('/profile', [UserAuthController::class, 'profile'])->name('profile.user');
