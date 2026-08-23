@@ -79,6 +79,7 @@ Route::prefix('support')->name('support.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Support\LiveChatSupportController::class, 'index'])->name('inbox');
         Route::get('/chat/{liveChat}', [\App\Http\Controllers\Support\LiveChatSupportController::class, 'show'])->name('chat.show');
         Route::post('/chat/{liveChat}/reply', [\App\Http\Controllers\Support\LiveChatSupportController::class, 'reply'])->name('chat.reply');
+        Route::post('/chat/{liveChat}/end', [\App\Http\Controllers\Support\LiveChatSupportController::class, 'endSession'])->name('chat.end');
     });
 });
 

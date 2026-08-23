@@ -32,13 +32,25 @@ class LiveChatMessageSent implements ShouldBroadcast
 
     public function broadcastWith(): array
     {
+        $replyTo = $this->message->replyTo;
+
         return [
             'id' => $this->message->id,
             'live_chat_id' => $this->message->live_chat_id,
             'sender_type' => $this->message->sender_type,
             'admin_support_name' => $this->message->adminSupport?->name,
             'message' => $this->message->message,
+            'media_url' => $this->message->media_url,
+            'media_filename' => $this->message->media_filename,
+            'media_extension' => $this->message->media_extension,
+            'is_image' => $this->message->isImage(),
             'created_at' => $this->message->created_at->toIso8601String(),
+            'reply_to' => $replyTo ? [
+                'id' => $replyTo->id,
+                'sender_type' => $replyTo->sender_type,
+                'admin_support_name' => $replyTo->adminSupport?->name,
+                'excerpt' => $replyTo->message ?: ($replyTo->media_filename ? '📎 ' . $replyTo->media_filename : '[Media]'),
+            ] : null,
         ];
     }
 }

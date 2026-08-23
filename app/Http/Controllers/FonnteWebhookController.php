@@ -69,7 +69,17 @@ class FonnteWebhookController extends Controller
                     ['user_id' => $user->id, 'nomor_wa' => $normalizedSender],
                     ['status' => 'open']
                 );
-                $liveChatService->handleIncomingPemohonMessage($liveChat, (string) $message);
+
+                // Field-field ini cuma bakal keisi kalau device-nya paket "all feature"
+                // dan pesannya emang ada lampirannya -- kalau enggak, ya tetep null aja.
+                $liveChatService->handleIncomingPemohonMessage(
+                    $liveChat,
+                    (string) $message,
+                    $request->input('url'),
+                    $request->input('filename'),
+                    $request->input('extension'),
+                    $request->filled('inboxid') ? (string) $request->input('inboxid') : null,
+                );
             }
 
             return response()->json(['status' => 'ok'], 200);
