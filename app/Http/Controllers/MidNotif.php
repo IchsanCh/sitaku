@@ -26,8 +26,8 @@ class MidNotif extends Controller
         }
 
         $targetUrl = null;
-        if (str_starts_with($orderId, 'ORDER-')) {
-            $targetUrl =  "https://sitaku.lotusaja.com/api/midtrans/callback";
+        if (str_starts_with($orderId, 'EXAVRO-')) {
+            $targetUrl =  "https://exavro.lotusaja.com/api/midtrans/callback";
         } elseif (str_starts_with($orderId, 'SINOMU-')) {
             $targetUrl = "https://sinomu.lotusaja.com/api/midtrans/callback";
         }

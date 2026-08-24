@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $media_filename
  * @property string|null $media_extension
  * @property string|null $fonnte_message_id
+ * @property string|null $fonnte_inbox_id
+ * @property int|null $reply_to_message_id
  */
 class LiveChatMessage extends Model
 {
@@ -26,6 +28,8 @@ class LiveChatMessage extends Model
         'media_filename',
         'media_extension',
         'fonnte_message_id',
+        'fonnte_inbox_id',
+        'reply_to_message_id',
     ];
 
     private const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
@@ -38,6 +42,11 @@ class LiveChatMessage extends Model
     public function adminSupport()
     {
         return $this->belongsTo(AdminSupport::class);
+    }
+
+    public function replyTo()
+    {
+        return $this->belongsTo(LiveChatMessage::class, 'reply_to_message_id');
     }
 
     public function isImage(): bool

@@ -1,2 +1,30 @@
 User-agent: *
-Disallow: /
+Allow: /$
+Allow: /about
+Allow: /pricing
+Allow: /docs
+Allow: /docs/
+Allow: /login
+Allow: /signup
+
+# Halaman auth yang bawa token/state -> ga usah diindex
+Disallow: /signup/otp
+Disallow: /forgot-password
+Disallow: /reset-password/
+
+# Semua area private user (dashboard, menu, billing, dll)
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /settings
+Disallow: /pegawai
+Disallow: /pesan
+Disallow: /user/
+Disallow: /billing
+
+# Live support (agent inbox)
+Disallow: /support/
+
+# Filament admin panel
+Disallow: /admins
+
+Sitemap: https://exavro.lotusaja.com/sitemap.xml

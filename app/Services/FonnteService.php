@@ -15,12 +15,6 @@ class FonnteService
      * Return true kalau Fonnte konfirmasi terkirim, false kalau gagal (network/token salah/dll).
      * Gagal kirim TIDAK melempar exception -- caller (state machine) tetap lanjut proses
      * session-nya, cuma balasannya aja yang gak nyampe.
-     */
-    /**
-     * Kirim pesan WA lewat device Fonnte milik $user (pakai token di kolom users.fonnte).
-     * Return true kalau Fonnte konfirmasi terkirim, false kalau gagal (network/token salah/dll).
-     * Gagal kirim TIDAK melempar exception -- caller (state machine) tetap lanjut proses
-     * session-nya, cuma balasannya aja yang gak nyampe.
      *
      * $options (semua opsional):
      * - url: string -- kirim media lewat link yang udah publicly accessible

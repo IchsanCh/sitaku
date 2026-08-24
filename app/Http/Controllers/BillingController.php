@@ -49,7 +49,7 @@ class BillingController extends Controller
         Config::$isSanitized = true;
         Config::$is3ds = true;
 
-        $orderId = uniqid('ORDER-' . $user->id . '-');
+        $orderId = uniqid('EXAVRO-' . $user->id . '-');
 
         $transactionDetails = [
             'order_id' => $orderId,

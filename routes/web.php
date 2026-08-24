@@ -61,6 +61,11 @@ Route::middleware('auth:user')->group(function () {
             ->except(['show'])
             ->names('quick-reply')
             ->parameters(['user/quick-replies' => 'quickReply']);
+
+        Route::resource('user/admin-supports', \App\Http\Controllers\AdminSupportController::class)
+            ->except(['show'])
+            ->names('admin-support')
+            ->parameters(['user/admin-supports' => 'adminSupport']);
     });
     Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout.user');
     Route::get('/dashboard', [UserAuthController::class, 'index'])->name('dashboard.user');
@@ -83,6 +88,11 @@ Route::middleware('auth:user')->group(function () {
 Route::prefix('support')->name('support.')->group(function () {
     Route::get('/login', [\App\Http\Controllers\Support\SupportAuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [\App\Http\Controllers\Support\SupportAuthController::class, 'login'])->name('login.submit');
+
+    Route::get('/forgot-password', [\App\Http\Controllers\Support\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/forgot-password', [\App\Http\Controllers\Support\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/reset-password/{token}', [\App\Http\Controllers\Support\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [\App\Http\Controllers\Support\ResetPasswordController::class, 'reset'])->name('password.update');
 
     Route::middleware('auth:support')->group(function () {
         Route::post('/logout', [\App\Http\Controllers\Support\SupportAuthController::class, 'logout'])->name('logout');

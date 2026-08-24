@@ -6,6 +6,11 @@
 <style>
     #quickReplyDropdown { position: absolute; bottom: 100%; left: 0; right: 0; margin-bottom: 4px; max-height: 220px; overflow-y: auto; z-index: 20; }
     #quickReplyDropdown li[aria-selected="true"] { background-color: hsl(var(--b2, var(--b3))); }
+    .swipe-wrap { touch-action: pan-y; will-change: transform; transition: transform 0.15s ease-out; position: relative; z-index: 1; }
+    .swipe-reply-icon {
+        position: absolute; top: 50%; left: 8px; transform: translateY(-50%);
+        opacity: 0; transition: opacity 0.15s ease-out; font-size: 1.1rem; pointer-events: none;
+    }
 </style>
 <div class="max-w-2xl mx-auto px-4 py-6">
     <a href="{{ route('support.inbox') }}" class="btn btn-ghost btn-sm mb-4">← Kembali ke Inbox</a>
@@ -26,8 +31,22 @@
 
             <div id="messageList" class="p-4 space-y-3 overflow-y-auto" style="height: 60vh;">
                 @foreach ($liveChat->messages as $msg)
-                    <div class="flex {{ $msg->sender_type === 'admin_support' ? 'justify-end' : 'justify-start' }}" data-msg-id="{{ $msg->id }}">
-                        <div class="max-w-[75%]">
+                    @php
+                        $excerpt = $msg->message ?: ($msg->media_filename ? '📎 ' . $msg->media_filename : '[Media]');
+                        $replySenderLabel = $msg->replyTo && $msg->replyTo->sender_type === 'admin_support'
+                            ? ($msg->replyTo->adminSupport?->name ?? 'Admin')
+                            : $liveChat->nomor_wa;
+                    @endphp
+                    <div class="flex {{ $msg->sender_type === 'admin_support' ? 'justify-end' : 'justify-start' }}"
+                        data-msg-id="{{ $msg->id }}"
+                        data-sender-label="{{ $msg->sender_type === 'admin_support' ? ($msg->adminSupport?->name ?? 'Admin') : $liveChat->nomor_wa }}"
+                        data-excerpt="{{ $excerpt }}">
+                        <div class="max-w-[75%] swipe-wrap">
+                            @if ($msg->replyTo)
+                                <div class="rounded-lg px-3 py-1 mb-1 text-xs bg-base-300/60 border-l-4 border-base-content/20 truncate">
+                                    <span class="font-semibold">{{ $replySenderLabel }}</span> · {{ Str::limit($msg->replyTo->message ?: ($msg->replyTo->media_filename ? '📎 ' . $msg->replyTo->media_filename : '[Media]'), 60) }}
+                                </div>
+                            @endif
                             <div class="rounded-2xl px-4 py-2 text-sm {{ $msg->sender_type === 'admin_support' ? 'bg-primary text-primary-content rounded-br-md' : 'bg-base-200 rounded-bl-md' }}">
                                 @if ($msg->media_url)
                                     @if ($msg->isImage())
@@ -49,8 +68,18 @@
                                 · {{ $msg->created_at->format('H:i') }}
                             </div>
                         </div>
+                        <div class="swipe-reply-icon">↩</div>
                     </div>
                 @endforeach
+            </div>
+
+            <div id="replyPreview" class="px-4 pt-2 border-t border-base-300" hidden>
+                <div class="flex items-center justify-between bg-base-200 rounded-lg px-3 py-2 text-sm">
+                    <div class="truncate">
+                        Balas <span id="replyPreviewLabel" class="font-semibold"></span>: <span id="replyPreviewExcerpt" class="text-base-content/60"></span>
+                    </div>
+                    <button type="button" id="cancelReplyBtn" class="btn btn-ghost btn-xs">✕</button>
+                </div>
             </div>
 
             <div id="mediaPreview" class="px-4 pt-2 border-t border-base-300" hidden>
@@ -94,7 +123,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const mediaPreview = document.getElementById('mediaPreview');
     const mediaPreviewName = document.getElementById('mediaPreviewName');
     const cancelMediaBtn = document.getElementById('cancelMediaBtn');
+    const replyPreview = document.getElementById('replyPreview');
+    const replyPreviewLabel = document.getElementById('replyPreviewLabel');
+    const replyPreviewExcerpt = document.getElementById('replyPreviewExcerpt');
+    const cancelReplyBtn = document.getElementById('cancelReplyBtn');
     const seenIds = new Set([...document.querySelectorAll('[data-msg-id]')].map(el => el.dataset.msgId));
+
+    let replyTarget = null; // { id, label, excerpt }
+
+    function setReplyTarget(id, label, excerpt) {
+        replyTarget = { id, label, excerpt };
+        replyPreviewLabel.textContent = label;
+        replyPreviewExcerpt.textContent = excerpt;
+        replyPreview.hidden = false;
+        messageInput.focus();
+    }
+
+    function clearReplyTarget() {
+        replyTarget = null;
+        replyPreview.hidden = true;
+    }
+
+    cancelReplyBtn.addEventListener('click', clearReplyTarget);
 
     attachBtn.addEventListener('click', () => mediaInput.click());
 
@@ -111,6 +161,64 @@ document.addEventListener('DOMContentLoaded', function () {
         mediaInput.value = '';
         mediaPreview.hidden = true;
     });
+
+    // ---- Swipe-to-reply --------------------------------------------------
+    // Geser bubble pesan ke kanan buat set target reply. Pointer events biar
+    // jalan di touch maupun mouse sekaligus.
+    function attachSwipeHandler(wrapEl) {
+        const swipeEl = wrapEl.querySelector('.swipe-wrap');
+        const iconEl = wrapEl.querySelector('.swipe-reply-icon');
+        if (!swipeEl || swipeEl.dataset.swipeBound) return;
+        swipeEl.dataset.swipeBound = '1';
+
+        const THRESHOLD = 55;
+        let startX = 0, startY = 0, dx = 0, dragging = false, locked = null;
+
+        swipeEl.addEventListener('pointerdown', function (e) {
+            startX = e.clientX;
+            startY = e.clientY;
+            dx = 0;
+            dragging = true;
+            locked = null;
+            swipeEl.style.transition = 'none';
+        });
+
+        swipeEl.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            const rawDx = e.clientX - startX;
+            const rawDy = e.clientY - startY;
+
+            if (locked === null) {
+                if (Math.abs(rawDx) < 6 && Math.abs(rawDy) < 6) return;
+                locked = Math.abs(rawDx) > Math.abs(rawDy) ? 'x' : 'y';
+            }
+            if (locked !== 'x') return;
+
+            dx = Math.max(0, Math.min(rawDx, 70));
+            swipeEl.style.transform = `translateX(${dx}px)`;
+            iconEl.style.opacity = String(Math.min(dx / THRESHOLD, 1));
+        });
+
+        function endSwipe() {
+            if (!dragging) return;
+            dragging = false;
+            swipeEl.style.transition = 'transform 0.15s ease-out';
+            swipeEl.style.transform = 'translateX(0)';
+            iconEl.style.opacity = '0';
+
+            if (dx >= THRESHOLD) {
+                setReplyTarget(wrapEl.dataset.msgId, wrapEl.dataset.senderLabel, wrapEl.dataset.excerpt);
+            }
+            dx = 0;
+        }
+
+        swipeEl.addEventListener('pointerup', endSwipe);
+        swipeEl.addEventListener('pointercancel', endSwipe);
+        swipeEl.addEventListener('pointerleave', function () { if (dragging) endSwipe(); });
+    }
+
+    document.querySelectorAll('#messageList [data-msg-id]').forEach(attachSwipeHandler);
+    // ------------------------------------------------------------------------
 
     // ---- Balasan cepat ("/trigger") ----------------------------------
     const quickReplies = @json($quickReplies->map(fn ($qr) => ['trigger' => $qr->trigger, 'content' => $qr->content]));
@@ -144,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     qrDropdown.addEventListener('mousedown', function (e) {
-        e.preventDefault(); // biar gak keburu blur input sebelum klik ke-handle
+        e.preventDefault();
         const a = e.target.closest('a[data-index]');
         if (a) pickQuickReply(qrMatches[Number(a.dataset.index)]);
     });
@@ -184,7 +292,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         messageInput.addEventListener('blur', function () {
-            // Delay dikit biar mousedown di dropdown sempet kepilih duluan.
             setTimeout(closeQrDropdown, 100);
         });
     }
@@ -252,6 +359,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const time = new Date(data.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         const senderLabel = isAdmin ? (data.admin_support_name || 'Admin') : nomorWa;
+        wrap.dataset.senderLabel = senderLabel;
+        wrap.dataset.excerpt = data.message || (data.media_filename ? '📎 ' + data.media_filename : '[Media]');
 
         let mediaHtml = '';
         if (data.media_url) {
@@ -266,8 +375,17 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
+        let replyHtml = '';
+        if (data.reply_to) {
+            const replyLabel = data.reply_to.sender_type === 'admin_support' ? (data.reply_to.admin_support_name || 'Admin') : nomorWa;
+            replyHtml = `<div class="rounded-lg px-3 py-1 mb-1 text-xs bg-base-300/60 border-l-4 border-base-content/20 truncate">
+                <span class="font-semibold">${escapeHtml(replyLabel)}</span> · ${escapeHtml(data.reply_to.excerpt)}
+            </div>`;
+        }
+
         wrap.innerHTML = `
-            <div class="max-w-[75%]">
+            <div class="max-w-[75%] swipe-wrap">
+                ${replyHtml}
                 <div class="rounded-2xl px-4 py-2 text-sm ${isAdmin ? 'bg-primary text-primary-content rounded-br-md' : 'bg-base-200 rounded-bl-md'}">
                     ${mediaHtml}
                     ${data.message ? `<div>${escapeHtml(data.message)}</div>` : ''}
@@ -276,8 +394,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     ${senderLabel} · ${time}
                 </div>
             </div>
+            <div class="swipe-reply-icon">↩</div>
         `;
         messageList.appendChild(wrap);
+        attachSwipeHandler(wrap);
         scrollToBottom();
     }
 
@@ -310,6 +430,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const formData = new FormData();
         formData.append('message', message);
         if (hasMedia) formData.append('media', mediaInput.files[0]);
+        if (replyTarget) formData.append('reply_to_message_id', replyTarget.id);
 
         try {
             const res = await fetch(`/support/chat/${liveChatId}/reply`, {
@@ -332,6 +453,7 @@ document.addEventListener('DOMContentLoaded', function () {
             messageInput.value = '';
             mediaInput.value = '';
             mediaPreview.hidden = true;
+            clearReplyTarget();
 
             if (body.fonnte_sent === false) {
                 showToast('error', 'Pesan tersimpan, tapi gagal terkirim ke WhatsApp. Cek token Fonnte instansi.');

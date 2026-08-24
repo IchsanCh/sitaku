@@ -39,6 +39,8 @@ class LiveChatService
     /**
      * $mediaUrl/$mediaFilename/$mediaExtension: field attachment dari payload webhook Fonnte
      * (cuma ada kalau device-nya paket "all feature" & pesannya emang ada lampirannya).
+     * $fonnteInboxId: field `inboxid` dari payload -- disimpen biar bisa dipake admin buat
+     * quote/reply ke pesan spesifik ini nanti.
      */
     public function handleIncomingPemohonMessage(
         LiveChat $liveChat,
@@ -46,6 +48,7 @@ class LiveChatService
         ?string $mediaUrl = null,
         ?string $mediaFilename = null,
         ?string $mediaExtension = null,
+        ?string $fonnteInboxId = null,
     ): void {
         $chatMessage = LiveChatMessage::create([
             'live_chat_id' => $liveChat->id,
@@ -54,6 +57,7 @@ class LiveChatService
             'media_url' => $mediaUrl,
             'media_filename' => $mediaFilename,
             'media_extension' => $mediaExtension,
+            'fonnte_inbox_id' => $fonnteInboxId,
         ]);
 
         $liveChat->update([
@@ -72,12 +76,17 @@ class LiveChatService
      * $media: file upload dari admin (opsional) -- disimpen ke storage publik kita sendiri
      * (beda kebijakan sama attachment masuk, karena di sini kita emang pegang byte-nya
      * langsung, bukan nge-download ulang dari URL luar).
+     * $replyTo: pesan yang di-quote (opsional, dari gesture swipe). Kalau pesan yang
+     * di-quote itu punya fonnte_inbox_id (artinya dari pemohon), kita pass ke Fonnte biar
+     * WA-nya nampilin bubble reply beneran. Quote ke pesan admin lain cuma keliatan di UI
+     * kita aja, gak ke WA-nya (keterbatasan API Fonnte).
      */
     public function handleAdminReply(
         AdminSupport $agent,
         LiveChat $liveChat,
         string $message,
         ?UploadedFile $media = null,
+        ?LiveChatMessage $replyTo = null,
     ): bool {
         $mediaUrl = null;
         $mediaFilename = null;
@@ -97,6 +106,10 @@ class LiveChatService
             $sendOptions['filename'] = $mediaFilename;
         }
 
+        if ($replyTo?->fonnte_inbox_id) {
+            $sendOptions['inboxid'] = $replyTo->fonnte_inbox_id;
+        }
+
         $sent = $this->fonnte->send($liveChat->user, $liveChat->nomor_wa, $message, $sendOptions);
 
         $chatMessage = LiveChatMessage::create([
@@ -107,6 +120,7 @@ class LiveChatService
             'media_url' => $mediaUrl,
             'media_filename' => $mediaFilename,
             'media_extension' => $mediaExtension,
+            'reply_to_message_id' => $replyTo?->id,
         ]);
 
         $liveChat->update([

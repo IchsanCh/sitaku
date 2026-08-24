@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Support Panel')</title>
     @vite(['resources/css/support.css', 'resources/js/support.js'])
+    @stack('head-scripts')
 </head>
 <body class="bg-base-200 min-h-screen">
     @auth('support')

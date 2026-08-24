@@ -21,6 +21,11 @@ if [ "$CONTAINER_ROLE" = "app" ]; then
         php artisan storage:link
     fi
 
+    # composer/npm di atas jalan sebagai root -> pastiin storage & cache
+    # tetep bisa ditulis sama www-data (yang jalanin php-fpm)
+    chown -R www-data:www-data storage bootstrap/cache
+    chmod -R 775 storage bootstrap/cache
+
     php artisan config:cache
     php artisan route:cache
     php artisan view:cache

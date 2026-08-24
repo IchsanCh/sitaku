@@ -27,7 +27,7 @@ class LiveChatSupportController extends Controller
         $agent = Auth::guard('support')->user();
         $this->authorizeRoom($liveChat, $agent);
 
-        $liveChat->load('messages.adminSupport');
+        $liveChat->load('messages.adminSupport', 'messages.replyTo.adminSupport');
 
         // Buka room ini dianggap "udah dibaca" -- reset badge unread.
         $liveChat->update(['unread_count' => 0]);
@@ -47,16 +47,23 @@ class LiveChatSupportController extends Controller
         $request->validate([
             'message' => 'required_without:media|nullable|string|max:2000',
             'media' => 'nullable|file|max:10240', // 10MB, samain kira-kira sama limit Fonnte
+            'reply_to_message_id' => 'nullable|integer|exists:live_chat_messages,id',
         ]);
+
+        $replyTo = null;
+        if ($request->filled('reply_to_message_id')) {
+            $replyTo = $liveChat->messages()->find($request->input('reply_to_message_id'));
+        }
 
         $sent = $liveChatService->handleAdminReply(
             $agent,
             $liveChat,
             (string) $request->input('message', ''),
             $request->file('media'),
+            $replyTo,
         );
 
-        $latest = $liveChat->messages()->latest()->first();
+        $latest = $liveChat->messages()->with('replyTo.adminSupport')->latest()->first();
 
         return response()->json([
             'data' => $this->formatMessage($latest, $agent->name),
@@ -95,6 +102,12 @@ class LiveChatSupportController extends Controller
             'media_extension' => $msg->media_extension,
             'is_image' => $msg->isImage(),
             'created_at' => $msg->created_at->toIso8601String(),
+            'reply_to' => $msg->replyTo ? [
+                'id' => $msg->replyTo->id,
+                'sender_type' => $msg->replyTo->sender_type,
+                'admin_support_name' => $msg->replyTo->adminSupport?->name,
+                'excerpt' => $msg->replyTo->message ?: ($msg->replyTo->media_filename ? '📎 ' . $msg->replyTo->media_filename : '[Media]'),
+            ] : null,
         ];
     }
 }
