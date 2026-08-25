@@ -85,7 +85,7 @@
                         <tr>
                             <td><code>live_support</code></td>
                             <td>Alihkan percakapan ke admin manusia (live chat)</td>
-                            <td><span class="badge badge-warning badge-sm">Premium</span></td>
+                            <td><span class="badge badge-warning badge-sm">Enterprise</span></td>
                         </tr>
                     </tbody>
                 </table>
