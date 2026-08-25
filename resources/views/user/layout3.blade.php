@@ -124,45 +124,64 @@
                                 <span class="font-medium">Getting Started</span>
                             </a>
                         </li>
-                        <!-- API References -->
+                        <!-- Menu WA -->
                         <li>
-                            <details class="group" {{ request()->is('docs/api/*') ? 'open' : '' }}
-                                title="API References">
+                            <a href="/docs/menu-wa" title="Menu WA"
+                                class="flex items-center text-white lisa gap-3 p-3 rounded-lg transition-all duration-200 {{ request()->is('docs/menu-wa') ? 'bgc2 border-b-2 border-white' : '' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                </svg>
+                                <span class="font-medium">Menu WA</span>
+                            </a>
+                        </li>
+
+                        <!-- Live Support -->
+                        <li>
+                            <details class="group" {{ request()->is('docs/live-support/*') ? 'open' : '' }}
+                                title="Live Support">
                                 <summary
-                                    class="flex items-center gap-3 p-3 lisa rounded-lg transition-all duration-200 text-white cursor-pointer {{ request()->is('docs/api/*') ? '' : '' }}">
+                                    class="flex items-center gap-3 p-3 lisa rounded-lg transition-all duration-200 text-white cursor-pointer">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
                                     </svg>
-                                    <span class="font-medium">API References</span>
+                                    <span class="font-medium">Live Support</span>
                                 </summary>
 
                                 <ul class="ml-6 mt-2 border-l-2 border-base-300 pl-4">
                                     <li class="mt-4 mb-2">
-                                        <a href="/docs/api/pemohon" title="API Pemohon"
-                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 lisa text-white {{ request()->is('docs/api/pemohon') ? 'bgc2 border-b-2 border-white' : '' }}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                            </svg>
-                                            <span class="text-sm">API Pemohon</span>
+                                        <a href="/docs/live-support/chat" title="Chat"
+                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 lisa text-white {{ request()->is('docs/live-support/chat') ? 'bgc2 border-b-2 border-white' : '' }}">
+                                            <span class="text-sm">Chat</span>
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="/docs/live-support/balasan-cepat" title="Balasan Cepat"
+                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 lisa text-white {{ request()->is('docs/live-support/balasan-cepat') ? 'bgc2 border-b-2 border-white' : '' }}">
+                                            <span class="text-sm">Balasan Cepat</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="/docs/api/sitaku" title="API SITAKU"
-                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 lisa text-white {{ request()->is('docs/api/sitaku') ? 'bgc2 border-b-2 border-white' : '' }}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
-                                            </svg>
-                                            <span class="text-sm">API SITAKU</span>
+                                        <a href="/docs/live-support/admin-support" title="Akun Admin Support"
+                                            class="flex items-center gap-3 p-2 rounded-md transition-all duration-200 lisa text-white {{ request()->is('docs/live-support/admin-support') ? 'bgc2 border-b-2 border-white' : '' }}">
+                                            <span class="text-sm">Akun Admin Support</span>
                                         </a>
                                     </li>
                                 </ul>
                             </details>
+                        </li>
+
+                        <!-- API Reference (cuma API SITAKU) -->
+                        <li>
+                            <a href="/docs/api/sitaku" title="API SITAKU"
+                                class="flex items-center gap-3 p-3 rounded-lg lisa transition-all duration-200 text-white {{ request()->is('docs/api/sitaku') ? 'bgc2 border-b-2 border-white' : '' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                                </svg>
+                                <span class="font-medium">API SITAKU</span>
+                            </a>
                         </li>
                         <li>
                             <a href="/docs/cronjob" title="Cronjob Time"

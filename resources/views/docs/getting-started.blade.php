@@ -96,34 +96,19 @@
                                 Buka menu <a href="{{ route('setting.user') }}" class="link link-primary"
                                     title="pengaturan">Pengaturan</a>
                                 untuk mengisi data
-                                unit, token fonnte dan
-                                endpoint api untuk pemohon,
+                                unit dan token fonnte,
                                 kemudian isi pegawai pada menu <a href="{{ route('user.pegawai') }}"
                                     class="link link-primary" title="pegawai">Pegawai.</a>
                             </p>
-                            <div class="alert alert-warning mb-4 font-semibold">
+                            <div class="alert alert-info mb-4 font-semibold">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z">
-                                    </path>
+                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                                 <span>
-                                    Pengaturan API untuk pemohon bisa dilihat melalui dokumentasi
-                                    <a href="/docs/api/pemohon" class="link link-primary font-semibold"
-                                        title="api-guide">API
-                                        Guide</a>
+                                    Endpoint API pemohon sekarang dikonfigurasi terpusat oleh tim Sitaku --
+                                    instansi gak perlu setting manual lagi.
                                 </span>
-                            </div>
-                            <div class="flex gap-2">
-                                <a href="/docs/api/pemohon" class="btn btn-accent btn-sm font-bold"
-                                    title="lihat dokumentasi">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                        </path>
-                                    </svg>
-                                    Lihat Dokumentasi
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -132,7 +117,50 @@
                     <div class="collapse collapse-arrow bg-base-200">
                         <input type="radio" name="getting-started-accordion" />
                         <div class="collapse-title text-xl font-medium flex items-center gap-3">
-                            <div class="badge badge-success badge-lg">4</div>
+                            <div class="badge badge-warning badge-lg">4</div>
+                            <strong>Hubungkan Webhook Fonnte</strong>
+                        </div>
+                        <div class="collapse-content">
+                            <p class="mb-4 font-semibold">
+                                Ini langkah yang paling sering kelewat -- tanpa ini, chat WhatsApp gak
+                                akan pernah nyampe ke Sitaku sama sekali.
+                            </p>
+                            <ol class="list-decimal list-inside space-y-3 font-semibold mb-4">
+                                <li>
+                                    Buka menu <a href="{{ route('setting.user') }}" class="link link-primary"
+                                        title="pengaturan">Pengaturan</a>, salin URL di kartu
+                                    "Webhook URL" (tombol Copy).
+                                </li>
+                                <li>
+                                    Login ke <a href="https://fonnte.com" target="_blank" rel="noopener"
+                                        class="link link-primary">dashboard Fonnte</a>, buka menu
+                                    <strong>Device → Edit</strong> pada device WhatsApp instansi Anda.
+                                </li>
+                                <li>Tempel URL yang tadi disalin ke kolom Webhook -- begitu ditempel, otomatis aktif.</li>
+                                <li>Pastikan <strong>Autoread</strong> dalam posisi <span class="badge badge-success badge-sm">On</span>.</li>
+                                <li>
+                                    Set dropdown <strong>Response Source</strong> ke <span class="badge badge-neutral badge-sm">Autoreply</span>.
+                                </li>
+                            </ol>
+                            <div class="alert alert-warning mb-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                                <span class="text-sm">Silent Read murni opsional. <strong>Inbox</strong> juga opsional,
+                                    tapi wajib <span class="badge badge-success badge-sm">On</span> kalau instansi mau
+                                    pakai fitur quote/reply pesan di Live Support -- tanpa itu, Fonnte gak ngirim
+                                    <code>inboxid</code> yang dibutuhin buat nge-quote pesan pemohon. Tinggal disesuaikan
+                                    sama kebutuhan instansi masing-masing.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="collapse collapse-arrow bg-base-200">
+                        <input type="radio" name="getting-started-accordion" />
+                        <div class="collapse-title text-xl font-medium flex items-center gap-3">
+                            <div class="badge badge-success badge-lg">5</div>
                             <strong>Uji Coba Aplikasi</strong>
                         </div>
                         <div class="collapse-content">
