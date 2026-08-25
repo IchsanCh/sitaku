@@ -60,17 +60,15 @@ class ApiKeyResource extends Resource
                         Forms\Components\TextInput::make('bearer_token')
                             ->label('Bearer Token')
                             ->required()
-                            ->maxLength(255)
                             ->password()
                             ->revealable()
-                            ->helperText('Dikirim di header Authorization: Bearer <token>'),
+                            ->helperText('Dikirim di header Authorization: Bearer <token>. Kolom udah TEXT, jadi gak dibatasin 255 karakter.'),
                         Forms\Components\TextInput::make('apikey')
                             ->label('API Key')
                             ->required()
-                            ->maxLength(255)
                             ->password()
                             ->revealable()
-                            ->helperText('Dikirim di header apikey'),
+                            ->helperText('Dikirim di header apikey. Kolom udah TEXT, jadi gak dibatasin 255 karakter.'),
                         Forms\Components\TextInput::make('key_uuid')
                             ->label('Key UUID')
                             ->required()
@@ -79,10 +77,9 @@ class ApiKeyResource extends Resource
                         Forms\Components\TextInput::make('salt_key')
                             ->label('Salt Key')
                             ->required()
-                            ->maxLength(255)
                             ->password()
                             ->revealable()
-                            ->helperText('Disimpen apa adanya (plain), decrypt-nya dilakukan di luar sistem ini.'),
+                            ->helperText('Disimpen apa adanya (plain), decrypt-nya dilakukan di luar sistem ini. Kolom udah TEXT, jadi gak dibatasin 255 karakter.'),
                     ]),
             ]);
     }

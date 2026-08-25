@@ -145,7 +145,7 @@ class TierFeatureSeeder extends Seeder
             $menuActionSubmenu->id => ['value' => '1', 'is_unlimited' => false],
             $maxMenuUtama->id => ['value' => '5', 'is_unlimited' => false],
             $maxSubmenu->id => ['value' => '5', 'is_unlimited' => false],
-            $menuActionLiveSupport->id => ['value' => '1', 'is_unlimited' => false],
+            $menuActionLiveSupport->id => ['value' => '0', 'is_unlimited' => false],
         ]);
 
         // ── Tier: Enterprise ─────────────────────────────────────────────
