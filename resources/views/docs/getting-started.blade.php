@@ -106,8 +106,8 @@
                                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                                 <span>
-                                    Endpoint API pemohon sekarang dikonfigurasi terpusat oleh tim Sitaku --
-                                    instansi gak perlu setting manual lagi.
+                                    Endpoint API pemohon kini dikonfigurasi secara terpusat oleh tim Sitaku,
+                                    sehingga instansi tidak perlu melakukan pengaturan secara manual.
                                 </span>
                             </div>
                         </div>
@@ -122,24 +122,24 @@
                         </div>
                         <div class="collapse-content">
                             <p class="mb-4 font-semibold">
-                                Ini langkah yang paling sering kelewat -- tanpa ini, chat WhatsApp gak
-                                akan pernah nyampe ke Sitaku sama sekali.
+                                Langkah ini paling sering terlewat, padahal tanpa langkah ini pesan
+                                WhatsApp tidak akan pernah sampai ke Sitaku.
                             </p>
                             <ol class="list-decimal list-inside space-y-3 font-semibold mb-4">
                                 <li>
                                     Buka menu <a href="{{ route('setting.user') }}" class="link link-primary"
-                                        title="pengaturan">Pengaturan</a>, salin URL di kartu
-                                    "Webhook URL" (tombol Copy).
+                                        title="pengaturan">Pengaturan</a>, kemudian salin URL pada kartu
+                                    "Webhook URL" melalui tombol Copy.
                                 </li>
                                 <li>
-                                    Login ke <a href="https://fonnte.com" target="_blank" rel="noopener"
-                                        class="link link-primary">dashboard Fonnte</a>, buka menu
+                                    Masuk ke <a href="https://fonnte.com" target="_blank" rel="noopener"
+                                        class="link link-primary">dashboard Fonnte</a>, lalu buka menu
                                     <strong>Device → Edit</strong> pada device WhatsApp instansi Anda.
                                 </li>
-                                <li>Tempel URL yang tadi disalin ke kolom Webhook -- begitu ditempel, otomatis aktif.</li>
-                                <li>Pastikan <strong>Autoread</strong> dalam posisi <span class="badge badge-success badge-sm">On</span>.</li>
+                                <li>Tempelkan URL yang telah disalin ke kolom Webhook. Setelah ditempel, webhook akan aktif secara otomatis.</li>
+                                <li>Pastikan <strong>Autoread</strong> berada pada posisi <span class="badge badge-success badge-sm">On</span>.</li>
                                 <li>
-                                    Set dropdown <strong>Response Source</strong> ke <span class="badge badge-neutral badge-sm">Autoreply</span>.
+                                    Atur dropdown <strong>Response Source</strong> ke <span class="badge badge-neutral badge-sm">Autoreply</span>.
                                 </li>
                             </ol>
                             <div class="alert alert-warning mb-4">
@@ -147,11 +147,12 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                                 </svg>
-                                <span class="text-sm">Silent Read murni opsional. <strong>Inbox</strong> juga opsional,
-                                    tapi wajib <span class="badge badge-success badge-sm">On</span> kalau instansi mau
-                                    pakai fitur quote/reply pesan di Live Support -- tanpa itu, Fonnte gak ngirim
-                                    <code>inboxid</code> yang dibutuhin buat nge-quote pesan pemohon. Tinggal disesuaikan
-                                    sama kebutuhan instansi masing-masing.</span>
+                                <span class="text-sm">Silent Read bersifat opsional. <strong>Inbox</strong> juga
+                                    opsional, namun wajib berada pada posisi <span class="badge badge-success badge-sm">On</span>
+                                    apabila instansi hendak menggunakan fitur kutip/balas pesan pada Live Support,
+                                    sebab tanpa itu Fonnte tidak akan mengirimkan <code>inboxid</code> yang
+                                    dibutuhkan untuk mengutip pesan pemohon. Pengaturan ini dapat disesuaikan
+                                    dengan kebutuhan masing-masing instansi.</span>
                             </div>
                         </div>
                     </div>

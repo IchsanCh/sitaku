@@ -3,8 +3,8 @@
 @section('title', 'Menu WA (Alur Layanan)')
 
 @section('meta_description',
-    'Pelajari cara kerja Menu WA di Sitaku -- sistem alur otomatis (state machine) yang membalas
-    pesan WhatsApp pemohon dan pegawai sesuai trigger yang instansi atur sendiri.')
+    'Pelajari cara kerja Menu WA di Sitaku, sistem alur otomatis (state machine) yang membalas
+    pesan WhatsApp pemohon dan pegawai sesuai trigger yang diatur oleh instansi.')
 
 @section('og_description',
     'Dokumentasi Menu WA Sitaku: trigger, tipe aksi, submenu, dan cara mengatur alur layanan
@@ -27,45 +27,46 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                <span>Menu WA adalah "alur otomatis" (state machine) yang membalas pesan WhatsApp
-                    pemohon atau pegawai berdasarkan kata kunci (trigger) yang mereka ketik --
-                    tanpa admin harus balas manual.</span>
+                <span>Menu WA merupakan alur otomatis (state machine) yang membalas pesan WhatsApp
+                    dari pemohon maupun pegawai berdasarkan kata kunci (trigger) yang mereka ketik,
+                    tanpa perlu dibalas secara manual oleh admin.</span>
             </div>
 
-            <h2 class="text-xl font-bold mb-3">Cara Kerjanya</h2>
+            <h2 class="text-xl font-bold mb-3">Cara Kerja</h2>
             <p class="font-semibold mb-4">
-                Ketika pemohon atau pegawai mengirim pesan ke nomor WhatsApp instansi, sistem
-                mencocokkan isi pesan dengan trigger yang sudah diatur. Kalau cocok, bot langsung
-                membalas sesuai tipe aksi (action type) yang dipilih untuk trigger tersebut. Kalau
-                gak ada yang cocok, menu yang ditandai <span class="badge badge-ghost badge-sm">Default</span>
-                yang akan tampil.
+                Ketika pemohon atau pegawai mengirim pesan ke nomor WhatsApp instansi, sistem akan
+                mencocokkan isi pesan tersebut dengan trigger yang telah diatur. Apabila cocok, bot
+                akan langsung membalas sesuai tipe aksi (action type) yang dipilih untuk trigger
+                tersebut. Apabila tidak ada trigger yang cocok, menu yang ditandai
+                <span class="badge badge-ghost badge-sm">Default</span> yang akan ditampilkan.
             </p>
 
-            <h2 class="text-xl font-bold mb-3">Audience</h2>
+            <h2 class="text-xl font-bold mb-3">Audiens</h2>
             <p class="font-semibold mb-4">
-                Setiap menu bisa dibatasi buat siapa: <span class="badge badge-outline">Pemohon saja</span>,
+                Setiap menu dapat dibatasi berdasarkan audiensnya: <span class="badge badge-outline">Pemohon saja</span>,
                 <span class="badge badge-outline">Pegawai saja</span>, atau <span class="badge badge-outline">Pemohon & Pegawai</span>.
-                Nomor yang sama bisa dapat balasan beda tergantung dia terdaftar sebagai pemohon atau pegawai.
+                Nomor yang sama dapat menerima balasan yang berbeda, tergantung apakah nomor tersebut
+                terdaftar sebagai pemohon atau sebagai pegawai.
             </p>
 
             <h2 class="text-xl font-bold mb-3">Tipe Aksi</h2>
-            <p class="font-semibold mb-4">Tersedia di semua tier (asal punya feature Menu WA):</p>
+            <p class="font-semibold mb-2">Tersedia pada seluruh tier, selama instansi memiliki feature Menu WA:</p>
             <div class="overflow-x-auto mb-4">
                 <table class="table table-sm">
                     <thead>
                         <tr><th>Action Type</th><th>Fungsi</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td><code>cek_status</code></td><td>Balas status permohonan terbaru</td></tr>
-                        <tr><td><code>riwayat_tahapan</code></td><td>Balas riwayat tahapan permohonan</td></tr>
-                        <tr><td><code>antrian_pegawai</code></td><td>Balas info antrian buat pegawai</td></tr>
-                        <tr><td><code>info_pegawai</code></td><td>Balas info terkait pegawai</td></tr>
-                        <tr><td><code>exit</code></td><td>Keluar dari sesi/alur yang sedang jalan</td></tr>
+                        <tr><td><code>cek_status</code></td><td>Membalas status permohonan terbaru</td></tr>
+                        <tr><td><code>riwayat_tahapan</code></td><td>Membalas riwayat tahapan permohonan</td></tr>
+                        <tr><td><code>antrian_pegawai</code></td><td>Membalas informasi antrean untuk pegawai</td></tr>
+                        <tr><td><code>info_pegawai</code></td><td>Membalas informasi terkait pegawai</td></tr>
+                        <tr><td><code>exit</code></td><td>Mengakhiri sesi atau alur yang sedang berjalan</td></tr>
                     </tbody>
                 </table>
             </div>
 
-            <p class="font-semibold mb-2">Butuh feature tambahan (tergantung paket instansi):</p>
+            <p class="font-semibold mb-2">Membutuhkan feature tambahan, tergantung paket yang dimiliki instansi:</p>
             <div class="overflow-x-auto mb-6">
                 <table class="table table-sm">
                     <thead>
@@ -74,18 +75,18 @@
                     <tbody>
                         <tr>
                             <td><code>pesan_custom</code></td>
-                            <td>Balas teks custom yang instansi tulis sendiri</td>
+                            <td>Membalas teks khusus yang ditulis sendiri oleh instansi</td>
                             <td><span class="badge badge-warning badge-sm">Premium</span></td>
                         </tr>
                         <tr>
                             <td><code>submenu</code></td>
-                            <td>Bikin menu bertingkat (nested) di bawah trigger ini</td>
+                            <td>Membuat menu bertingkat (nested) di bawah trigger ini</td>
                             <td><span class="badge badge-warning badge-sm">Premium</span></td>
                         </tr>
                         <tr>
                             <td><code>live_support</code></td>
-                            <td>Alihkan percakapan ke admin manusia (live chat)</td>
-                            <td><span class="badge badge-warning badge-sm">Enterprise</span></td>
+                            <td>Mengalihkan percakapan kepada admin manusia (live chat)</td>
+                            <td><span class="badge badge-warning badge-sm">Premium</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -96,22 +97,22 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                <span class="text-sm">Trigger dengan <code>live_support</code> yang ngarahin pemohon
-                    ke admin manusia. Lihat <a href="/docs/live-support/chat" class="link link-primary font-semibold">dokumentasi Live Support</a>
-                    buat detail alur chat-nya.</span>
+                <span class="text-sm">Trigger dengan tipe aksi <code>live_support</code> akan mengarahkan
+                    pemohon kepada admin manusia. Silakan lihat <a href="/docs/live-support/chat" class="link link-primary font-semibold">dokumentasi Live Support</a>
+                    untuk mempelajari alur percakapannya lebih lanjut.</span>
             </div>
 
-            <h2 class="text-xl font-bold mb-3">Cara Setup</h2>
+            <h2 class="text-xl font-bold mb-3">Cara Pengaturan</h2>
             <div class="space-y-4">
                 <div class="collapse collapse-arrow bg-base-200">
                     <input type="radio" name="menu-wa-accordion" checked="checked" />
                     <div class="collapse-title text-lg font-medium flex items-center gap-3">
                         <div class="badge badge-primary badge-lg">1</div>
-                        <strong>Buka Menu WA</strong>
+                        <strong>Membuka Menu WA</strong>
                     </div>
                     <div class="collapse-content">
-                        <p class="font-semibold">Dari sidebar, klik <strong>Menu WA</strong>. Di sini kelihatan semua
-                            trigger yang udah instansi buat, termasuk submenu-nya.</p>
+                        <p class="font-semibold">Pada sidebar, klik <strong>Menu WA</strong>. Halaman ini menampilkan
+                            seluruh trigger yang telah dibuat oleh instansi, termasuk submenu di dalamnya.</p>
                     </div>
                 </div>
 
@@ -119,12 +120,13 @@
                     <input type="radio" name="menu-wa-accordion" />
                     <div class="collapse-title text-lg font-medium flex items-center gap-3">
                         <div class="badge badge-secondary badge-lg">2</div>
-                        <strong>Tambah Trigger Baru</strong>
+                        <strong>Menambahkan Trigger Baru</strong>
                     </div>
                     <div class="collapse-content">
-                        <p class="font-semibold">Klik "Tambah Menu", isi trigger (kata kunci yang diketik pemohon/pegawai),
-                            label (nama tampilan), audience, dan action type. Kalau action type-nya butuh feature premium
-                            tapi tier instansi belum punya, opsinya bakal ke-lock.</p>
+                        <p class="font-semibold">Klik "Tambah Menu", kemudian isi trigger (kata kunci yang akan
+                            diketik oleh pemohon atau pegawai), label (nama tampilan), audiens, dan tipe aksi. Apabila
+                            tipe aksi yang dipilih membutuhkan feature premium yang belum dimiliki oleh tier instansi,
+                            opsi tersebut akan terkunci.</p>
                     </div>
                 </div>
 
@@ -132,11 +134,12 @@
                     <input type="radio" name="menu-wa-accordion" />
                     <div class="collapse-title text-lg font-medium flex items-center gap-3">
                         <div class="badge badge-accent badge-lg">3</div>
-                        <strong>Atur Submenu (Opsional)</strong>
+                        <strong>Mengatur Submenu (Opsional)</strong>
                     </div>
                     <div class="collapse-content">
-                        <p class="font-semibold">Kalau action type-nya <code>submenu</code>, trigger itu bisa punya
-                            menu anak di bawahnya -- berguna buat alur bertingkat (misal: "Layanan" → "Perizinan" / "Non-Perizinan").</p>
+                        <p class="font-semibold">Apabila tipe aksi yang dipilih adalah <code>submenu</code>, trigger
+                            tersebut dapat memiliki menu turunan di bawahnya. Fitur ini berguna untuk membangun alur
+                            bertingkat, misalnya menu "Layanan" yang bercabang menjadi "Perizinan" dan "Non-Perizinan".</p>
                     </div>
                 </div>
             </div>
