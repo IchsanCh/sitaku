@@ -32,12 +32,16 @@ class LiveChatRoomUpdated implements ShouldBroadcast
     // tanpa reload -- ditambahin di sini (bukan cuma userId kayak sebelumnya).
     public function broadcastWith(): array
     {
+        $latest = $this->liveChat->latestMessage;
+
         return [
             'id' => $this->liveChat->id,
             'nomor_wa' => $this->liveChat->nomor_wa,
             'status' => $this->liveChat->status,
             'unread_count' => $this->liveChat->unread_count,
             'last_message_at' => $this->liveChat->last_message_at?->toIso8601String(),
+            'last_message_preview' => $latest?->excerpt(80),
+            'last_message_sender_type' => $latest?->sender_type,
             'replying_admin_id' => $this->liveChat->replying_admin_id,
             'replying_admin_name' => $this->liveChat->replyingAdmin?->name,
             'replying_at' => $this->liveChat->replying_at?->toIso8601String(),

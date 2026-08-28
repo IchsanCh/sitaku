@@ -16,6 +16,7 @@ class LiveChatSupportController extends Controller
         $agent = Auth::guard('support')->user();
 
         $rooms = LiveChat::where('user_id', $agent->user_id)
+            ->with('latestMessage')
             ->orderByDesc('last_message_at')
             ->paginate(20);
 
@@ -106,7 +107,7 @@ class LiveChatSupportController extends Controller
                 'id' => $msg->replyTo->id,
                 'sender_type' => $msg->replyTo->sender_type,
                 'admin_support_name' => $msg->replyTo->adminSupport?->name,
-                'excerpt' => $msg->replyTo->message ?: ($msg->replyTo->media_filename ? '📎 ' . $msg->replyTo->media_filename : '[Media]'),
+                'excerpt' => $msg->replyTo->excerpt(),
             ] : null,
         ];
     }

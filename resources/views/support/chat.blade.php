@@ -3,51 +3,53 @@
 @section('title', 'Chat ' . $liveChat->nomor_wa . ' - Support Panel')
 
 @section('content')
-<style>
-    #quickReplyDropdown { position: absolute; bottom: 100%; left: 0; right: 0; margin-bottom: 4px; max-height: 220px; overflow-y: auto; z-index: 20; }
-    #quickReplyDropdown li[aria-selected="true"] { background-color: hsl(var(--b2, var(--b3))); }
-    .swipe-wrap { touch-action: pan-y; will-change: transform; transition: transform 0.15s ease-out; position: relative; z-index: 1; }
-    .swipe-reply-icon {
-        position: absolute; top: 50%; left: 8px; transform: translateY(-50%);
-        opacity: 0; transition: opacity 0.15s ease-out; font-size: 1.1rem; pointer-events: none;
-    }
-</style>
 <div class="max-w-2xl mx-auto px-4 py-6">
-    <a href="{{ route('support.inbox') }}" class="btn btn-ghost btn-sm mb-4">← Kembali ke Inbox</a>
+    <a href="{{ route('support.inbox') }}" class="btn btn-ghost btn-sm gap-1.5 mb-4 -ml-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg>
+        Inbox
+    </a>
 
-    <div class="card bg-base-100 shadow-xl border border-base-300">
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
         <div class="card-body p-0">
-            <div class="p-4 border-b border-base-300 flex items-center justify-between">
-                <div>
-                    <h1 class="font-bold">{{ $liveChat->nomor_wa }}</h1>
-                    <span id="statusBadge" class="badge badge-sm {{ $liveChat->status === 'open' ? 'badge-success' : 'badge-ghost' }}">
-                        {{ $liveChat->status === 'open' ? 'Aktif' : 'Selesai' }}
-                    </span>
+
+            <div class="p-4 border-b border-base-300 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="room-card-avatar">{{ substr($liveChat->nomor_wa, -2) }}</div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-semibold font-mono text-sm truncate">{{ $liveChat->nomor_wa }}</h1>
+                            <span class="ticket-tag">T-{{ str_pad($liveChat->id, 3, '0', STR_PAD_LEFT) }}</span>
+                        </div>
+                        <span id="statusBadge" class="badge badge-sm mt-0.5 {{ $liveChat->status === 'open' ? 'badge-success badge-outline' : 'badge-ghost' }}">
+                            {{ $liveChat->status === 'open' ? 'Aktif' : 'Selesai' }}
+                        </span>
+                    </div>
                 </div>
-                <button id="endSessionBtn" type="button" class="btn btn-outline btn-error btn-sm" {{ $liveChat->status === 'open' ? '' : 'hidden' }}>
+                <button id="endSessionBtn" type="button" class="btn btn-outline btn-error btn-sm shrink-0" {{ $liveChat->status === 'open' ? '' : 'hidden' }}>
                     Akhiri Sesi
                 </button>
             </div>
 
-            <div id="messageList" class="p-4 space-y-3 overflow-y-auto" style="height: 60vh;">
+            <div id="messageList" class="p-4 space-y-3 overflow-y-auto bg-base-200/40" style="height: 60vh;">
                 @foreach ($liveChat->messages as $msg)
                     @php
-                        $excerpt = $msg->message ?: ($msg->media_filename ? '📎 ' . $msg->media_filename : '[Media]');
+                        $excerpt = $msg->excerpt();
                         $replySenderLabel = $msg->replyTo && $msg->replyTo->sender_type === 'admin_support'
                             ? ($msg->replyTo->adminSupport?->name ?? 'Admin')
                             : $liveChat->nomor_wa;
+                        $isAdmin = $msg->sender_type === 'admin_support';
                     @endphp
-                    <div class="flex {{ $msg->sender_type === 'admin_support' ? 'justify-end' : 'justify-start' }}"
+                    <div class="flex {{ $isAdmin ? 'justify-end' : 'justify-start' }}"
                         data-msg-id="{{ $msg->id }}"
-                        data-sender-label="{{ $msg->sender_type === 'admin_support' ? ($msg->adminSupport?->name ?? 'Admin') : $liveChat->nomor_wa }}"
+                        data-sender-label="{{ $isAdmin ? ($msg->adminSupport?->name ?? 'Admin') : $liveChat->nomor_wa }}"
                         data-excerpt="{{ $excerpt }}">
                         <div class="max-w-[75%] swipe-wrap">
                             @if ($msg->replyTo)
-                                <div class="rounded-lg px-3 py-1 mb-1 text-xs bg-base-300/60 border-l-4 border-base-content/20 truncate">
-                                    <span class="font-semibold">{{ $replySenderLabel }}</span> · {{ Str::limit($msg->replyTo->message ?: ($msg->replyTo->media_filename ? '📎 ' . $msg->replyTo->media_filename : '[Media]'), 60) }}
+                                <div class="rounded-lg px-3 py-1.5 mb-1 text-xs bg-base-300/60 border-l-2 border-primary/40 truncate">
+                                    <span class="font-semibold">{{ $replySenderLabel }}</span> · {{ $msg->replyTo->excerpt(60) }}
                                 </div>
                             @endif
-                            <div class="rounded-2xl px-4 py-2 text-sm {{ $msg->sender_type === 'admin_support' ? 'bg-primary text-primary-content rounded-br-md' : 'bg-base-200 rounded-bl-md' }}">
+                            <div class="px-3.5 py-2 text-sm {{ $isAdmin ? 'bubble-out' : 'bubble-in' }}">
                                 @if ($msg->media_url)
                                     @if ($msg->isImage())
                                         <a href="{{ $msg->media_url }}" target="_blank" rel="noopener">
@@ -60,11 +62,11 @@
                                     @endif
                                 @endif
                                 @if ($msg->message)
-                                    <div>{{ $msg->message }}</div>
+                                    <div class="leading-relaxed">{{ $msg->message }}</div>
                                 @endif
                             </div>
-                            <div class="text-xs text-base-content/40 mt-1 {{ $msg->sender_type === 'admin_support' ? 'text-right' : 'text-left' }}">
-                                {{ $msg->sender_type === 'admin_support' ? ($msg->adminSupport?->name ?? 'Admin') : $liveChat->nomor_wa }}
+                            <div class="text-[0.68rem] text-base-content/40 mt-1 {{ $isAdmin ? 'text-right' : 'text-left' }}">
+                                {{ $isAdmin ? ($msg->adminSupport?->name ?? 'Admin') : $liveChat->nomor_wa }}
                                 · {{ $msg->created_at->format('H:i') }}
                             </div>
                         </div>
@@ -74,25 +76,27 @@
             </div>
 
             <div id="replyPreview" class="px-4 pt-2 border-t border-base-300" hidden>
-                <div class="flex items-center justify-between bg-base-200 rounded-lg px-3 py-2 text-sm">
+                <div class="flex items-center justify-between bg-base-200 rounded-lg px-3 py-2 text-sm border-l-2 border-primary">
                     <div class="truncate">
-                        Balas <span id="replyPreviewLabel" class="font-semibold"></span>: <span id="replyPreviewExcerpt" class="text-base-content/60"></span>
+                        Balas <span id="replyPreviewLabel" class="font-semibold"></span>: <span id="replyPreviewExcerpt" class="text-base-content/55"></span>
                     </div>
-                    <button type="button" id="cancelReplyBtn" class="btn btn-ghost btn-xs">✕</button>
+                    <button type="button" id="cancelReplyBtn" class="btn btn-ghost btn-xs btn-circle">✕</button>
                 </div>
             </div>
 
             <div id="mediaPreview" class="px-4 pt-2 border-t border-base-300" hidden>
                 <div class="flex items-center justify-between bg-base-200 rounded-lg px-3 py-2 text-sm">
                     <div class="truncate">📎 <span id="mediaPreviewName"></span></div>
-                    <button type="button" id="cancelMediaBtn" class="btn btn-ghost btn-xs">✕</button>
+                    <button type="button" id="cancelMediaBtn" class="btn btn-ghost btn-xs btn-circle">✕</button>
                 </div>
             </div>
 
-            <form id="replyForm" class="p-4 border-t border-base-300 flex gap-2 items-center relative">
+            <form id="replyForm" class="p-3.5 border-t border-base-300 flex gap-2 items-center relative">
                 @csrf
                 <input type="file" id="mediaInput" name="media" class="hidden" @disabled($liveChat->status !== 'open')>
-                <button type="button" id="attachBtn" class="btn btn-ghost btn-sm" @disabled($liveChat->status !== 'open')>📎</button>
+                <button type="button" id="attachBtn" class="btn btn-ghost btn-sm btn-circle" @disabled($liveChat->status !== 'open')>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" /></svg>
+                </button>
 
                 <div class="relative flex-1">
                     <ul id="quickReplyDropdown" class="menu bg-base-100 rounded-lg shadow-lg border border-base-300 p-1 flex-nowrap" hidden></ul>
@@ -101,7 +105,9 @@
                         @disabled($liveChat->status !== 'open')>
                 </div>
 
-                <button type="submit" class="btn btn-primary" @disabled($liveChat->status !== 'open')>Kirim</button>
+                <button type="submit" class="btn btn-primary btn-circle btn-sm" @disabled($liveChat->status !== 'open')>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" /></svg>
+                </button>
             </form>
         </div>
     </div>
@@ -129,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const cancelReplyBtn = document.getElementById('cancelReplyBtn');
     const seenIds = new Set([...document.querySelectorAll('[data-msg-id]')].map(el => el.dataset.msgId));
 
-    let replyTarget = null; // { id, label, excerpt }
+    let replyTarget = null;
 
     function setReplyTarget(id, label, excerpt) {
         replyTarget = { id, label, excerpt };
@@ -162,9 +168,6 @@ document.addEventListener('DOMContentLoaded', function () {
         mediaPreview.hidden = true;
     });
 
-    // ---- Swipe-to-reply --------------------------------------------------
-    // Geser bubble pesan ke kanan buat set target reply. Pointer events biar
-    // jalan di touch maupun mouse sekaligus.
     function attachSwipeHandler(wrapEl) {
         const swipeEl = wrapEl.querySelector('.swipe-wrap');
         const iconEl = wrapEl.querySelector('.swipe-reply-icon');
@@ -218,9 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     document.querySelectorAll('#messageList [data-msg-id]').forEach(attachSwipeHandler);
-    // ------------------------------------------------------------------------
 
-    // ---- Balasan cepat ("/trigger") ----------------------------------
     const quickReplies = @json($quickReplies->map(fn ($qr) => ['trigger' => $qr->trigger, 'content' => $qr->content]));
     const qrDropdown = document.getElementById('quickReplyDropdown');
     let qrMatches = [];
@@ -237,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
         qrDropdown.innerHTML = qrMatches.map((qr, i) => `
             <li>
                 <a data-index="${i}" aria-selected="${i === qrActiveIndex}" class="flex-col items-start gap-0 py-1.5">
-                    <span class="font-mono text-xs font-semibold">/${qr.trigger}</span>
+                    <span class="font-mono text-xs font-semibold text-primary">/${qr.trigger}</span>
                     <span class="text-xs text-base-content/50 truncate w-full">${qr.content}</span>
                 </a>
             </li>
@@ -295,11 +296,10 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(closeQrDropdown, 100);
         });
     }
-    // --------------------------------------------------------------------
 
     function setClosedState() {
         statusBadge.textContent = 'Selesai';
-        statusBadge.classList.remove('badge-success');
+        statusBadge.classList.remove('badge-success', 'badge-outline');
         statusBadge.classList.add('badge-ghost');
         endSessionBtn.hidden = true;
         messageInput.disabled = true;
@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let replyHtml = '';
         if (data.reply_to) {
             const replyLabel = data.reply_to.sender_type === 'admin_support' ? (data.reply_to.admin_support_name || 'Admin') : nomorWa;
-            replyHtml = `<div class="rounded-lg px-3 py-1 mb-1 text-xs bg-base-300/60 border-l-4 border-base-content/20 truncate">
+            replyHtml = `<div class="rounded-lg px-3 py-1.5 mb-1 text-xs bg-base-300/60 border-l-2 border-primary/40 truncate">
                 <span class="font-semibold">${escapeHtml(replyLabel)}</span> · ${escapeHtml(data.reply_to.excerpt)}
             </div>`;
         }
@@ -386,11 +386,11 @@ document.addEventListener('DOMContentLoaded', function () {
         wrap.innerHTML = `
             <div class="max-w-[75%] swipe-wrap">
                 ${replyHtml}
-                <div class="rounded-2xl px-4 py-2 text-sm ${isAdmin ? 'bg-primary text-primary-content rounded-br-md' : 'bg-base-200 rounded-bl-md'}">
+                <div class="px-3.5 py-2 text-sm ${isAdmin ? 'bubble-out' : 'bubble-in'}">
                     ${mediaHtml}
-                    ${data.message ? `<div>${escapeHtml(data.message)}</div>` : ''}
+                    ${data.message ? `<div class="leading-relaxed">${escapeHtml(data.message)}</div>` : ''}
                 </div>
-                <div class="text-xs text-base-content/40 mt-1 ${isAdmin ? 'text-right' : 'text-left'}">
+                <div class="text-[0.68rem] text-base-content/40 mt-1 ${isAdmin ? 'text-right' : 'text-left'}">
                     ${senderLabel} · ${time}
                 </div>
             </div>
@@ -411,6 +411,11 @@ document.addEventListener('DOMContentLoaded', function () {
         authEndpoint: '/broadcasting/auth',
         auth: { headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } }
     });
+
+    pusher.connection.bind('connected', () => setConnectionStatus(true));
+    pusher.connection.bind('unavailable', () => setConnectionStatus(false));
+    pusher.connection.bind('failed', () => setConnectionStatus(false));
+    pusher.connection.bind('disconnected', () => setConnectionStatus(false));
 
     const channel = pusher.subscribe('private-live-chat.' + liveChatId);
     channel.bind('message.sent', function (data) {

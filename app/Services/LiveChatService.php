@@ -131,6 +131,7 @@ class LiveChatService
         ]);
 
         broadcast(new LiveChatMessageSent($chatMessage));
+        broadcast(new LiveChatRoomUpdated($liveChat));
 
         return $sent;
     }

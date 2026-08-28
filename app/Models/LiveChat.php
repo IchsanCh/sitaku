@@ -50,6 +50,13 @@ class LiveChat extends Model
         return $this->hasMany(LiveChatMessage::class)->orderBy('created_at');
     }
 
+    // Buat preview "pesan terakhir" di inbox -- 1 query per halaman (bukan
+    // N+1) selama dipanggil lewat ->with('latestMessage') di controller.
+    public function latestMessage()
+    {
+        return $this->hasOne(LiveChatMessage::class)->latestOfMany();
+    }
+
     public function isBeingRepliedByOther(?int $currentAdminId): bool
     {
         if (! $this->replying_admin_id || $this->replying_admin_id === $currentAdminId) {

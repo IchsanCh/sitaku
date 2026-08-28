@@ -53,4 +53,15 @@ class LiveChatMessage extends Model
     {
         return $this->media_extension && in_array(strtolower($this->media_extension), self::IMAGE_EXTENSIONS);
     }
+
+    // Cuplikan singkat buat ditampilin di preview (inbox) & bubble reply-quote --
+    // sebelumnya logic yang sama ke-duplikat di beberapa tempat di blade.
+    public function excerpt(int $limit = 60): string
+    {
+        if ($this->message) {
+            return \Illuminate\Support\Str::limit($this->message, $limit);
+        }
+
+        return $this->media_filename ? '📎 ' . $this->media_filename : '[Media]';
+    }
 }

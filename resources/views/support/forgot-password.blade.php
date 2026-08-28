@@ -9,33 +9,41 @@
 @endif
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center px-4">
-    <div class="card w-full max-w-sm bg-base-100 shadow-2xl">
-        <div class="card-body">
-            <h1 class="text-xl font-bold mb-1">Lupa Password</h1>
-            <p class="text-sm text-base-content/60 mb-6">Masukkan email akun admin support kamu, link reset bakal dikirim ke situ.</p>
+<div class="min-h-screen flex items-center justify-center px-4 py-10">
+    <div class="w-full max-w-sm">
 
-            @if (session('status'))
-                <div class="alert alert-success mb-4 text-sm"><span>{{ session('status') }}</span></div>
-            @endif
-            @if ($errors->any())
-                <div class="alert alert-error mb-4 text-sm"><span>{{ $errors->first() }}</span></div>
-            @endif
+        <div class="text-center mb-7">
+            <span class="inline-flex w-11 h-11 rounded-xl bg-primary text-primary-content items-center justify-center font-display font-semibold text-lg mb-4">S</span>
+            <h1 class="font-display font-semibold text-[1.6rem] leading-tight">Lupa Password</h1>
+            <p class="text-sm text-base-content/55 mt-1.5 leading-relaxed">Masukkan email akun kamu, link reset bakal dikirim ke situ.</p>
+        </div>
 
-            <form id="forgotForm" method="POST" action="{{ route('support.password.email') }}" class="space-y-4">
-                @csrf
-                <div>
-                    <label class="label"><span class="label-text">Email</span></label>
-                    <input type="email" name="email" value="{{ old('email') }}" class="input input-bordered w-full" required autofocus>
+        <div class="card bg-base-100 border border-base-300 shadow-sm">
+            <div class="card-body p-7">
+
+                @if (session('status'))
+                    <div class="alert alert-success mb-4 text-sm py-2.5"><span>{{ session('status') }}</span></div>
+                @endif
+                @if ($errors->any())
+                    <div class="alert alert-error mb-4 text-sm py-2.5"><span>{{ $errors->first() }}</span></div>
+                @endif
+
+                <form id="forgotForm" method="POST" action="{{ route('support.password.email') }}" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="label pb-1.5"><span class="label-text font-medium text-sm">Email</span></label>
+                        <input type="email" name="email" value="{{ old('email') }}" class="input input-bordered w-full" placeholder="nama@instansi.go.id" required autofocus>
+                    </div>
+                    <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                    <button type="submit" id="forgotBtn" class="btn btn-primary w-full gap-2">
+                        <span id="forgotBtnText">Kirim Link Reset</span>
+                        <span id="forgotBtnLoading" class="loading loading-spinner loading-sm hidden"></span>
+                    </button>
+                </form>
+
+                <div class="pt-4 text-center">
+                    <a href="{{ route('support.login') }}" class="text-sm text-base-content/55 hover:text-primary transition-colors">← Kembali ke login</a>
                 </div>
-                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
-                <button type="submit" id="forgotBtn" class="btn btn-primary w-full">
-                    <span id="forgotBtnText">Kirim Link Reset</span>
-                    <span id="forgotBtnLoading" class="loading loading-spinner loading-sm hidden"></span>
-                </button>
-            </form>
-            <div class="pt-2 text-center">
-                <a href="{{ route('support.login') }}" class="text-sm text-base-content/60 hover:underline">← Kembali ke login</a>
             </div>
         </div>
     </div>
