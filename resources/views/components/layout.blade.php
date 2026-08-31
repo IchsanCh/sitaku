@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    @vite(['resources/css/app.css', 'resources/js/public.js'])
-    <title>@yield('title', 'SITAKU')</title>
-    <meta property="og:title" content="@yield('title', 'SITAKU')">
-    <meta name="description" content="@yield('meta_description', 'SITAKU adalah sistem notifikasi otomatis berbasis web yang membantu mengirimkan pesan WhatsApp ke pemohon dan pegawai secara real-time, tepat waktu, dan efisien.')">
+    @vite(['resources/css/app.css', 'resources/css/exavro.css', 'resources/js/public.js'])
+    <title>@yield('title', 'EXAVRO')</title>
+    <meta property="og:title" content="@yield('title', 'EXAVRO')">
+    <meta name="description" content="@yield('meta_description', 'EXAVRO adalah sistem notifikasi otomatis berbasis web yang membantu mengirimkan pesan WhatsApp ke pemohon dan pegawai secara real-time, tepat waktu, dan efisien.')">
     <meta property="og:description" content="@yield('og_description', 'Otomatisasi notifikasi ke pemohon dan pegawai dalam satu sistem yang cerdas dan mudah diatur.')">
 </head>
 
