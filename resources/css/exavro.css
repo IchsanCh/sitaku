@@ -1,137 +1,18 @@
 /* ==========================================================================
-   EXAVRO — public site design system
+   EXAVRO — marketing pages (home / about / pricing)
    --------------------------------------------------------------------------
-   Loaded alongside app.css on the public layout (components/layout.blade.php)
-   only. Every rule here is either a `.xv-` prefixed class or a browser-
-   surface reset (selection/focus/scrollbar) — nothing overrides DaisyUI's
-   .btn/.card/.badge/.collapse, so about.blade.php and pricing.blade.php
-   keep rendering exactly as before until they get their own pass.
+   Loaded only from components/layout.blade.php. Imports the shared
+   foundation (fonts/tokens/buttons/footer) from exavro-core.css, then adds
+   everything specific to the marketing pages: the horizontal navbar, hero,
+   feature rows, CTA band, FAQ accordion, pricing cards, contact cards.
+   None of this loads on the docs shell (see exavro-docs.css) so a docs
+   visit never pays for rules it doesn't use.
    ========================================================================== */
+@import "./exavro-core.css";
 
-@font-face {
-    font-family: "Bricolage Grotesque";
-    src: url("/fonts/exavro/bricolage-grotesque-500.woff2") format("woff2");
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: "Bricolage Grotesque";
-    src: url("/fonts/exavro/bricolage-grotesque-600.woff2") format("woff2");
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: "Bricolage Grotesque";
-    src: url("/fonts/exavro/bricolage-grotesque-700.woff2") format("woff2");
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: "Hanken Grotesk";
-    src: url("/fonts/exavro/hanken-grotesk-400.woff2") format("woff2");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: "Hanken Grotesk";
-    src: url("/fonts/exavro/hanken-grotesk-500.woff2") format("woff2");
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: "Hanken Grotesk";
-    src: url("/fonts/exavro/hanken-grotesk-600.woff2") format("woff2");
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-
-:root {
-    /* color -- ink (dark surface) + warm paper (light surface) + one
-       confident accent. no teal, no indigo/slate -- those stay owned by
-       the old public palette / dashboard theme respectively. */
-    --xv-ink: #10131a;
-    --xv-ink-soft: #1a1e27;
-    --xv-ink-line: rgba(246, 243, 236, 0.12);
-    --xv-paper: #f6f3ec;
-    --xv-paper-alt: #ece6d8;
-    --xv-line: rgba(16, 19, 26, 0.1);
-    --xv-text: #10131a;
-    --xv-text-soft: #52565f;
-    --xv-on-ink: #f6f3ec;
-    --xv-on-ink-soft: #aeb2bd;
-    --xv-accent: #ff5a2e;
-    --xv-accent-hover: #e6491f;
-    --xv-accent-content: #17110c;
-    --xv-signal: #1fae73;
-
-    --xv-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
-    --xv-body: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
-
-    --xv-r-sm: 8px;
-    --xv-r-md: 16px;
-    --xv-r-lg: 26px;
-
-    --xv-shadow-sm: 0 2px 10px rgba(16, 19, 26, 0.07);
-    --xv-shadow-md: 0 10px 30px rgba(16, 19, 26, 0.1);
-    --xv-shadow-lg: 0 28px 64px rgba(16, 19, 26, 0.18);
-
-    --xv-ease: cubic-bezier(0.16, 1, 0.3, 1);
-    --xv-ease-hover: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* browser surfaces carry the brand too, not just the drawn pixels */
-body {
-    background: var(--xv-paper);
-    color: var(--xv-text);
-    font-family: var(--xv-body);
-}
-::selection {
-    background: var(--xv-accent);
-    color: var(--xv-accent-content);
-}
-:focus-visible {
-    outline: 2px solid var(--xv-accent);
-    outline-offset: 2px;
-    border-radius: 4px;
-}
-* {
-    scrollbar-color: var(--xv-ink) var(--xv-paper-alt);
-    scrollbar-width: thin;
-}
-*::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-*::-webkit-scrollbar-track {
-    background: var(--xv-paper-alt);
-}
-*::-webkit-scrollbar-thumb {
-    background: var(--xv-ink);
-    border-radius: 999px;
-    border: 2px solid var(--xv-paper-alt);
-}
-
-.xv-display {
-    font-family: var(--xv-display);
-    letter-spacing: -0.02em;
-}
-
-/* === navbar === */
+/* === navbar (marketing only -- docs has its own sidebar nav) === */
 .xv-navbar {
     background: var(--xv-ink);
-    color: var(--xv-on-ink);
-}
-.xv-wordmark {
-    font-family: var(--xv-display);
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    font-size: 1.25rem;
     color: var(--xv-on-ink);
 }
 .xv-navlink {
@@ -159,75 +40,12 @@ body {
     color: var(--xv-on-ink);
 }
 
-/* === buttons === */
-.xv-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-family: var(--xv-body);
-    font-weight: 600;
-    border-radius: var(--xv-r-sm);
-    padding: 0.85rem 1.6rem;
-    line-height: 1.1;
-    border: 1px solid transparent;
-    transition:
-        transform 0.18s var(--xv-ease-hover),
-        box-shadow 0.18s var(--xv-ease-hover),
-        background-color 0.18s var(--xv-ease-hover),
-        color 0.18s var(--xv-ease-hover),
-        border-color 0.18s var(--xv-ease-hover);
-}
-.xv-btn-accent {
-    background: var(--xv-accent);
-    color: var(--xv-accent-content);
-    box-shadow: var(--xv-shadow-sm);
-}
-.xv-btn-accent:hover {
-    background: var(--xv-accent-hover);
-    transform: translateY(-2px);
-    box-shadow: var(--xv-shadow-md);
-}
-.xv-btn-outline-onink {
-    border-color: var(--xv-ink-line);
-    color: var(--xv-on-ink);
-    background: transparent;
-}
-.xv-btn-outline-onink:hover {
-    background: var(--xv-on-ink);
-    color: var(--xv-ink);
-}
-.xv-btn-outline-ink {
-    border-color: var(--xv-line);
-    color: var(--xv-text);
-    background: transparent;
-}
-.xv-btn-outline-ink:hover {
-    border-color: var(--xv-text);
-    background: var(--xv-ink);
-    color: var(--xv-on-ink);
-}
-.xv-btn-ink {
-    background: var(--xv-ink);
-    color: var(--xv-on-ink);
-    box-shadow: var(--xv-shadow-sm);
-}
-.xv-btn-ink:hover {
-    background: var(--xv-ink-soft);
-    transform: translateY(-2px);
-    box-shadow: var(--xv-shadow-md);
-}
-
 /* single radial accent glow -- one use per page, not a repeated decoration */
 .xv-radial-glow {
     position: absolute;
     pointer-events: none;
     border-radius: 999px;
-    background: radial-gradient(
-        circle,
-        rgba(255, 90, 46, 0.16) 0%,
-        transparent 70%
-    );
+    background: radial-gradient(circle, rgba(255, 90, 46, 0.16) 0%, transparent 70%);
     filter: blur(50px);
 }
 
@@ -513,24 +331,5 @@ body {
     justify-content: center;
     border-radius: 999px;
     background: var(--xv-ink);
-    color: var(--xv-on-ink);
-}
-
-/* === footer === */
-.xv-footer {
-    background: var(--xv-ink);
-    color: var(--xv-on-ink-soft);
-}
-.xv-footer a {
-    transition: color 0.18s var(--xv-ease-hover);
-}
-.xv-footer a:hover {
-    color: var(--xv-on-ink);
-}
-.xv-footer-heading {
-    font-family: var(--xv-display);
-    font-size: 0.8rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
     color: var(--xv-on-ink);
 }

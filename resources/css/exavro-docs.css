@@ -1,0 +1,356 @@
+/* ==========================================================================
+   EXAVRO — docs shell
+   --------------------------------------------------------------------------
+   Loaded only from user/layout3.blade.php (the 7 docs pages). Imports the
+   shared foundation from exavro-core.css, then adds the docs sidebar shell,
+   content typography, callouts, step list and code/copy-button styling.
+   Deliberately does NOT import exavro.css -- none of the hero/FAQ/pricing
+   rules a docs visit will never use are shipped here.
+   ========================================================================== */
+@import "./exavro-core.css";
+
+:root {
+    --xv-info: var(--xv-accent);
+    --xv-info-bg: #fff1ec;
+    --xv-success: var(--xv-signal);
+    --xv-success-bg: #e8f7f0;
+    --xv-warning: #b45309;
+    --xv-warning-bg: #fdf1e0;
+    --xv-danger: #b3261e;
+    --xv-danger-bg: #fbe9e7;
+}
+
+/* === shell layout === */
+.xv-docs-shell {
+    display: flex;
+    min-height: 100vh;
+}
+.xv-docs-topbar {
+    background: var(--xv-ink);
+    color: var(--xv-on-ink);
+}
+
+/* Sidebar: off-canvas + JS-driven on mobile, static column from lg up. */
+.xv-docs-sidebar {
+    background: var(--xv-ink);
+    color: var(--xv-on-ink);
+}
+.xv-docs-overlay {
+    background: rgba(16, 19, 26, 0.5);
+}
+
+.xv-docs-navlink {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: var(--xv-r-sm);
+    color: var(--xv-on-ink-soft);
+    font-weight: 500;
+    font-size: 0.925rem;
+    border-left: 2px solid transparent;
+    transition:
+        color 0.18s var(--xv-ease-hover),
+        background-color 0.18s var(--xv-ease-hover);
+}
+.xv-docs-navlink:hover {
+    color: var(--xv-on-ink);
+    background: var(--xv-ink-soft);
+}
+.xv-docs-navlink.is-active {
+    color: var(--xv-on-ink);
+    background: var(--xv-ink-soft);
+    border-left-color: var(--xv-accent);
+}
+.xv-docs-navgroup > summary {
+    list-style: none;
+    cursor: pointer;
+}
+.xv-docs-navgroup > summary::-webkit-details-marker {
+    display: none;
+}
+.xv-docs-navgroup-caret {
+    margin-left: auto;
+    transition: transform 0.2s var(--xv-ease-hover);
+}
+.xv-docs-navgroup[open] .xv-docs-navgroup-caret {
+    transform: rotate(90deg);
+}
+.xv-docs-navsub {
+    margin-left: 1.6rem;
+    padding-left: 0.85rem;
+    border-left: 1px solid var(--xv-ink-line);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin-top: 0.25rem;
+}
+
+/* === content === */
+.xv-docs-content {
+    animation: xv-docs-in 0.45s var(--xv-ease-hover) both;
+}
+@keyframes xv-docs-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .xv-docs-content {
+        animation: none;
+    }
+}
+
+.xv-docs-article h2 {
+    font-family: var(--xv-display);
+    font-weight: 700;
+    color: var(--xv-text);
+}
+.xv-docs-article h3 {
+    font-family: var(--xv-display);
+    font-weight: 600;
+    color: var(--xv-text);
+}
+.xv-docs-article p,
+.xv-docs-article li {
+    color: var(--xv-text-soft);
+    line-height: 1.7;
+}
+.xv-docs-article a:not(.xv-btn) {
+    color: var(--xv-text);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--xv-line);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.18s var(--xv-ease-hover);
+}
+.xv-docs-article a:not(.xv-btn):hover {
+    text-decoration-color: var(--xv-accent);
+}
+.xv-docs-article code {
+    font-family: var(--xv-mono);
+    font-size: 0.875em;
+    background: var(--xv-paper-alt);
+    border: 1px solid var(--xv-line);
+    border-radius: 5px;
+    padding: 0.1em 0.4em;
+    color: var(--xv-text);
+}
+.xv-docs-article pre {
+    font-family: var(--xv-mono);
+    font-size: 0.875rem;
+    background: var(--xv-ink);
+    color: var(--xv-on-ink);
+    border-radius: var(--xv-r-md);
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    line-height: 1.6;
+}
+.xv-docs-article pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* === card wrapper (replaces DaisyUI card bg-base-100 shadow-xl) === */
+.xv-docs-card {
+    background: #fff;
+    border: 1px solid var(--xv-line);
+    border-radius: var(--xv-r-lg);
+    box-shadow: var(--xv-shadow-sm);
+}
+
+/* === callouts (replace DaisyUI alert-info/warning/error/success) === */
+.xv-callout {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    border-radius: var(--xv-r-md);
+    padding: 1rem 1.15rem;
+    font-size: 0.925rem;
+    line-height: 1.6;
+}
+.xv-callout svg {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.1rem;
+}
+.xv-callout--info {
+    background: var(--xv-info-bg);
+    color: #7a2b12;
+}
+.xv-callout--info svg {
+    color: var(--xv-info);
+}
+.xv-callout--success {
+    background: var(--xv-success-bg);
+    color: #0f5132;
+}
+.xv-callout--success svg {
+    color: var(--xv-success);
+}
+.xv-callout--warning {
+    background: var(--xv-warning-bg);
+    color: var(--xv-warning);
+}
+.xv-callout--warning svg {
+    color: var(--xv-warning);
+}
+.xv-callout--danger {
+    background: var(--xv-danger-bg);
+    color: var(--xv-danger);
+}
+.xv-callout--danger svg {
+    color: var(--xv-danger);
+}
+
+/* === step list (replaces the collapse-accordion onboarding steps -- all
+   steps stay visible/scannable, no JS needed to read them) === */
+.xv-step-list {
+    display: flex;
+    flex-direction: column;
+}
+.xv-step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: 1rem;
+    padding-block: 1.5rem;
+}
+.xv-step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 1.05rem;
+    top: 2.7rem;
+    bottom: -0.2rem;
+    width: 1px;
+    background: var(--xv-line);
+}
+.xv-step-num {
+    position: relative;
+    z-index: 1;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    background: var(--xv-ink);
+    color: var(--xv-on-ink);
+    font-family: var(--xv-display);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* === small tag pill (replaces DaisyUI badge-success/neutral etc.) === */
+.xv-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+}
+.xv-tag--on {
+    background: var(--xv-success-bg);
+    color: #0f5132;
+}
+.xv-tag--neutral {
+    background: var(--xv-paper-alt);
+    color: var(--xv-text);
+}
+
+/* === copy button === */
+.xv-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--xv-on-ink-soft);
+    background: rgba(246, 243, 236, 0.08);
+    border: 1px solid var(--xv-ink-line);
+    border-radius: 999px;
+    padding: 0.3rem 0.7rem;
+    cursor: pointer;
+    transition:
+        color 0.18s var(--xv-ease-hover),
+        background-color 0.18s var(--xv-ease-hover);
+}
+.xv-copy-btn:hover {
+    color: var(--xv-on-ink);
+    background: rgba(246, 243, 236, 0.16);
+}
+.xv-copy-btn svg {
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
+/* === table === */
+.xv-docs-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.xv-docs-table th {
+    text-align: left;
+    font-family: var(--xv-display);
+    font-weight: 600;
+    color: var(--xv-text);
+    padding: 0.65rem 0.9rem;
+    border-bottom: 1px solid var(--xv-line);
+    white-space: nowrap;
+}
+.xv-docs-table td {
+    padding: 0.65rem 0.9rem;
+    border-bottom: 1px solid var(--xv-line);
+    color: var(--xv-text-soft);
+    vertical-align: top;
+}
+.xv-docs-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* === stat block (replaces DaisyUI .stat) === */
+.xv-stat {
+    border-radius: var(--xv-r-md);
+    background: var(--xv-paper-alt);
+    padding: 1rem 1.1rem;
+}
+.xv-stat-title {
+    font-size: 0.75rem;
+    color: var(--xv-text-soft);
+    margin-bottom: 0.2rem;
+}
+.xv-stat-value {
+    font-family: var(--xv-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--xv-text);
+}
+.xv-stat-desc {
+    font-size: 0.8rem;
+    color: var(--xv-text-soft);
+    margin-top: 0.2rem;
+}
+
+/* === kbd === */
+.xv-kbd {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--xv-mono);
+    font-size: 0.75rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 5px;
+    background: var(--xv-paper-alt);
+    border: 1px solid var(--xv-line);
+    border-bottom-width: 2px;
+    color: var(--xv-text);
+}
