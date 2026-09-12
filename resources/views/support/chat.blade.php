@@ -306,37 +306,37 @@ document.addEventListener('DOMContentLoaded', function () {
         replyForm.querySelector('button[type="submit"]').disabled = true;
     }
 
-    endSessionBtn.addEventListener('click', async function () {
-        if (!confirm('Akhiri sesi live chat ini? Pemohon bakal dibalikin ke menu bot lagi.')) return;
+    endSessionBtn.addEventListener('click', function () {
+        confirmAction('Akhiri sesi live chat ini? Pemohon bakal dibalikin ke menu bot lagi.', async function () {
+            endSessionBtn.disabled = true;
+            try {
+                const res = await fetch(`/support/chat/${liveChatId}/end`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                });
 
-        endSessionBtn.disabled = true;
-        try {
-            const res = await fetch(`/support/chat/${liveChatId}/end`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                },
-            });
+                if (!res.ok) {
+                    const body = await res.json().catch(() => ({}));
+                    showToast('error', body.message || 'Gagal ngakhirin sesi.');
+                    endSessionBtn.disabled = false;
+                    return;
+                }
 
-            if (!res.ok) {
-                const body = await res.json().catch(() => ({}));
-                showToast('error', body.message || 'Gagal ngakhirin sesi.');
+                const body = await res.json();
+                setClosedState();
+
+                if (body.fonnte_sent === false) {
+                    showToast('error', 'Sesi ditutup, tapi notif ke WhatsApp gagal terkirim. Cek token Fonnte instansi.');
+                }
+            } catch (err) {
+                showToast('error', 'Gagal ngakhirin sesi: ' + err.message);
                 endSessionBtn.disabled = false;
-                return;
             }
-
-            const body = await res.json();
-            setClosedState();
-
-            if (body.fonnte_sent === false) {
-                showToast('error', 'Sesi ditutup, tapi notif ke WhatsApp gagal terkirim. Cek token Fonnte instansi.');
-            }
-        } catch (err) {
-            showToast('error', 'Gagal ngakhirin sesi: ' + err.message);
-            endSessionBtn.disabled = false;
-        }
+        });
     });
 
     function scrollToBottom() {

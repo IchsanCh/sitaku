@@ -166,6 +166,8 @@ class WhatsappStateMachineService
             'pesan_custom' => (function () use ($user, $session, $sender, $item, $role) {
                 $pesan = data_get($item->action_config, 'template', data_get($item->action_config, 'pesan', ''));
                 if ($pesan !== '') {
+                    $pegawai = $role === 'pegawai' ? $this->findPegawai($user, $sender) : null;
+                    $pesan = $this->renderCustomTemplate($pesan, $user, $pegawai);
                     $this->reply($user, $sender, $pesan);
                 }
                 // Tetep di level menu yang sama, tampilin ulang biar bisa pilih lagi.
@@ -173,6 +175,20 @@ class WhatsappStateMachineService
             })(),
 
             'cek_status', 'riwayat_tahapan' => $this->startValidationFlow($user, $session, $sender, $item),
+
+            'antrian_pegawai' => (function () use ($user, $session, $sender, $item, $role) {
+                $pegawai = $this->findPegawai($user, $sender);
+                $template = data_get($item->action_config, 'template');
+                $this->reply($user, $sender, $this->buildAntrianPegawaiMessage($user, $pegawai, $template));
+                $this->showMenu($user, $session, $sender, $item->parent_id, $role);
+            })(),
+
+            'info_pegawai' => (function () use ($user, $session, $sender, $item, $role) {
+                $pegawai = $this->findPegawai($user, $sender);
+                $template = data_get($item->action_config, 'template');
+                $this->reply($user, $sender, $this->buildInfoPegawaiMessage($pegawai, $template));
+                $this->showMenu($user, $session, $sender, $item->parent_id, $role);
+            })(),
 
             'live_support' => (function () use ($user, $session, $sender) {
                 $this->liveChat->openRoom($user, $sender);
@@ -368,11 +384,102 @@ class WhatsappStateMachineService
 
     private function detectRole(User $user, string $normalizedSender): string
     {
-        $isPegawai = Pegawai::where('user_id', $user->id)
-            ->get()
-            ->contains(fn ($p) => $this->normalizePhone((string) $p->no_hp) === $normalizedSender);
+        return $this->findPegawai($user, $normalizedSender) ? 'pegawai' : 'pemohon';
+    }
 
-        return $isPegawai ? 'pegawai' : 'pemohon';
+    /**
+     * Cari record Pegawai yang no HP-nya cocok sama nomor pengirim (udah dinormalisasi).
+     * Dipakai buat detectRole() (cuma butuh tau ada/nggaknya) dan juga action_type
+     * yang butuh identitas pegawai beneran (antrian_pegawai, info_pegawai, pesan_custom).
+     */
+    private function findPegawai(User $user, string $normalizedSender): ?Pegawai
+    {
+        return Pegawai::where('user_id', $user->id)
+            ->get()
+            ->first(fn ($p) => $this->normalizePhone((string) $p->no_hp) === $normalizedSender);
+    }
+
+    /**
+     * "Antrian saya": daftar permohonan yang tahapannya lagi di posisi pegawai ini
+     * (tahapan pemohon dicocokin ke posisi pegawai, case-insensitive) DAN statusnya
+     * masih "proses" -- kalau statusnya udah sudah/done/selesai/dll, dianggap
+     * bukan bagian antrian lagi. Diurutin dari yang paling lama ngantri (tgl_pengajuan,
+     * fallback ke created_at kalau kosong).
+     */
+    private function buildAntrianPegawaiMessage(User $user, ?Pegawai $pegawai, ?string $template): string
+    {
+        if (! $pegawai) {
+            return 'Data pegawai kamu gak ketemu di sistem. Hubungi admin instansi buat didaftarin dulu.';
+        }
+
+        $posisi = trim((string) $pegawai->posisi);
+
+        $antrian = Pemohon::where('user_id', $user->id)
+            ->whereRaw('LOWER(tahapan) = ?', [strtolower($posisi)])
+            ->whereRaw('LOWER(status) = ?', ['proses'])
+            ->orderByRaw('COALESCE(tgl_pengajuan, created_at) asc')
+            ->get();
+
+        $jumlah = $antrian->count();
+        $vars = [
+            '{nama_pegawai}' => $pegawai->nama ?? '-',
+            '{posisi_pegawai}' => $pegawai->posisi ?? '-',
+            '{jumlah}' => (string) $jumlah,
+        ];
+
+        $intro = filled($template)
+            ? strtr($template, $vars)
+            : "Antrian di posisi {$vars['{posisi_pegawai}']} ({$jumlah} permohonan):";
+
+        if ($antrian->isEmpty()) {
+            return "{$intro}\n(kosong, gak ada antrian saat ini)";
+        }
+
+        $lines = $antrian->map(fn (Pemohon $p) => "- {$p->no_permohonan} | " . ($p->nama ?? '-'))->implode("\n");
+
+        return "{$intro}\n{$lines}";
+    }
+
+    /**
+     * "Info saya": identitas pegawai yang lagi chat, kedeteksi otomatis dari nomor WA-nya.
+     */
+    private function buildInfoPegawaiMessage(?Pegawai $pegawai, ?string $template): string
+    {
+        if (! $pegawai) {
+            return 'Data pegawai kamu gak ketemu di sistem. Hubungi admin instansi buat didaftarin dulu.';
+        }
+
+        $vars = [
+            '{nama_pegawai}' => $pegawai->nama ?? '-',
+            '{posisi_pegawai}' => $pegawai->posisi ?? '-',
+            '{no_hp_pegawai}' => $pegawai->no_hp ?? '-',
+        ];
+
+        if (filled($template)) {
+            return strtr($template, $vars);
+        }
+
+        return "Nama: {$vars['{nama_pegawai}']}\nPosisi: {$vars['{posisi_pegawai}']}\nNo. HP: {$vars['{no_hp_pegawai}']}";
+    }
+
+    /**
+     * Render template pesan_custom: gabungan variable UMUM (selalu ada, gak butuh
+     * konteks apa-apa) + variable PEGAWAI (cuma keisi kalau yang mencet menu ini
+     * kedeteksi sebagai pegawai terdaftar -- kalau pemohon atau pegawai gak ketemu,
+     * placeholder pegawai diisi '-' daripada dibiarin mentah di pesan).
+     */
+    private function renderCustomTemplate(string $template, User $user, ?Pegawai $pegawai): string
+    {
+        $vars = [
+            '{username}' => $user->name ?? '-',
+            '{tanggal}' => Carbon::now()->translatedFormat('d M Y'),
+            '{jam}' => Carbon::now()->format('H:i'),
+            '{nama_pegawai}' => $pegawai?->nama ?? '-',
+            '{posisi_pegawai}' => $pegawai?->posisi ?? '-',
+            '{no_hp_pegawai}' => $pegawai?->no_hp ?? '-',
+        ];
+
+        return strtr($template, $vars);
     }
 
     /**

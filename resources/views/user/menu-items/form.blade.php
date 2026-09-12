@@ -61,12 +61,13 @@
 
                         <div>
                             <label class="label"><span class="label-text font-medium">Untuk Siapa</span></label>
-                            <select name="audience" class="select select-bordered w-full" required>
+                            <select id="audience_select" class="select select-bordered w-full" required>
                                 <option value="both" {{ old('audience', $menuItem->audience ?? 'both') === 'both' ? 'selected' : '' }}>Pemohon & Pegawai</option>
                                 <option value="pemohon" {{ old('audience', $menuItem->audience ?? '') === 'pemohon' ? 'selected' : '' }}>Pemohon saja</option>
                                 <option value="pegawai" {{ old('audience', $menuItem->audience ?? '') === 'pegawai' ? 'selected' : '' }}>Pegawai saja</option>
                             </select>
-                            <p class="text-xs text-base-content/50 mt-1">Menu ini cuma muncul buat peran yang dipilih pas mereka chat WA.</p>
+                            <input type="hidden" name="audience" id="audience_hidden" value="{{ old('audience', $menuItem->audience ?? 'both') }}">
+                            <p class="text-xs text-base-content/50 mt-1" id="audience_hint">Menu ini cuma muncul buat peran yang dipilih pas mereka chat WA.</p>
                         </div>
 
                         <div>
@@ -99,7 +100,8 @@
                                 maxlength="1500" placeholder="Tulis template pesan kamu di sini...">{{ old('template', $menuItem->action_config['template'] ?? $menuItem->action_config['pesan'] ?? '') }}</textarea>
 
                             <div id="var_hint_pesan_custom" class="hidden text-xs text-base-content/50 mt-2">
-                                Pesan statis, tampil apa adanya -- gak ada data pemohon di titik ini (belum lewat validasi), jadi gak ada variabel yang bisa dipakai.
+                                Belum ada data pemohon di titik ini (belum lewat validasi), tapi bisa pakai variabel umum: <code>{username}</code> <code>{tanggal}</code> <code>{jam}</code>.
+                                Kalau menu ini ditujukan buat pegawai, variabel pegawai juga otomatis kedeteksi dari nomor WA-nya: <code>{nama_pegawai}</code> <code>{posisi_pegawai}</code> <code>{no_hp_pegawai}</code>.
                             </div>
                             <div id="var_hint_status" class="hidden text-xs text-base-content/50 mt-2">
                                 Variabel yang bisa dipakai: <code>{nama}</code> <code>{no_permohonan}</code> <code>{nama_izin}</code> <code>{tahapan}</code> <code>{status}</code> <code>{link_izin}</code> <code>{no_hp}</code>
@@ -110,7 +112,7 @@
                                 <br>Kosongin buat pakai default: <em>"Riwayat notifikasi permohonan {no_permohonan}:"</em>
                             </div>
                             <div id="var_hint_antrian" class="hidden text-xs text-base-content/50 mt-2">
-                                Khusus pegawai -- identitas otomatis kedeteksi dari nomor WA-nya, gak perlu validasi apa-apa. Ini teks PEMBUKA doang (daftar antriannya tetap format baku di bawahnya). Variabel: <code>{nama_pegawai}</code> <code>{posisi_pegawai}</code> <code>{jumlah}</code>
+                                Khusus pegawai -- identitas otomatis kedeteksi dari nomor WA-nya, gak perlu validasi apa-apa. Antrian dihitung dari permohonan yang tahapannya cocok sama posisi pegawai ini DAN statusnya masih "proses" (yang udah selesai/sudah gak dihitung). Ini teks PEMBUKA doang (daftar antriannya tetap format baku di bawahnya). Variabel: <code>{nama_pegawai}</code> <code>{posisi_pegawai}</code> <code>{jumlah}</code>
                             </div>
                             <div id="var_hint_info" class="hidden text-xs text-base-content/50 mt-2">
                                 Khusus pegawai -- identitas otomatis kedeteksi dari nomor WA-nya. Variabel: <code>{nama_pegawai}</code> <code>{posisi_pegawai}</code> <code>{no_hp_pegawai}</code>
@@ -240,6 +242,38 @@
 <div class="toast toast-top toast-end z-50" id="toastContainer"></div>
 
 <script>
+    // Ternyata file ini manggil showToast() di bawah tapi gak pernah define-nya
+    // sendiri (beda dari kebanyakan halaman lain yang masing-masing punya definisi
+    // lokal) -- makanya toast error/success gak pernah muncul. Ditambahin di sini,
+    // pola yang sama kayak di halaman lain.
+    function showToast(type, message) {
+        const toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) return;
+
+        const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+        const icon = type === 'error' ?
+            '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' :
+            '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+
+        const toast = document.createElement('div');
+        toast.className = `alert ${alertClass} shadow-lg mb-4`;
+        toast.innerHTML = `
+            <div class="flex items-center gap-3">
+                ${icon}
+                <span>${message}</span>
+                <button class="btn btn-ghost btn-xs" onclick="this.parentElement.parentElement.remove()">✕</button>
+            </div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 4000);
+    }
+
     const DEFAULT_TEMPLATES = {
         cek_status: 'Status permohonan {no_permohonan}:\nTahapan: {tahapan}\nStatus: {status}',
         riwayat_tahapan: 'Riwayat notifikasi permohonan {no_permohonan}:',
@@ -247,10 +281,41 @@
         info_pegawai: 'Nama: {nama_pegawai}\nPosisi: {posisi_pegawai}\nNo. HP: {no_hp_pegawai}',
     };
 
+    // Action_type yang audience-nya WAJIB nilai tertentu -- gak boleh dipilih bebas.
+    // Sinkron sama MenuItem::ROLE_LOCKED_ACTIONS di backend (yang tetap validasi ulang,
+    // ini cuma layer UI biar gak ngasal milih di awal).
+    const ROLE_LOCKED_ACTIONS = @json($roleLockedActions ?? []);
+
+    const audienceSelect = document.getElementById('audience_select');
+    const audienceHidden = document.getElementById('audience_hidden');
+    const audienceHint = document.getElementById('audience_hint');
+    const audienceLabels = { pemohon: 'Pemohon saja', pegawai: 'Pegawai saja', both: 'Pemohon & Pegawai' };
+
+    audienceSelect.addEventListener('change', function () {
+        audienceHidden.value = audienceSelect.value;
+    });
+
+    function applyAudienceLock(type) {
+        const lockedTo = ROLE_LOCKED_ACTIONS[type];
+
+        if (lockedTo) {
+            audienceSelect.value = lockedTo;
+            audienceHidden.value = lockedTo;
+            audienceSelect.disabled = true;
+            audienceHint.textContent = `Aksi ini khusus buat "${audienceLabels[lockedTo]}" -- audience dikunci otomatis, gak bisa diganti.`;
+        } else {
+            audienceSelect.disabled = false;
+            audienceHidden.value = audienceSelect.value;
+            audienceHint.textContent = 'Menu ini cuma muncul buat peran yang dipilih pas mereka chat WA.';
+        }
+    }
+
     function toggleActionFields() {
         const type = document.getElementById('action_type').value;
         const needsTemplate = ['cek_status', 'riwayat_tahapan', 'pesan_custom', 'antrian_pegawai', 'info_pegawai'].includes(type);
         const templateInput = document.getElementById('template_input');
+
+        applyAudienceLock(type);
 
         document.getElementById('template_field').classList.toggle('hidden', !needsTemplate);
         document.getElementById('submenu_hint').classList.toggle('hidden', type !== 'submenu');
@@ -303,6 +368,9 @@
         text = text.replace(/\{posisi_pegawai\}/g, 'Verifikasi');
         text = text.replace(/\{no_hp_pegawai\}/g, '081234567890');
         text = text.replace(/\{jumlah\}/g, '3');
+        text = text.replace(/\{username\}/g, '{{ addslashes($user->name ?? "Instansi Contoh") }}');
+        text = text.replace(/\{tanggal\}/g, new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }));
+        text = text.replace(/\{jam\}/g, new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }));
 
         if (type === 'riwayat_tahapan' && !templateInput.value.trim().includes('\n')) {
             text += '\n- 10 Agu 2026 10:00: Verifikasi Dokumen\n- 11 Agu 2026 14:20: Cetak Izin';

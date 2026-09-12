@@ -65,5 +65,7 @@
         }
     </script>
     @yield('scripts')
+
+    @include('partials.confirm-modal')
 </body>
 </html>

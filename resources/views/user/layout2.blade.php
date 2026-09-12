@@ -117,6 +117,8 @@
             <button>close</button>
         </form>
     </dialog>
+
+    @include('partials.confirm-modal')
 </body>
 
 </html>

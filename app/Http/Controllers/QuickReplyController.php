@@ -91,6 +91,9 @@ class QuickReplyController extends Controller
         ]);
 
         $data['trigger'] = strtolower($data['trigger']);
+        // Textarea polos -- apa yang diketik ya itu yang kesimpen apa adanya,
+        // gak ada normalisasi spasi/enter lagi (beda dari waktu masih WYSIWYG).
+        $data['content'] = trim($data['content']);
 
         return $data;
     }

@@ -23,10 +23,6 @@
     </div>
 
     <div class="max-w-4xl mx-auto px-6 mt-6">
-        @if (session('success'))
-            <div class="alert alert-success mb-6"><span>{{ session('success') }}</span></div>
-        @endif
-
         <div class="flex justify-end mb-4">
             <a href="{{ route('admin-support.create') }}" class="btn btn-primary btn-sm">+ Tambah Admin Support</a>
         </div>
@@ -63,8 +59,8 @@
                                     </td>
                                     <td class="text-right space-x-1">
                                         <a href="{{ route('admin-support.edit', $admin) }}" class="btn btn-xs btn-outline">Edit</a>
-                                        <form action="{{ route('admin-support.destroy', $admin) }}" method="POST" class="inline"
-                                            onsubmit="return confirm('Yakin hapus akun admin support ini? Dia gak bisa login lagi.');">
+                                        <form action="{{ route('admin-support.destroy', $admin) }}" method="POST" class="inline js-confirm-submit"
+                                            data-confirm-message="Yakin hapus akun admin support ini? Dia gak bisa login lagi.">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-xs btn-error btn-outline">Hapus</button>
@@ -79,4 +75,45 @@
         @endif
     </div>
 </div>
+
+<div class="toast toast-top toast-end z-50" id="toastContainer"></div>
+
+<script>
+    function showToast(type, message) {
+        const toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) return;
+
+        const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+        const icon = type === 'error' ?
+            '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' :
+            '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+
+        const toast = document.createElement('div');
+        toast.className = `alert ${alertClass} shadow-lg mb-4`;
+        toast.innerHTML = `
+            <div class="flex items-center gap-3">
+                ${icon}
+                <span>${message}</span>
+                <button class="btn btn-ghost btn-xs" onclick="this.parentElement.parentElement.remove()">✕</button>
+            </div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        @if (session('success'))
+            showToast('success', "{{ session('success') }}");
+        @endif
+        @if (session('error'))
+            showToast('error', "{{ session('error') }}");
+        @endif
+    });
+</script>
 @endsection

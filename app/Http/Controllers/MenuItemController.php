@@ -6,6 +6,7 @@ use App\Models\MenuItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class MenuItemController extends Controller
 {
@@ -68,6 +69,8 @@ class MenuItemController extends Controller
             'menuItem' => new MenuItem(['parent_id' => $parentId]),
             'parent' => $parent,
             'allowedActions' => $allowed,
+            'roleLockedActions' => MenuItem::ROLE_LOCKED_ACTIONS,
+            'user' => $user,
         ]);
     }
 
@@ -140,6 +143,8 @@ class MenuItemController extends Controller
             'menuItem' => $menuItem,
             'parent' => $parent,
             'allowedActions' => $user->allowedMenuActionTypes(),
+            'roleLockedActions' => MenuItem::ROLE_LOCKED_ACTIONS,
+            'user' => $user,
         ]);
     }
 
@@ -210,9 +215,21 @@ class MenuItemController extends Controller
             // fallback default kayak cek_status/riwayat_tahapan.
             $request->validate(['template' => 'required|string|max:1500']);
             $actionConfig = ['template' => $data['template']];
-        } elseif (in_array($data['action_type'], ['cek_status', 'riwayat_tahapan'], true) && filled($data['template'] ?? null)) {
+        } elseif (in_array($data['action_type'], ['cek_status', 'riwayat_tahapan', 'antrian_pegawai', 'info_pegawai'], true) && filled($data['template'] ?? null)) {
             // Opsional -- kosong = pakai teks default bawaan sistem.
             $actionConfig = ['template' => $data['template']];
+        }
+
+        // Klasifikasi audience per action_type -- action yang emang khusus buat
+        // satu role (misal antrian_pegawai/info_pegawai = pegawai doang) gak boleh
+        // disimpen dengan audience lain, WALAUPUN request-nya somehow lolos dari
+        // lock di form (dev tools, request manual, dll). Ini layer ke-2 setelah
+        // auto-lock di JS form -- backend TETAP nolak, bukan cuma diem-diem benerin.
+        $requiredAudience = MenuItem::ROLE_LOCKED_ACTIONS[$data['action_type']] ?? null;
+        if ($requiredAudience !== null && $data['audience'] !== $requiredAudience) {
+            throw ValidationException::withMessages([
+                'audience' => "Jenis aksi ini cuma boleh buat audience \"{$requiredAudience}\".",
+            ]);
         }
 
         return [

@@ -16,16 +16,6 @@
                     {{ $adminSupport->exists ? 'Edit Admin Support' : 'Tambah Admin Support' }}
                 </h1>
 
-                @if ($errors->any())
-                    <div class="alert alert-error mb-6">
-                        <ul class="list-disc list-inside text-sm">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
                 <form method="POST"
                     action="{{ $adminSupport->exists ? route('admin-support.update', $adminSupport) : route('admin-support.store') }}"
                     class="space-y-5">
@@ -71,4 +61,50 @@
         </div>
     </div>
 </div>
+
+<div class="toast toast-top toast-end z-50" id="toastContainer"></div>
+
+<script>
+    function showToast(type, message) {
+        const toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) return;
+
+        const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+        const icon = type === 'error' ?
+            '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' :
+            '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+
+        const toast = document.createElement('div');
+        toast.className = `alert ${alertClass} shadow-lg mb-4`;
+        toast.innerHTML = `
+            <div class="flex items-center gap-3">
+                ${icon}
+                <span>${message}</span>
+                <button class="btn btn-ghost btn-xs" onclick="this.parentElement.parentElement.remove()">✕</button>
+            </div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        @if (session('success'))
+            showToast('success', "{{ session('success') }}");
+        @endif
+        @if (session('error'))
+            showToast('error', "{{ session('error') }}");
+        @endif
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                showToast('error', "{{ $error }}");
+            @endforeach
+        @endif
+    });
+</script>
 @endsection

@@ -51,6 +51,15 @@ class MenuItem extends Model
         'live_support' => 'menu_action_live_support',
     ];
 
+    // Action type yang audience-nya WAJIB nilai tertentu (gak boleh dipilih bebas
+    // di CRUD) -- key = action_type, value = audience yang dipaksain. Dipakai buat
+    // validasi backend (MenuItemController) sekaligus auto-lock dropdown di form.
+    // Extensible: kalau nanti ada action_type khusus pemohon, tinggal tambah di sini.
+    public const ROLE_LOCKED_ACTIONS = [
+        'antrian_pegawai' => 'pegawai',
+        'info_pegawai' => 'pegawai',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
