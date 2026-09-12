@@ -51,6 +51,27 @@ class FonnteWebhookController extends Controller
         // langsung ke room chat. Exit keyword tetap dicek biar pemohon bisa
         // keluar dari live chat kapan aja, pakai kata kunci yang sama kayak bot.
         if ($session && $session->current_state === 'live_support') {
+            // Cutoff langsung kalau instansinya udah gak eligible lagi (downgrade
+            // paket / subscription expired) -- dianggap reset session, BUKAN
+            // exit normal, makanya pesannya beda biar jelas ini otomatis dari
+            // sistem, bukan inisiatif pemohon/admin.
+            if (! $stateMachine->isLiveSupportEligible($user)) {
+                $session->resetToIdle();
+
+                $liveChat = LiveChat::where('user_id', $user->id)
+                    ->where('nomor_wa', $normalizedSender)
+                    ->where('status', 'open')
+                    ->first();
+
+                if ($liveChat) {
+                    $liveChatService->closeRoom($liveChat);
+                }
+
+                $fonnte->send($user, $normalizedSender, 'Sesi live chat diakhiri otomatis karena layanan ini gak lagi tersedia buat instansi ini. Ketik "menu" buat lihat pilihan yang ada.');
+
+                return response()->json(['status' => 'ok'], 200);
+            }
+
             if ($stateMachine->isExitCommand((string) $message)) {
                 $session->resetToIdle();
 

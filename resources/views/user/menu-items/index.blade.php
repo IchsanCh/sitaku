@@ -116,6 +116,11 @@
                                                 default => $item->action_type,
                                             } }}
                                         </span>
+                                        @if (in_array($item->action_type, $lockedActionTypes))
+                                            <span class="badge badge-error badge-sm gap-1" title="Paket sekarang gak nyakup fitur ini -- item ini gak ditampilin di WA sampai upgrade lagi">
+                                                🔒 Butuh paket lebih tinggi
+                                            </span>
+                                        @endif
                                     </td>
                                     <td>
                                         @if ($item->is_active)

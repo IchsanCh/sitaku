@@ -11,7 +11,7 @@ use App\Models\WhatsappSession;
 use Illuminate\Support\Carbon;
 
 class WhatsappStateMachineService
-{
+    {
     private const EXIT_KEYWORDS = ['exit', 'keluar', 'selesai', 'batal'];
     private const BACK_KEYWORDS = ['back', 'kembali', 'balik'];
     private const ENTRY_KEYWORDS = ['menu', 'hai', 'halo', 'hi', 'start'];
@@ -30,6 +30,28 @@ class WhatsappStateMachineService
     public function isExitCommand(string $message): bool
     {
         return in_array(strtolower(trim($message)), self::EXIT_KEYWORDS, true);
+    }
+
+    /**
+     * Dicek LIVE tiap kali dipanggil (bukan disimpen sebagai flag) -- biar
+     * begitu instansi upgrade/downgrade/expired, hasilnya otomatis ikut
+     * berubah tanpa perlu sinkronin apa-apa. Base actions selalu true.
+     */
+    private function isActionStillAllowed(User $user, MenuItem $item): bool
+    {
+        $requiredFeature = MenuItem::PREMIUM_ACTIONS[$item->action_type] ?? null;
+
+        return $requiredFeature === null || $user->hasFeature($requiredFeature);
+    }
+
+    /**
+     * Dipakai FonnteWebhookController buat cek ulang eligibility live_support
+     * SEBELUM neruskan pesan masuk ke LiveChatService -- baik gara-gara
+     * downgrade paket maupun subscription expired.
+     */
+    public function isLiveSupportEligible(User $user): bool
+    {
+        return $user->hasActiveSubscription() && $user->hasFeature('menu_action_live_support');
     }
 
     public function handle(User $user, string $rawSender, string $message): void
@@ -122,6 +144,15 @@ class WhatsappStateMachineService
 
     private function executeAction(User $user, WhatsappSession $session, string $sender, MenuItem $item, string $role): void
     {
+        // Jaga-jaga -- harusnya udah ke-filter duluan di showMenu(), tapi kalau
+        // trigger-nya sempet keketik user pas downgrade/expired lagi kejadian
+        // tepat di tengah-tengah, tetep ke-block di sini.
+        if (! $this->isActionStillAllowed($user, $item)) {
+            $this->reply($user, $sender, 'Menu ini udah gak tersedia buat instansi ini. Ketik "menu" buat lihat pilihan yang ada.');
+            $session->resetToIdle();
+            return;
+        }
+
         match ($item->action_type) {
             'exit' => (function () use ($session, $user, $sender) {
                 $session->resetToIdle();
@@ -303,7 +334,9 @@ class WhatsappStateMachineService
             ->where('is_active', true)
             ->whereIn('audience', [$role, 'both'])
             ->orderBy('sort_order')
-            ->get();
+            ->get()
+            ->filter(fn (MenuItem $item) => $this->isActionStillAllowed($user, $item))
+            ->values();
 
         if ($items->isEmpty()) {
             $session->resetToIdle();

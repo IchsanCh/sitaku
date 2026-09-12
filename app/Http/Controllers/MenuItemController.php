@@ -32,10 +32,13 @@ class MenuItemController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        $allowedActions = $user->allowedMenuActionTypes();
+
         return view('user.menu-items.index', [
             'items' => $items,
             'parent' => $parent,
-            'allowedActions' => $user->allowedMenuActionTypes(),
+            'allowedActions' => $allowedActions,
+            'lockedActionTypes' => array_diff(array_keys(\App\Models\MenuItem::PREMIUM_ACTIONS), $allowedActions),
             'canManageStructure' => $user->hasFeature('state_machine'),
             'quota' => $this->quotaInfo($user, $parentId ? (int) $parentId : null),
         ]);
