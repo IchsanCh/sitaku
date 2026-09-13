@@ -33,6 +33,27 @@ services:
         restart: unless-stopped
         mem_limit: 1g
 
+    scheduler:
+        image: exavro-app:latest
+        container_name: exavro-scheduler
+        working_dir: /var/www/html
+        volumes:
+            - ./:/var/www/html
+        environment:
+            - CONTAINER_ROLE=scheduler
+        command:
+            [
+                "sh",
+                "-c",
+                "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done",
+            ]
+        depends_on:
+            - exavro
+        networks:
+            - nginx-proxy
+        restart: unless-stopped
+        mem_limit: 512m
+
     reverb:
         image: exavro-app:latest
         container_name: exavro-reverb
