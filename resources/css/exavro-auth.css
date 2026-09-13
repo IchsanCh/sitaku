@@ -1,0 +1,487 @@
+/* ==========================================================================
+   EXAVRO — auth pages (login / signup / otp / forgot-password / reset-password)
+   --------------------------------------------------------------------------
+   Loaded only from user/layout.blade.php. Imports the shared foundation
+   (fonts/tokens/buttons) from exavro-core.css, then adds only what these five
+   task-focused forms need. This is "Operate" territory, not marketing: one
+   quiet accent, restrained motion, no hero/editorial flourishes -- the form
+   is the whole job.
+   ========================================================================== */
+@import "./exavro-core.css";
+
+/* === tiny utility set ===================================================
+   exavro-core.css has no Tailwind underneath it (unlike app.css, which the
+   dashboard/marketing pages layer Tailwind under their own component
+   classes). Pulling in all of Tailwind here just for a handful of spacing/
+   flex helpers would be the opposite of "ringan", so this is a small,
+   hand-picked set covering exactly what these five pages use -- nothing
+   speculative. */
+.hidden {
+    display: none !important;
+}
+.flex {
+    display: flex;
+}
+.flex-1 {
+    flex: 1 1 0%;
+}
+.items-center {
+    align-items: center;
+}
+.justify-center {
+    justify-content: center;
+}
+.justify-between {
+    justify-content: space-between;
+}
+.gap-2 {
+    gap: 0.5rem;
+}
+.gap-3 {
+    gap: 0.75rem;
+}
+.text-center {
+    text-align: center;
+}
+.font-semibold {
+    font-weight: 600;
+}
+.ml-2 {
+    margin-left: 0.5rem;
+}
+.mt-0\.5 {
+    margin-top: 0.125rem;
+}
+.mt-1 {
+    margin-top: 0.25rem;
+}
+.mt-2 {
+    margin-top: 0.5rem;
+}
+.mt-3 {
+    margin-top: 0.75rem;
+}
+.mt-5 {
+    margin-top: 1.25rem;
+}
+.mt-6 {
+    margin-top: 1.5rem;
+}
+.mb-3 {
+    margin-bottom: 0.75rem;
+}
+.mb-5 {
+    margin-bottom: 1.25rem;
+}
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+.space-y-5 > * + * {
+    margin-top: 1.25rem;
+}
+.space-y-1\.5 > * + * {
+    margin-top: 0.375rem;
+}
+
+.xv-auth-shell {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.25rem;
+    background: var(--xv-paper);
+}
+
+.xv-auth-wrap {
+    width: 100%;
+    max-width: 25rem;
+}
+
+.xv-auth-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 1.75rem;
+}
+.xv-auth-brand img {
+    height: 1.6rem;
+    width: auto;
+}
+.xv-auth-brand .xv-wordmark {
+    color: var(--xv-text);
+    font-size: 1.05rem;
+}
+
+.xv-auth-card {
+    background: #fff;
+    border: 1px solid var(--xv-line);
+    border-radius: var(--xv-r-lg);
+    box-shadow: var(--xv-shadow-md);
+    padding: 2.25rem;
+}
+@media (max-width: 420px) {
+    .xv-auth-card {
+        padding: 1.75rem 1.4rem;
+    }
+}
+
+.xv-auth-title {
+    font-family: var(--xv-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--xv-text);
+}
+.xv-auth-subtitle {
+    color: var(--xv-text-soft);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* === form controls =====================================================
+   One shared visual language for every input across the five pages --
+   same border, same radius, same focus treatment. */
+.xv-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+.xv-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--xv-text);
+}
+.xv-input-wrap {
+    position: relative;
+}
+.xv-input {
+    width: 100%;
+    font-family: var(--xv-body);
+    font-size: 0.95rem;
+    color: var(--xv-text);
+    background: #fff;
+    border: 1px solid var(--xv-line);
+    border-radius: var(--xv-r-sm);
+    padding: 0.75rem 0.9rem;
+    transition:
+        border-color 0.15s var(--xv-ease-hover),
+        box-shadow 0.15s var(--xv-ease-hover);
+}
+.xv-input::placeholder {
+    color: color-mix(in oklch, var(--xv-text-soft) 70%, transparent);
+}
+.xv-input:focus {
+    outline: none;
+    border-color: var(--xv-accent);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--xv-accent) 18%, transparent);
+}
+.xv-input.has-icon {
+    padding-right: 2.6rem;
+}
+.xv-input-icon-btn {
+    position: absolute;
+    inset: 0 0 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 0 0.85rem;
+    color: var(--xv-text-soft);
+    background: none;
+    border: 0;
+    cursor: pointer;
+}
+.xv-input-icon-btn:hover {
+    color: var(--xv-text);
+}
+.xv-input-static-icon {
+    position: absolute;
+    inset: 0 0 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 0 0.85rem;
+    color: color-mix(in oklch, var(--xv-text-soft) 70%, transparent);
+    pointer-events: none;
+}
+.xv-field-error {
+    font-size: 0.8rem;
+    color: #b3261e;
+}
+.xv-input.is-invalid {
+    border-color: #b3261e;
+}
+.xv-input.is-valid {
+    border-color: var(--xv-signal);
+}
+
+/* === primary submit button ============================================= */
+.xv-btn-block {
+    width: 100%;
+    height: 3rem;
+    font-size: 0.95rem;
+}
+.xv-btn[disabled],
+.xv-btn.is-loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+.xv-spinner {
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 999px;
+    border: 2px solid
+        color-mix(in oklch, var(--xv-accent-content) 35%, transparent);
+    border-top-color: var(--xv-accent-content);
+    animation: xv-spin 0.7s linear infinite;
+}
+@keyframes xv-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .xv-spinner {
+        animation-duration: 1.4s;
+    }
+}
+
+/* === divider / secondary links ========================================= */
+.xv-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: color-mix(in oklch, var(--xv-text-soft) 70%, transparent);
+    font-size: 0.8rem;
+    margin: 1.5rem 0;
+}
+.xv-divider::before,
+.xv-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--xv-line);
+}
+.xv-auth-footnote {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--xv-text-soft);
+}
+.xv-auth-footnote a {
+    color: var(--xv-accent);
+    font-weight: 600;
+}
+.xv-auth-footnote a:hover {
+    color: var(--xv-accent-hover);
+}
+
+/* === password strength (shared by signup + reset-password) ============= */
+.xv-strength-track {
+    display: flex;
+    gap: 4px;
+    height: 4px;
+}
+.xv-strength-seg {
+    flex: 1;
+    border-radius: 999px;
+    background: var(--xv-paper-alt);
+    transition: background-color 0.15s var(--xv-ease-hover);
+}
+.xv-strength-seg.is-filled[data-level="weak"] {
+    background: #b3261e;
+}
+.xv-strength-seg.is-filled[data-level="fair"] {
+    background: #b8860b;
+}
+.xv-strength-seg.is-filled[data-level="good"] {
+    background: #1f7ae0;
+}
+.xv-strength-seg.is-filled[data-level="strong"] {
+    background: var(--xv-signal);
+}
+.xv-strength-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.xv-req-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+}
+.xv-req-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--xv-text-soft);
+    transition: color 0.15s var(--xv-ease-hover);
+}
+.xv-req-dot {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--xv-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        background-color 0.15s var(--xv-ease-hover),
+        border-color 0.15s var(--xv-ease-hover);
+}
+.xv-req-dot svg {
+    width: 0.6rem;
+    height: 0.6rem;
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+.xv-req-item.is-met {
+    color: var(--xv-text);
+}
+.xv-req-item.is-met .xv-req-dot {
+    background: var(--xv-signal);
+    border-color: var(--xv-signal);
+}
+.xv-req-item.is-met .xv-req-dot svg {
+    opacity: 1;
+    color: #fff;
+}
+
+.xv-match-note {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.xv-match-note.is-match {
+    color: var(--xv-signal);
+}
+.xv-match-note.is-mismatch {
+    color: #b3261e;
+}
+
+/* === OTP digit input ==================================================== */
+.xv-otp-input {
+    width: 100%;
+    text-align: center;
+    font-family: var(--xv-mono);
+    font-size: 1.6rem;
+    letter-spacing: 0.5em;
+    padding: 0.75rem 0 0.75rem 0.5em; /* offsets the letter-spacing so digits look centered */
+}
+
+.xv-otp-timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--xv-text-soft);
+}
+.xv-otp-timer strong {
+    color: var(--xv-text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* === help / info callout ================================================ */
+.xv-info-box {
+    background: var(--xv-paper);
+    border: 1px solid var(--xv-line);
+    border-radius: var(--xv-r-md);
+    padding: 1rem 1.1rem;
+    font-size: 0.82rem;
+    color: var(--xv-text-soft);
+}
+.xv-info-box strong {
+    color: var(--xv-text);
+}
+.xv-info-box ul {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.3rem;
+}
+
+/* === status banner (verified email, generic success/error inline) ====== */
+.xv-status-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--xv-signal);
+}
+
+/* === toast (bottom-right stack, replaces per-page duplicated markup) === */
+#xv-toast-region {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: min(22rem, calc(100vw - 2.5rem));
+}
+.xv-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    background: var(--xv-ink);
+    color: var(--xv-on-ink);
+    border-radius: var(--xv-r-sm);
+    padding: 0.85rem 0.95rem;
+    box-shadow: var(--xv-shadow-lg);
+    font-size: 0.85rem;
+    animation: xv-toast-in 0.2s var(--xv-ease);
+}
+.xv-toast.is-leaving {
+    animation: xv-toast-out 0.18s var(--xv-ease-hover) forwards;
+}
+@keyframes xv-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+}
+@keyframes xv-toast-out {
+    to {
+        opacity: 0;
+        transform: translateX(12px);
+    }
+}
+.xv-toast-icon {
+    flex-shrink: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.05rem;
+}
+.xv-toast[data-type="error"] .xv-toast-icon {
+    color: #ff8a75;
+}
+.xv-toast[data-type="success"] .xv-toast-icon {
+    color: var(--xv-signal);
+}
+.xv-toast[data-type="info"] .xv-toast-icon {
+    color: #7fb8ff;
+}
+.xv-toast-title {
+    font-weight: 700;
+    margin-bottom: 0.1rem;
+}
+.xv-toast-close {
+    flex-shrink: 0;
+    background: none;
+    border: 0;
+    color: var(--xv-on-ink-soft);
+    cursor: pointer;
+    padding: 0.15rem;
+}
+.xv-toast-close:hover {
+    color: var(--xv-on-ink);
+}

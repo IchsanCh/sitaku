@@ -8,6 +8,7 @@ export default defineConfig({
             input: [
                 "resources/css/app.css",
                 "resources/css/exavro.css",
+                "resources/css/exavro-auth.css",
                 "resources/css/exavro-docs.css",
                 "resources/js/app.js",
                 "resources/js/public.js",

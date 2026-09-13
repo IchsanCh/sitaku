@@ -4,181 +4,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi Email</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f7fa;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px 40px;
-            text-align: center;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 300;
-        }
-
-        .content {
-            padding: 40px;
-            text-align: center;
-        }
-
-        .greeting {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .message {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
-        }
-
-        .otp-container {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 10px;
-            padding: 25px;
-            margin: 30px 0;
-            display: inline-block;
-        }
-
-        .otp-code {
-            font-size: 36px;
-            font-weight: bold;
-            color: white;
-            letter-spacing: 8px;
-            margin: 0;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .validity {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 20px 0;
-            color: #856404;
-        }
-
-        .validity-icon {
-            font-size: 18px;
-            margin-right: 8px;
-        }
-
-        .security-note {
-            background-color: #f8f9fa;
-            border-left: 4px solid #007bff;
-            padding: 15px;
-            margin: 20px 0;
-            color: #495057;
-            font-size: 14px;
-            text-align: left;
-        }
-
-        .footer {
-            background-color: #f8f9fa;
-            padding: 20px 40px;
-            text-align: center;
-            color: #6c757d;
-            font-size: 12px;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .logo {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                margin: 20px;
-                border-radius: 8px;
-            }
-
-            .content {
-                padding: 30px 20px;
-            }
-
-            .header {
-                padding: 25px 20px;
-            }
-
-            .otp-code {
-                font-size: 28px;
-                letter-spacing: 4px;
-            }
-        }
-    </style>
+    <title>Verifikasi Email - Exavro</title>
 </head>
 
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">
-                🔐
-            </div>
-            <h1>Verifikasi Email</h1>
-        </div>
+<body style="margin:0; padding:0; background-color:#f6f3ec; font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f6f3ec; padding:40px 16px;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="100%" style="max-width:480px; background-color:#ffffff; border:1px solid rgba(16,19,26,0.1); border-radius:12px; overflow:hidden;" cellpadding="0" cellspacing="0">
+                    <!-- Brand bar -->
+                    <tr>
+                        <td style="background-color:#10131a; padding:22px 32px;">
+                            <span style="color:#f6f3ec; font-size:15px; font-weight:700; letter-spacing:0.08em;">EXAVRO</span>
+                        </td>
+                    </tr>
 
-        <div class="content">
-            <div class="greeting">
-                Halo!
-            </div>
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding:36px 32px 8px;">
+                            <h1 style="margin:0 0 12px; font-size:20px; font-weight:700; color:#10131a;">Verifikasi alamat email Anda</h1>
+                            <p style="margin:0 0 24px; font-size:14px; line-height:1.6; color:#52565f;">
+                                Gunakan kode di bawah ini untuk menyelesaikan pendaftaran akun Exavro Anda.
+                            </p>
+                        </td>
+                    </tr>
 
-            <p class="message">
-                Kami telah menerima permintaan untuk memverifikasi alamat email Anda.
-                Gunakan kode OTP di bawah ini untuk melanjutkan proses verifikasi.
-            </p>
+                    <!-- OTP code -->
+                    <tr>
+                        <td style="padding:0 32px 24px;" align="center">
+                            <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%; background-color:#f6f3ec; border:1px solid rgba(16,19,26,0.1); border-radius:10px;">
+                                <tr>
+                                    <td align="center" style="padding:22px 12px;">
+                                        <span style="font-family:'SF Mono','Courier New',monospace; font-size:32px; font-weight:700; letter-spacing:0.5em; color:#ff5a2e;">{{ $otp }}</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-            <div class="otp-container">
-                <div class="otp-code">{{ $otp }}</div>
-            </div>
+                    <tr>
+                        <td style="padding:0 32px 8px;">
+                            <p style="margin:0 0 20px; font-size:13px; color:#52565f;">
+                                <strong style="color:#10131a;">Kode ini berlaku 10 menit</strong> sejak email ini dikirim.
+                            </p>
+                        </td>
+                    </tr>
 
-            <div class="validity">
-                <span class="validity-icon">⏰</span>
-                <strong>Kode ini berlaku selama 10 menit</strong> dari waktu pengiriman email ini.
-            </div>
+                    <!-- Security note -->
+                    <tr>
+                        <td style="padding:0 32px 32px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f6f3ec; border-radius:8px;">
+                                <tr>
+                                    <td style="padding:16px 18px; font-size:12.5px; line-height:1.7; color:#52565f;">
+                                        <strong style="color:#10131a; display:block; margin-bottom:4px;">Catatan keamanan</strong>
+                                        Jangan bagikan kode ini kepada siapa pun. Exavro tidak akan pernah meminta kode OTP lewat telepon atau email. Kalau Anda tidak meminta verifikasi ini, abaikan saja email ini.
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-            <div class="security-note">
-                <strong>🛡️ Catatan Keamanan:</strong><br>
-                • Jangan bagikan kode ini kepada siapa pun<br>
-                • Kami tidak akan pernah meminta kode OTP melalui telepon atau email<br>
-                • Jika Anda tidak meminta verifikasi ini, abaikan email ini
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>Email ini dikirim secara otomatis. Mohon jangan membalas email ini.</p>
-            <p>&copy; 2025 Sitaku. All Right Reserved</p>
-        </div>
-    </div>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding:18px 32px; border-top:1px solid rgba(16,19,26,0.1); font-size:11.5px; color:#8a8d94;">
+                            Email ini dikirim otomatis, mohon jangan dibalas.<br>
+                            &copy; {{ date('Y') }} Exavro. Seluruh hak cipta dilindungi.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 
 </html>

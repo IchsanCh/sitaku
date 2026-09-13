@@ -4,239 +4,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f7fa;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            color: white;
-            padding: 30px 40px;
-            text-align: center;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 300;
-        }
-
-        .content {
-            padding: 40px;
-            text-align: center;
-        }
-
-        .greeting {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .message {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
-            text-align: left;
-        }
-
-        .reset-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 16px 32px;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 16px;
-            margin: 20px 0;
-            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
-            transition: all 0.3s ease;
-            letter-spacing: 0.5px;
-        }
-
-        .reset-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
-        }
-
-        .alternative-link {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 25px 0;
-            word-break: break-all;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            color: #495057;
-        }
-
-        .expiry-warning {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 20px 0;
-            color: #856404;
-        }
-
-        .warning-icon {
-            font-size: 18px;
-            margin-right: 8px;
-        }
-
-        .security-note {
-            background-color: #f8f9fa;
-            border-left: 4px solid #dc3545;
-            padding: 15px;
-            margin: 20px 0;
-            color: #495057;
-            font-size: 14px;
-            text-align: left;
-        }
-
-        .footer {
-            background-color: #f8f9fa;
-            padding: 20px 40px;
-            text-align: center;
-            color: #6c757d;
-            font-size: 12px;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .logo {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .steps {
-            text-align: left;
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-
-        .steps h3 {
-            color: #495057;
-            margin-top: 0;
-            font-size: 16px;
-        }
-
-        .steps ol {
-            color: #6c757d;
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        .steps li {
-            margin-bottom: 8px;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                margin: 20px;
-                border-radius: 8px;
-            }
-
-            .content {
-                padding: 30px 20px;
-            }
-
-            .header {
-                padding: 25px 20px;
-            }
-
-            .reset-button {
-                padding: 14px 28px;
-                font-size: 15px;
-            }
-        }
-    </style>
+    <title>Reset Password - Exavro</title>
 </head>
 
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">
-                🔑
-            </div>
-            <h1>Reset Password</h1>
-        </div>
+<body style="margin:0; padding:0; background-color:#f6f3ec; font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f6f3ec; padding:40px 16px;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="100%" style="max-width:480px; background-color:#ffffff; border:1px solid rgba(16,19,26,0.1); border-radius:12px; overflow:hidden;" cellpadding="0" cellspacing="0">
+                    <!-- Brand bar -->
+                    <tr>
+                        <td style="background-color:#10131a; padding:22px 32px;">
+                            <span style="color:#f6f3ec; font-size:15px; font-weight:700; letter-spacing:0.08em;">EXAVRO</span>
+                        </td>
+                    </tr>
 
-        <div class="content">
-            <div class="greeting">
-                Halo!
-            </div>
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding:36px 32px 8px;">
+                            <h1 style="margin:0 0 12px; font-size:20px; font-weight:700; color:#10131a;">Reset password akun Anda</h1>
+                            <p style="margin:0 0 24px; font-size:14px; line-height:1.6; color:#52565f;">
+                                Kami menerima permintaan reset password. Kalau ini Anda, klik tombol di bawah untuk membuat password baru.
+                            </p>
+                        </td>
+                    </tr>
 
-            <div class="message">
-                <p>Kami menerima permintaan untuk mereset password akun Anda. Jika Anda yang meminta reset password,
-                    silakan klik tombol di bawah ini untuk melanjutkan proses reset.</p>
-            </div>
+                    <!-- CTA -->
+                    <tr>
+                        <td style="padding:0 32px 24px;" align="center">
+                            <a href="{{ url('/reset-password/' . $token . '?email=' . $email) }}"
+                                style="display:inline-block; background-color:#ff5a2e; color:#17110c; text-decoration:none; font-weight:700; font-size:15px; padding:14px 32px; border-radius:8px;">
+                                Reset Password Saya
+                            </a>
+                        </td>
+                    </tr>
 
-            <a href="{{ url('/reset-password/' . $token . '?email=' . $email) }}" class="reset-button">
-                🔐 Reset Password Saya
-            </a>
+                    <tr>
+                        <td style="padding:0 32px 20px;">
+                            <p style="margin:0; font-size:13px; color:#52565f;">
+                                <strong style="color:#10131a;">Link ini berlaku 60 menit</strong> sejak email ini dikirim.
+                            </p>
+                        </td>
+                    </tr>
 
-            <div class="expiry-warning">
-                <span class="warning-icon">⏰</span>
-                <strong>Link ini akan kedaluwarsa dalam 60 menit</strong> setelah email ini dikirim.
-            </div>
+                    <!-- Steps -->
+                    <tr>
+                        <td style="padding:0 32px 20px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f6f3ec; border-radius:8px;">
+                                <tr>
+                                    <td style="padding:16px 18px;">
+                                        <strong style="display:block; margin-bottom:8px; font-size:13px; color:#10131a;">Langkah selanjutnya</strong>
+                                        <ol style="margin:0; padding-left:18px; font-size:12.5px; line-height:1.9; color:#52565f;">
+                                            <li>Klik tombol "Reset Password Saya" di atas</li>
+                                            <li>Masukkan password baru yang kuat</li>
+                                            <li>Konfirmasi password baru Anda</li>
+                                            <li>Klik "Perbarui Password" untuk menyelesaikan</li>
+                                        </ol>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-            <div class="steps">
-                <h3>📋 Langkah-langkah selanjutnya:</h3>
-                <ol>
-                    <li>Klik tombol "Reset Password Saya" di atas</li>
-                    <li>Anda akan diarahkan ke halaman reset password</li>
-                    <li>Masukkan password baru yang kuat</li>
-                    <li>Konfirmasi password baru Anda</li>
-                    <li>Klik "Update Password" untuk menyelesaikan</li>
-                </ol>
-            </div>
+                    <!-- Fallback link -->
+                    <tr>
+                        <td style="padding:0 32px 20px;">
+                            <p style="margin:0 0 6px; font-size:12px; color:#8a8d94;">Kalau tombolnya tidak berfungsi, salin link ini ke browser:</p>
+                            <p style="margin:0; font-size:12px; word-break:break-all; color:#52565f; font-family:'SF Mono','Courier New',monospace;">
+                                {{ url('/reset-password/' . $token . '?email=' . $email) }}
+                            </p>
+                        </td>
+                    </tr>
 
-            <div class="alternative-link">
-                <strong>Jika tombol tidak berfungsi, salin dan tempel link ini ke browser:</strong><br>
-                {{ url('/reset-password/' . $token . '?email=' . $email) }}
-            </div>
+                    <!-- Security note -->
+                    <tr>
+                        <td style="padding:0 32px 32px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f6f3ec; border-radius:8px;">
+                                <tr>
+                                    <td style="padding:16px 18px; font-size:12.5px; line-height:1.7; color:#52565f;">
+                                        <strong style="color:#10131a; display:block; margin-bottom:4px;">Catatan keamanan</strong>
+                                        Kalau Anda tidak meminta reset ini, abaikan saja email ini — password Anda tidak akan berubah. Jangan bagikan link ini kepada siapa pun; setelah password diperbarui, semua sesi aktif akan diakhiri demi keamanan.
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-            <div class="security-note">
-                <strong>🛡️ Catatan Keamanan:</strong><br>
-                • Jika Anda tidak meminta reset password, abaikan email ini<br>
-                • Jangan bagikan link ini kepada siapa pun<br>
-                • Pastikan menggunakan password yang kuat dan unik<br>
-                • Setelah reset, semua sesi aktif akan diakhiri untuk keamanan
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>Email ini dikirim secara otomatis. Mohon jangan membalas email ini.</p>
-            <p>Jika Anda mengalami masalah, silakan hubungi tim support kami.</p>
-            <p>&copy; 2025 Sitaku. All Right Reserved.</p>
-        </div>
-    </div>
-</body>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding:18px 32px; border-top:1px solid rgba(16,19,26,0.1); font-size:11.5px; color:#8a8d94;">
+                            Email ini dikirim otomatis, mohon jangan dibalas. Ada kendala? Hubungi tim support kami.<br>
+                            &copy; {{ date('Y') }} Exavro. Seluruh hak cipta dilindungi.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 
 </html>
