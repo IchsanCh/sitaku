@@ -9,6 +9,27 @@
    ========================================================================== */
 @import "./exavro-core.css";
 
+/* === minimal reset =======================================================
+   exavro-core.css was always paired with app.css (Tailwind) on the marketing
+   pages, which quietly provided box-sizing:border-box and link underline
+   reset via Preflight. This auth bundle intentionally does NOT load
+   Tailwind (that's the whole point of splitting it out), so those two
+   resets have to be restated here by hand -- small, self-contained, not a
+   reason to pull in a whole framework. */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+html,
+body {
+    margin: 0;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
 /* === tiny utility set ===================================================
    exavro-core.css has no Tailwind underneath it (unlike app.css, which the
    dashboard/marketing pages layer Tailwind under their own component
@@ -101,16 +122,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    margin-bottom: 1.75rem;
+    gap: 0.55rem;
+    margin-bottom: 2rem;
 }
 .xv-auth-brand img {
-    height: 1.6rem;
+    height: 1.85rem;
     width: auto;
 }
 .xv-auth-brand .xv-wordmark {
     color: var(--xv-text);
-    font-size: 1.05rem;
+    font-size: 1.3rem;
+    letter-spacing: -0.015em;
 }
 
 .xv-auth-card {
@@ -272,6 +294,7 @@
 }
 .xv-auth-footnote a:hover {
     color: var(--xv-accent-hover);
+    text-decoration: underline;
 }
 
 /* === password strength (shared by signup + reset-password) ============= */
