@@ -104,20 +104,46 @@
                                 Kalau menu ini ditujukan buat pegawai, variabel pegawai juga otomatis kedeteksi dari nomor WA-nya: <code>{nama_pegawai}</code> <code>{posisi_pegawai}</code> <code>{no_hp_pegawai}</code>.
                             </div>
                             <div id="var_hint_status" class="hidden text-xs text-base-content/50 mt-2">
-                                Variabel yang bisa dipakai: <code>{nama}</code> <code>{no_permohonan}</code> <code>{nama_izin}</code> <code>{tahapan}</code> <code>{status}</code> <code>{link_izin}</code> <code>{no_hp}</code>
+                                Variabel yang bisa dipakai (klik "+ Sisipkan Variable" buat lihat semuanya): <code>{nama}</code> <code>{no_permohonan}</code> <code>{nama_izin}</code> <code>{tahapan}</code> <code>{status}</code> <code>{link_izin}</code> <code>{no_hp}</code> <code>{tgl_pengajuan}</code> <code>{username}</code> <code>{tanggal}</code> <code>{jam}</code>
                                 <br>Contoh: <em>"Halo {nama}, permohonan {no_permohonan} Anda saat ini: {tahapan}."</em>
                             </div>
                             <div id="var_hint_riwayat" class="hidden text-xs text-base-content/50 mt-2">
-                                Ini teks PEMBUKA doang (baris riwayatnya tetap format baku di bawahnya). Variabel: <code>{nama}</code> <code>{no_permohonan}</code>
+                                Ini teks PEMBUKA doang (baris riwayatnya tetap format baku di bawahnya, otomatis diambil dari log notifikasi). Variabel yang sama kayak Cek Status juga bisa dipakai di sini.
                                 <br>Kosongin buat pakai default: <em>"Riwayat notifikasi permohonan {no_permohonan}:"</em>
                             </div>
                             <div id="var_hint_antrian" class="hidden text-xs text-base-content/50 mt-2">
-                                Khusus pegawai -- identitas otomatis kedeteksi dari nomor WA-nya, gak perlu validasi apa-apa. Antrian dihitung dari permohonan yang tahapannya cocok sama posisi pegawai ini DAN statusnya masih "proses" (yang udah selesai/sudah gak dihitung). Ini teks PEMBUKA doang (daftar antriannya tetap format baku di bawahnya). Variabel: <code>{nama_pegawai}</code> <code>{posisi_pegawai}</code> <code>{jumlah}</code>
+                                Khusus pegawai -- identitas otomatis kedeteksi dari nomor WA-nya, gak perlu validasi apa-apa. Antrian dihitung dari permohonan yang tahapannya cocok sama posisi pegawai ini DAN statusnya masih "proses" (yang udah selesai/sudah gak dihitung). Ini teks PEMBUKA doang -- format tiap baris antriannya diatur terpisah di bawah.
                             </div>
                             <div id="var_hint_info" class="hidden text-xs text-base-content/50 mt-2">
-                                Khusus pegawai -- identitas otomatis kedeteksi dari nomor WA-nya. Variabel: <code>{nama_pegawai}</code> <code>{posisi_pegawai}</code> <code>{no_hp_pegawai}</code>
+                                Khusus pegawai -- identitas otomatis kedeteksi dari nomor WA-nya. Variabel: <code>{nama_pegawai}</code> <code>{posisi_pegawai}</code> <code>{no_hp_pegawai}</code> <code>{username}</code> <code>{tanggal}</code> <code>{jam}</code>
                             </div>
-                            <p class="text-xs text-base-content/50 mt-1">Ini teks bawaan sistem -- edit sesuka kamu. Kosongin lagi kalau mau balik pakai default (otomatis ikut update kalau sistemnya nanti direvisi). Bisa pakai *bold*, _italic_, ```monospace```.</p>
+
+                            <div class="flex items-center justify-between mt-2">
+                                <p class="text-xs text-base-content/50">Ini teks bawaan sistem -- edit sesuka kamu. Kosongin lagi kalau mau balik pakai default. Bisa pakai *bold*, _italic_, ```monospace```.</p>
+                                <div class="dropdown dropdown-end shrink-0 ml-2" id="var_picker_template">
+                                    <div tabindex="0" role="button" class="btn btn-xs btn-outline">+ Sisipkan Variable</div>
+                                    <ul tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-10 w-56 p-2 shadow border border-base-300"></ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="row_template_field" class="hidden mt-4">
+                            <div class="flex justify-between items-baseline">
+                                <label class="label"><span class="label-text font-medium">Format Baris Antrian</span></label>
+                                <span class="text-xs text-base-content/50"><span id="rowCharCount">0</span>/300</span>
+                            </div>
+                            <textarea name="row_template" id="row_template_input" rows="2" class="textarea textarea-bordered w-full font-mono text-sm"
+                                maxlength="300" placeholder="- {no_permohonan} | {nama}">{{ old('row_template', $menuItem->action_config['row_template'] ?? '') }}</textarea>
+
+                            <div class="flex items-center justify-between mt-2">
+                                <p class="text-xs text-base-content/50">
+                                    Ini format 1 BARIS, diulang buat tiap permohonan yang lagi ngantri. Variabel bebas dipilih dari data permohonan (nomor, tahapan, status, tanggal pengajuan, dll) -- gak kaku kayak sebelumnya. Kosongin buat pakai default: <code>- {no_permohonan} | {nama}</code>
+                                </p>
+                                <div class="dropdown dropdown-end shrink-0 ml-2" id="var_picker_row_template">
+                                    <div tabindex="0" role="button" class="btn btn-xs btn-outline">+ Sisipkan Variable</div>
+                                    <ul tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-10 w-56 p-2 shadow border border-base-300"></ul>
+                                </div>
+                            </div>
                         </div>
 
                         <div id="submenu_hint" class="hidden">
@@ -280,6 +306,76 @@
         antrian_pegawai: 'Antrian di posisi {posisi_pegawai} ({jumlah} permohonan):',
         info_pegawai: 'Nama: {nama_pegawai}\nPosisi: {posisi_pegawai}\nNo. HP: {no_hp_pegawai}',
     };
+    const DEFAULT_ROW_TEMPLATE = '- {no_permohonan} | {nama}';
+
+    // Kosakata variabel, dipecah per konteks data -- satu-satunya tempat buat
+    // nambah variabel baru di sisi tampilan (harus sinkron sama
+    // generalVariables()/pemohonVariables()/pegawaiVariables() di
+    // WhatsappStateMachineService.php). Tinggal nambah 1 baris di sini,
+    // otomatis kepilih di semua jenis aksi yang makai kelompok itu.
+    const GENERAL_VARS = [
+        ['{username}', 'Nama Instansi'], ['{tanggal}', 'Tanggal'], ['{jam}', 'Jam'],
+    ];
+    const PEMOHON_VARS = [
+        ['{nama}', 'Nama Pemohon'], ['{no_permohonan}', 'No. Permohonan'], ['{nama_izin}', 'Nama Izin'],
+        ['{tahapan}', 'Tahapan'], ['{status}', 'Status'], ['{link_izin}', 'Link Izin'],
+        ['{no_hp}', 'No. HP Pemohon'], ['{tgl_pengajuan}', 'Tanggal Pengajuan'],
+    ];
+    const PEGAWAI_VARS = [
+        ['{nama_pegawai}', 'Nama Pegawai'], ['{posisi_pegawai}', 'Posisi Pegawai'], ['{no_hp_pegawai}', 'No. HP Pegawai'],
+    ];
+
+    const VARIABLE_SETS = {
+        cek_status: { template: [...GENERAL_VARS, ...PEMOHON_VARS] },
+        riwayat_tahapan: { template: [...GENERAL_VARS, ...PEMOHON_VARS] },
+        info_pegawai: { template: [...GENERAL_VARS, ...PEGAWAI_VARS] },
+        pesan_custom: { template: [...GENERAL_VARS, ...PEGAWAI_VARS] },
+        antrian_pegawai: {
+            template: [...GENERAL_VARS, ...PEGAWAI_VARS, ['{jumlah}', 'Jumlah Antrian']],
+            row_template: [...PEMOHON_VARS],
+        },
+    };
+
+    function insertAtCursor(textarea, text) {
+        const start = textarea.selectionStart ?? textarea.value.length;
+        const end = textarea.selectionEnd ?? textarea.value.length;
+        textarea.value = textarea.value.slice(0, start) + text + textarea.value.slice(end);
+        const newPos = start + text.length;
+        textarea.focus();
+        textarea.setSelectionRange(newPos, newPos);
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    // Isi ulang isi dropdown "+ Sisipkan Variable" sesuai action_type yang
+    // lagi dipilih. pickerId = id div.dropdown, textareaId = target textarea,
+    // fieldKey = 'template' atau 'row_template' (buat nentuin pool mana dari VARIABLE_SETS).
+    function populateVariablePicker(pickerId, textareaId, fieldKey, type) {
+        const picker = document.getElementById(pickerId);
+        const list = picker.querySelector('.dropdown-content');
+        const variables = (VARIABLE_SETS[type] && VARIABLE_SETS[type][fieldKey]) || [];
+
+        list.innerHTML = '';
+        if (variables.length === 0) {
+            picker.classList.add('hidden');
+            return;
+        }
+        picker.classList.remove('hidden');
+
+        variables.forEach(([tag, label]) => {
+            const li = document.createElement('li');
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'flex justify-between gap-2';
+            btn.innerHTML = `<span>${label}</span><code class="text-xs opacity-60">${tag}</code>`;
+            btn.addEventListener('mousedown', (e) => e.preventDefault()); // biar cursor position di textarea gak ilang
+            btn.addEventListener('click', () => {
+                insertAtCursor(document.getElementById(textareaId), tag);
+                document.activeElement.blur(); // nutup dropdown-nya (daisyUI dropdown = focus-based)
+            });
+            li.appendChild(btn);
+            list.appendChild(li);
+        });
+    }
 
     // Action_type yang audience-nya WAJIB nilai tertentu -- gak boleh dipilih bebas.
     // Sinkron sama MenuItem::ROLE_LOCKED_ACTIONS di backend (yang tetap validasi ulang,
@@ -314,10 +410,12 @@
         const type = document.getElementById('action_type').value;
         const needsTemplate = ['cek_status', 'riwayat_tahapan', 'pesan_custom', 'antrian_pegawai', 'info_pegawai'].includes(type);
         const templateInput = document.getElementById('template_input');
+        const rowTemplateInput = document.getElementById('row_template_input');
 
         applyAudienceLock(type);
 
         document.getElementById('template_field').classList.toggle('hidden', !needsTemplate);
+        document.getElementById('row_template_field').classList.toggle('hidden', type !== 'antrian_pegawai');
         document.getElementById('submenu_hint').classList.toggle('hidden', type !== 'submenu');
         document.getElementById('menu_list_note').classList.toggle('hidden', needsTemplate);
 
@@ -327,11 +425,17 @@
         document.getElementById('var_hint_antrian').classList.toggle('hidden', type !== 'antrian_pegawai');
         document.getElementById('var_hint_info').classList.toggle('hidden', type !== 'info_pegawai');
 
+        populateVariablePicker('var_picker_template', 'template_input', 'template', type);
+        populateVariablePicker('var_picker_row_template', 'row_template_input', 'row_template', type);
+
         // Kalau textarea-nya kosong (belum pernah di-custom), tampilin langsung
         // teks bawaan sistem sebagai isi awal -- biar user liat & tinggal edit,
         // bukan nebak-nebak dari placeholder doang.
         if (templateInput.value.trim() === '' && DEFAULT_TEMPLATES[type]) {
             templateInput.value = DEFAULT_TEMPLATES[type];
+        }
+        if (type === 'antrian_pegawai' && rowTemplateInput.value.trim() === '') {
+            rowTemplateInput.value = DEFAULT_ROW_TEMPLATE;
         }
 
         updatePreview();
@@ -341,10 +445,13 @@
         const type = document.getElementById('action_type').value;
         const preview = document.getElementById('whatsapp-preview');
         const templateInput = document.getElementById('template_input');
+        const rowTemplateInput = document.getElementById('row_template_input');
         const charCount = document.getElementById('charCount');
+        const rowCharCount = document.getElementById('rowCharCount');
 
         let text = templateInput.value.trim();
         charCount.textContent = templateInput.value.length;
+        rowCharCount.textContent = rowTemplateInput.value.length;
 
         if (!text) {
             if (type === 'riwayat_tahapan') {
@@ -362,8 +469,9 @@
         text = text.replace(/\{nama_izin\}/g, 'Izin Reklame');
         text = text.replace(/\{tahapan\}/g, 'Verifikasi Dokumen');
         text = text.replace(/\{status\}/g, 'proses');
-        text = text.replace(/\{link_izin\}/g, 'https://sitaku.test/dok/xyz');
+        text = text.replace(/\{link_izin\}/g, 'https://exavro.test/dok/xyz');
         text = text.replace(/\{no_hp\}/g, '08123456789');
+        text = text.replace(/\{tgl_pengajuan\}/g, '10 Agu 2026');
         text = text.replace(/\{nama_pegawai\}/g, 'Siti Aminah');
         text = text.replace(/\{posisi_pegawai\}/g, 'Verifikasi');
         text = text.replace(/\{no_hp_pegawai\}/g, '081234567890');
@@ -375,8 +483,20 @@
         if (type === 'riwayat_tahapan' && !templateInput.value.trim().includes('\n')) {
             text += '\n- 10 Agu 2026 10:00: Verifikasi Dokumen\n- 11 Agu 2026 14:20: Cetak Izin';
         }
-        if (type === 'antrian_pegawai' && !templateInput.value.trim().includes('\n')) {
-            text += '\n- REG-2026-001 | Budi Santoso\n- REG-2026-002 | Siti Rahayu';
+        if (type === 'antrian_pegawai') {
+            const rowTemplate = rowTemplateInput.value.trim() || DEFAULT_ROW_TEMPLATE;
+            const sampleRows = [
+                { '{no_permohonan}': 'REG-2026-001', '{nama}': 'Budi Santoso', '{nama_izin}': 'Izin Reklame', '{tahapan}': 'Verifikasi Dokumen', '{status}': 'proses', '{link_izin}': 'https://exavro.test/dok/abc', '{no_hp}': '08123456789', '{tgl_pengajuan}': '10 Agu 2026' },
+                { '{no_permohonan}': 'REG-2026-002', '{nama}': 'Siti Rahayu', '{nama_izin}': 'Izin Usaha', '{tahapan}': 'Verifikasi Dokumen', '{status}': 'proses', '{link_izin}': 'https://exavro.test/dok/xyz', '{no_hp}': '08129876543', '{tgl_pengajuan}': '12 Agu 2026' },
+            ];
+            const rows = sampleRows.map((sample) => {
+                let rowText = rowTemplate;
+                Object.entries(sample).forEach(([tag, value]) => {
+                    rowText = rowText.split(tag).join(value);
+                });
+                return rowText;
+            });
+            text += '\n' + rows.join('\n');
         }
 
         text = text.replace(/\n/g, '<br>');
@@ -395,6 +515,7 @@
         toggleActionFields();
 
         document.getElementById('template_input').addEventListener('input', updatePreview);
+        document.getElementById('row_template_input').addEventListener('input', updatePreview);
 
         @if (session('error'))
             showToast('error', "{{ session('error') }}");

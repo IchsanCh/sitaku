@@ -205,6 +205,7 @@ class MenuItemController extends Controller
             'audience' => ['required', Rule::in(['pemohon', 'pegawai', 'both'])],
             'action_type' => ['required', Rule::in($allowed)],
             'template' => 'nullable|string|max:1500',
+            'row_template' => 'nullable|string|max:300',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
         ]);
@@ -218,6 +219,12 @@ class MenuItemController extends Controller
         } elseif (in_array($data['action_type'], ['cek_status', 'riwayat_tahapan', 'antrian_pegawai', 'info_pegawai'], true) && filled($data['template'] ?? null)) {
             // Opsional -- kosong = pakai teks default bawaan sistem.
             $actionConfig = ['template' => $data['template']];
+        }
+
+        // antrian_pegawai punya template KEDUA -- format per-baris (satu baris per
+        // permohonan yang lagi ngantri), terpisah dari teks pembuka di atas.
+        if ($data['action_type'] === 'antrian_pegawai' && filled($data['row_template'] ?? null)) {
+            $actionConfig = array_merge($actionConfig ?? [], ['row_template' => $data['row_template']]);
         }
 
         // Klasifikasi audience per action_type -- action yang emang khusus buat

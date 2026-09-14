@@ -179,14 +179,15 @@ class WhatsappStateMachineService
             'antrian_pegawai' => (function () use ($user, $session, $sender, $item, $role) {
                 $pegawai = $this->findPegawai($user, $sender);
                 $template = data_get($item->action_config, 'template');
-                $this->reply($user, $sender, $this->buildAntrianPegawaiMessage($user, $pegawai, $template));
+                $rowTemplate = data_get($item->action_config, 'row_template');
+                $this->reply($user, $sender, $this->buildAntrianPegawaiMessage($user, $pegawai, $template, $rowTemplate));
                 $this->showMenu($user, $session, $sender, $item->parent_id, $role);
             })(),
 
             'info_pegawai' => (function () use ($user, $session, $sender, $item, $role) {
                 $pegawai = $this->findPegawai($user, $sender);
                 $template = data_get($item->action_config, 'template');
-                $this->reply($user, $sender, $this->buildInfoPegawaiMessage($pegawai, $template));
+                $this->reply($user, $sender, $this->buildInfoPegawaiMessage($pegawai, $template, $user));
                 $this->showMenu($user, $session, $sender, $item->parent_id, $role);
             })(),
 
@@ -276,7 +277,7 @@ class WhatsappStateMachineService
         $menuItem = MenuItem::find(data_get($context, 'menu_item_id'));
         $template = data_get($menuItem?->action_config, 'template');
 
-        $this->reply($user, $sender, $this->buildValidationResultMessage($pemohon, $intent, $template));
+        $this->reply($user, $sender, $this->buildValidationResultMessage($pemohon, $intent, $user, $template));
 
         // Selesai -- balik ke menu level asal (tempat menu item cek_status/riwayat_tahapan tadi dipencet).
         $returnMenuId = data_get($context, 'return_menu_id');
@@ -290,7 +291,7 @@ class WhatsappStateMachineService
         $this->showMenu($user, $session, $sender, $returnMenuId, $role);
     }
 
-    private function buildValidationResultMessage(Pemohon $pemohon, string $intent, ?string $template = null): string
+    private function buildValidationResultMessage(Pemohon $pemohon, string $intent, User $user, ?string $template = null): string
     {
         if ($intent === 'riwayat_tahapan') {
             $riwayat = Pesan::where('pemohon_id', $pemohon->id)
@@ -304,7 +305,7 @@ class WhatsappStateMachineService
             // Template di sini cuma buat baris PEMBUKA -- format tiap baris riwayat
             // tetap baku, soalnya itu daftar (bukan satu pesan tunggal kayak cek_status).
             $intro = filled($template)
-                ? $this->renderTemplate($template, $pemohon)
+                ? $this->renderTemplate($template, $pemohon, $user)
                 : "Riwayat notifikasi permohonan {$pemohon->no_permohonan}:";
 
             $lines = $riwayat->map(function ($pesan) {
@@ -317,7 +318,7 @@ class WhatsappStateMachineService
 
         // default: cek_status
         if (filled($template)) {
-            return $this->renderTemplate($template, $pemohon);
+            return $this->renderTemplate($template, $pemohon, $user);
         }
 
         return "Status permohonan {$pemohon->no_permohonan}:\n"
@@ -326,13 +327,28 @@ class WhatsappStateMachineService
     }
 
     /**
-     * Ganti placeholder {nama}, {no_permohonan}, dst di template custom user
-     * dengan data pemohon yang beneran ketemu. Pola sama kayak
-     * pesan_pemohon/pesan_penyerahan yang udah ada di aplikasi ini.
+     * Variabel UMUM -- selalu tersedia di semua template, gak butuh konteks
+     * pemohon/pegawai apa pun. Satu-satunya tempat buat nambah variabel jenis
+     * ini; begitu ditambah di sini, otomatis kepake di semua template yang
+     * manggil generalVariables().
      */
-    private function renderTemplate(string $template, Pemohon $pemohon): string
+    private function generalVariables(User $user): array
     {
-        return strtr($template, [
+        return [
+            '{username}' => $user->name ?? '-',
+            '{tanggal}' => Carbon::now()->translatedFormat('d M Y'),
+            '{jam}' => Carbon::now()->format('H:i'),
+        ];
+    }
+
+    /**
+     * Variabel data PEMOHON -- satu-satunya tempat buat nambah field pemohon
+     * baru (cek_status, riwayat_tahapan, dan baris antrian_pegawai semua
+     * manggil ini, jadi otomatis konsisten di ketiganya).
+     */
+    private function pemohonVariables(Pemohon $pemohon): array
+    {
+        return [
             '{nama}' => $pemohon->nama ?? '-',
             '{no_permohonan}' => $pemohon->no_permohonan ?? '-',
             '{nama_izin}' => $pemohon->nama_izin ?? '-',
@@ -340,7 +356,37 @@ class WhatsappStateMachineService
             '{status}' => $pemohon->status ?? '-',
             '{link_izin}' => $pemohon->link_izin ?? '-',
             '{no_hp}' => $pemohon->nomor_hp ?? '-',
-        ]);
+            '{tgl_pengajuan}' => $pemohon->tgl_pengajuan ? Carbon::parse($pemohon->tgl_pengajuan)->translatedFormat('d M Y') : '-',
+        ];
+    }
+
+    /**
+     * Variabel data PEGAWAI -- satu-satunya tempat buat nambah field pegawai
+     * baru. $pegawai nullable karena kadang dipanggil dari konteks yang belum
+     * pasti pegawai-nya ketemu (mis. pesan_custom yang diakses pemohon) --
+     * placeholder-nya jadi '-' daripada dibiarin mentah di pesan.
+     */
+    private function pegawaiVariables(?Pegawai $pegawai): array
+    {
+        return [
+            '{nama_pegawai}' => $pegawai?->nama ?? '-',
+            '{posisi_pegawai}' => $pegawai?->posisi ?? '-',
+            '{no_hp_pegawai}' => $pegawai?->no_hp ?? '-',
+        ];
+    }
+
+    /**
+     * Ganti placeholder {nama}, {no_permohonan}, dst di template custom user
+     * dengan data pemohon yang beneran ketemu, plus variabel umum ({username},
+     * {tanggal}, {jam}). Pola sama kayak pesan_pemohon/pesan_penyerahan yang
+     * udah ada di aplikasi ini.
+     */
+    private function renderTemplate(string $template, Pemohon $pemohon, User $user): string
+    {
+        return strtr($template, array_merge(
+            $this->generalVariables($user),
+            $this->pemohonVariables($pemohon),
+        ));
     }
 
     private function showMenu(User $user, WhatsappSession $session, string $sender, ?int $parentId, string $role, ?string $prefixLabel = null): void
@@ -406,7 +452,7 @@ class WhatsappStateMachineService
      * bukan bagian antrian lagi. Diurutin dari yang paling lama ngantri (tgl_pengajuan,
      * fallback ke created_at kalau kosong).
      */
-    private function buildAntrianPegawaiMessage(User $user, ?Pegawai $pegawai, ?string $template): string
+    private function buildAntrianPegawaiMessage(User $user, ?Pegawai $pegawai, ?string $template, ?string $rowTemplate = null): string
     {
         if (! $pegawai) {
             return 'Data pegawai kamu gak ketemu di sistem. Hubungi admin instansi buat didaftarin dulu.';
@@ -421,11 +467,11 @@ class WhatsappStateMachineService
             ->get();
 
         $jumlah = $antrian->count();
-        $vars = [
-            '{nama_pegawai}' => $pegawai->nama ?? '-',
-            '{posisi_pegawai}' => $pegawai->posisi ?? '-',
-            '{jumlah}' => (string) $jumlah,
-        ];
+        $vars = array_merge(
+            $this->generalVariables($user),
+            $this->pegawaiVariables($pegawai),
+            ['{jumlah}' => (string) $jumlah],
+        );
 
         $intro = filled($template)
             ? strtr($template, $vars)
@@ -435,7 +481,13 @@ class WhatsappStateMachineService
             return "{$intro}\n(kosong, gak ada antrian saat ini)";
         }
 
-        $lines = $antrian->map(fn (Pemohon $p) => "- {$p->no_permohonan} | " . ($p->nama ?? '-'))->implode("\n");
+        // Format per-baris bisa di-custom bebas (variabel sama kayak yang dipakai
+        // di cek_status/riwayat_tahapan -- satu kosakata variabel buat semua
+        // template pemohon, lewat pemohonVariables()) -- kosong = balik ke
+        // format lama biar menu yang udah ada gak berubah tiba-tiba.
+        $rowTemplate = filled($rowTemplate) ? $rowTemplate : '- {no_permohonan} | {nama}';
+
+        $lines = $antrian->map(fn (Pemohon $p) => strtr($rowTemplate, $this->pemohonVariables($p)))->implode("\n");
 
         return "{$intro}\n{$lines}";
     }
@@ -443,17 +495,16 @@ class WhatsappStateMachineService
     /**
      * "Info saya": identitas pegawai yang lagi chat, kedeteksi otomatis dari nomor WA-nya.
      */
-    private function buildInfoPegawaiMessage(?Pegawai $pegawai, ?string $template): string
+    private function buildInfoPegawaiMessage(?Pegawai $pegawai, ?string $template, User $user): string
     {
         if (! $pegawai) {
             return 'Data pegawai kamu gak ketemu di sistem. Hubungi admin instansi buat didaftarin dulu.';
         }
 
-        $vars = [
-            '{nama_pegawai}' => $pegawai->nama ?? '-',
-            '{posisi_pegawai}' => $pegawai->posisi ?? '-',
-            '{no_hp_pegawai}' => $pegawai->no_hp ?? '-',
-        ];
+        $vars = array_merge(
+            $this->generalVariables($user),
+            $this->pegawaiVariables($pegawai),
+        );
 
         if (filled($template)) {
             return strtr($template, $vars);
@@ -470,14 +521,10 @@ class WhatsappStateMachineService
      */
     private function renderCustomTemplate(string $template, User $user, ?Pegawai $pegawai): string
     {
-        $vars = [
-            '{username}' => $user->name ?? '-',
-            '{tanggal}' => Carbon::now()->translatedFormat('d M Y'),
-            '{jam}' => Carbon::now()->format('H:i'),
-            '{nama_pegawai}' => $pegawai?->nama ?? '-',
-            '{posisi_pegawai}' => $pegawai?->posisi ?? '-',
-            '{no_hp_pegawai}' => $pegawai?->no_hp ?? '-',
-        ];
+        $vars = array_merge(
+            $this->generalVariables($user),
+            $this->pegawaiVariables($pegawai),
+        );
 
         return strtr($template, $vars);
     }
