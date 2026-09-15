@@ -100,9 +100,10 @@
 
                 <div class="relative flex-1">
                     <ul id="quickReplyDropdown" class="menu bg-base-100 rounded-lg shadow-lg border border-base-300 p-1 flex-nowrap" hidden></ul>
-                    <input type="text" name="message" id="messageInput" class="input input-bordered w-full"
-                        placeholder="Tulis balasan... (ketik / buat balasan cepat)" autocomplete="off" maxlength="2000"
-                        @disabled($liveChat->status !== 'open')>
+                    <textarea name="message" id="messageInput" rows="1" class="textarea textarea-bordered w-full resize-y leading-snug py-2.5"
+                        style="min-height: 2.75rem; max-height: 10rem; overflow-y: hidden;"
+                        placeholder="Tulis balasan... (ketik / buat balasan cepat, Shift+Enter buat baris baru)" maxlength="2000"
+                        @disabled($liveChat->status !== 'open')></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-circle btn-sm" @disabled($liveChat->status !== 'open')>
@@ -132,6 +133,32 @@ document.addEventListener('DOMContentLoaded', function () {
     const replyPreview = document.getElementById('replyPreview');
     const replyPreviewLabel = document.getElementById('replyPreviewLabel');
     const replyPreviewExcerpt = document.getElementById('replyPreviewExcerpt');
+
+    // === textarea chat: auto-grow sesuai isi, tapi tetep bisa di-drag manual ===
+    // (resize-y di class-nya). Ceiling default 160px (~6 baris) -- kalau user
+    // narik manual lebih gede dari itu, ceiling-nya ikut naik biar auto-grow
+    // gak "ngelawan" ukuran yang udah dipilih user sendiri.
+    const MIN_INPUT_HEIGHT = 44;
+    let inputHeightCeiling = 160;
+
+    function autoGrowInput() {
+        messageInput.style.height = 'auto';
+        const next = Math.min(Math.max(messageInput.scrollHeight, MIN_INPUT_HEIGHT), inputHeightCeiling);
+        messageInput.style.height = next + 'px';
+        messageInput.style.overflowY = messageInput.scrollHeight > inputHeightCeiling ? 'auto' : 'hidden';
+    }
+
+    messageInput.addEventListener('input', autoGrowInput);
+
+    // Deteksi user selesai narik resize handle manual -- kalau tingginya lebih
+    // gede dari ceiling saat ini, jadiin itu ceiling baru.
+    messageInput.addEventListener('mouseup', function () {
+        setTimeout(function () {
+            if (messageInput.offsetHeight > inputHeightCeiling) {
+                inputHeightCeiling = messageInput.offsetHeight;
+            }
+        }, 0);
+    });
     const cancelReplyBtn = document.getElementById('cancelReplyBtn');
     const seenIds = new Set([...document.querySelectorAll('[data-msg-id]')].map(el => el.dataset.msgId));
 
@@ -250,6 +277,7 @@ document.addEventListener('DOMContentLoaded', function () {
         messageInput.value = qr.content;
         closeQrDropdown();
         messageInput.focus();
+        autoGrowInput();
     }
 
     qrDropdown.addEventListener('mousedown', function (e) {
@@ -285,6 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (e.key === 'Enter' || e.key === 'Tab') {
                 if (qrActiveIndex >= 0) {
                     e.preventDefault();
+                    e.stopImmediatePropagation(); // biar handler enter-to-send di bawah gak ikut ke-trigger abis milih quick reply
                     pickQuickReply(qrMatches[qrActiveIndex]);
                 }
             } else if (e.key === 'Escape') {
@@ -296,6 +325,19 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(closeQrDropdown, 100);
         });
     }
+
+    // Enter = kirim (kayak sebelumnya, cuma sekarang textarea jadi Enter gak
+    // otomatis nyisipin baris baru kayak default browser). Shift+Enter = baris
+    // baru beneran. Kalau dropdown quick-reply lagi nyala & ada yang di-highlight,
+    // Enter-nya udah ke-handle di listener atas (buat milih quick reply), jadi
+    // gak sampe ke sini.
+    messageInput.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' || e.shiftKey) return;
+        if (!qrDropdown.hidden && qrActiveIndex >= 0) return; // biar gak dobel sama handler quick reply di atas
+
+        e.preventDefault();
+        replyForm.requestSubmit();
+    });
 
     function setClosedState() {
         statusBadge.textContent = 'Selesai';
@@ -456,6 +498,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const body = await res.json();
             appendMessage(body.data);
             messageInput.value = '';
+            autoGrowInput();
             mediaInput.value = '';
             mediaPreview.hidden = true;
             clearReplyTarget();
