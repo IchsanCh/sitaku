@@ -21,14 +21,18 @@ if [ "$CONTAINER_ROLE" = "app" ]; then
         php artisan storage:link
     fi
 
-    # composer/npm di atas jalan sebagai root -> pastiin storage & cache
-    # tetep bisa ditulis sama www-data (yang jalanin php-fpm)
-    chown -R www-data:www-data storage bootstrap/cache
-    chmod -R 775 storage bootstrap/cache
-
     php artisan config:cache
     php artisan route:cache
     php artisan view:cache
+
+    # chown/chmod HARUS di belakang, bukan di depan -- 3 command artisan di atas
+    # jalan sebagai root (belum ada user-switch di entrypoint ini) dan bikin file
+    # cache baru (view/route/config), jadi kalau chown-nya duluan, file baru dari
+    # command2 itu balik lagi jadi punya root, nge-undo chown-nya. Ujung-ujungnya
+    # php-fpm (jalan sebagai www-data) gak bisa nulis/update view cache pas ada
+    # blade yang berubah -> Permission Denied pas ada request.
+    chown -R www-data:www-data storage bootstrap/cache
+    chmod -R 775 storage bootstrap/cache
 
     echo "[entrypoint] Siap. Jalanin migration manual kalau perlu:"
     echo "  docker compose exec exavro php artisan migrate --force"
@@ -37,6 +41,14 @@ else
     until [ -f vendor/autoload.php ]; do
         sleep 2
     done
+
+    # Container ini (queue/reverb/scheduler) jalan sebagai root juga -- kalau
+    # proses di dalemnya bikin file baru di storage/ (mis. lock file punya
+    # scheduler tiap kali schedule:run jalan), file itu bakal root-owned dan
+    # bisa numpuk masalah permission yang sama kayak di atas. Disamain lagi
+    # di sini sebagai jaga-jaga di setiap start container.
+    chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+    chmod -R 775 storage bootstrap/cache 2>/dev/null || true
 fi
 
 exec "$@"
