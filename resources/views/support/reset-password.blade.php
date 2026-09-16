@@ -7,7 +7,7 @@
     <div class="w-full max-w-sm">
 
         <div class="text-center mb-7">
-            <span class="inline-flex w-11 h-11 rounded-xl bg-primary text-primary-content items-center justify-center font-display font-semibold text-lg mb-4">S</span>
+            <span class="inline-flex w-11 h-11 rounded-xl bg-primary text-primary-content items-center justify-center font-display font-semibold text-lg mb-4">EX</span>
             <h1 class="font-display font-semibold text-[1.6rem] leading-tight">Reset Password</h1>
             <p class="text-sm text-base-content/55 mt-1.5">Masukin password baru buat akun kamu.</p>
         </div>

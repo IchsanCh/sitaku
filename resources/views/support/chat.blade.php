@@ -3,16 +3,16 @@
 @section('title', 'Chat ' . $liveChat->nomor_wa . ' - Support Panel')
 
 @section('content')
-<div class="max-w-2xl mx-auto px-4 py-6">
-    <a href="{{ route('support.inbox') }}" class="btn btn-ghost btn-sm gap-1.5 mb-4 -ml-2">
+<div class="max-w-2xl mx-auto px-4 py-6 flex flex-col" style="height: calc(100dvh - 6.5rem);">
+    <a href="{{ route('support.inbox') }}" class="btn btn-ghost btn-sm gap-1.5 mb-4 -ml-2 shrink-0">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg>
         Inbox
     </a>
 
-    <div class="card bg-base-100 border border-base-300 shadow-sm">
-        <div class="card-body p-0">
+    <div class="card bg-base-100 border border-base-300 shadow-sm flex-1 min-h-0 flex flex-col">
+        <div class="card-body p-0 flex-1 min-h-0 flex flex-col">
 
-            <div class="p-4 border-b border-base-300 flex items-center justify-between gap-3">
+            <div class="p-4 border-b border-base-300 flex items-center justify-between gap-3 shrink-0">
                 <div class="flex items-center gap-3 min-w-0">
                     <div class="room-card-avatar">{{ substr($liveChat->nomor_wa, -2) }}</div>
                     <div class="min-w-0">
@@ -30,7 +30,11 @@
                 </button>
             </div>
 
-            <div id="messageList" class="p-4 space-y-3 overflow-y-auto bg-base-200/40" style="height: 60vh;">
+            <!-- flex-1 + min-h-0 = area ini yang nyusut/scroll pas compose row di
+                 bawah manjang, BUKAN nge-dorong seluruh card ke bawah. Jadi
+                 textarea kesannya "manjang ke atas" -- tombol kirim & posisi
+                 compose row tetep di tempat yang sama. -->
+            <div id="messageList" class="flex-1 min-h-0 p-4 space-y-3 overflow-y-auto bg-base-200/40">
                 @foreach ($liveChat->messages as $msg)
                     @php
                         $excerpt = $msg->excerpt();
@@ -75,7 +79,7 @@
                 @endforeach
             </div>
 
-            <div id="replyPreview" class="px-4 pt-2 border-t border-base-300" hidden>
+            <div id="replyPreview" class="px-4 pt-2 border-t border-base-300 shrink-0" hidden>
                 <div class="flex items-center justify-between bg-base-200 rounded-lg px-3 py-2 text-sm border-l-2 border-primary">
                     <div class="truncate">
                         Balas <span id="replyPreviewLabel" class="font-semibold"></span>: <span id="replyPreviewExcerpt" class="text-base-content/55"></span>
@@ -84,17 +88,17 @@
                 </div>
             </div>
 
-            <div id="mediaPreview" class="px-4 pt-2 border-t border-base-300" hidden>
+            <div id="mediaPreview" class="px-4 pt-2 border-t border-base-300 shrink-0" hidden>
                 <div class="flex items-center justify-between bg-base-200 rounded-lg px-3 py-2 text-sm">
                     <div class="truncate">📎 <span id="mediaPreviewName"></span></div>
                     <button type="button" id="cancelMediaBtn" class="btn btn-ghost btn-xs btn-circle">✕</button>
                 </div>
             </div>
 
-            <form id="replyForm" class="p-3.5 border-t border-base-300 flex gap-2 items-center relative">
+            <form id="replyForm" class="p-3.5 border-t border-base-300 flex gap-2 items-end relative shrink-0">
                 @csrf
                 <input type="file" id="mediaInput" name="media" class="hidden" @disabled($liveChat->status !== 'open')>
-                <button type="button" id="attachBtn" class="btn btn-ghost btn-sm btn-circle" @disabled($liveChat->status !== 'open')>
+                <button type="button" id="attachBtn" class="btn btn-ghost btn-sm btn-circle shrink-0 mb-0.5" @disabled($liveChat->status !== 'open')>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" /></svg>
                 </button>
 
@@ -106,7 +110,7 @@
                         @disabled($liveChat->status !== 'open')></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-circle btn-sm" @disabled($liveChat->status !== 'open')>
+                <button type="submit" class="btn btn-primary btn-circle btn-sm shrink-0 mb-0.5" @disabled($liveChat->status !== 'open')>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" /></svg>
                 </button>
             </form>
@@ -462,6 +466,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const channel = pusher.subscribe('private-live-chat.' + liveChatId);
     channel.bind('message.sent', function (data) {
         appendMessage(data);
+        if (data.sender_type !== 'admin_support' && document.hidden) {
+            window.FaviconBadge?.show();
+        }
     });
 
     replyForm.addEventListener('submit', async function (e) {

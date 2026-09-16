@@ -207,6 +207,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const channel = pusher.subscribe('private-instansi.{{ $agent->user_id }}.live-chats');
     channel.bind('room.updated', function (data) {
         upsertRoomCard(data);
+        if (data.last_message_sender_type !== 'admin_support' && document.hidden) {
+            window.FaviconBadge?.show();
+        }
     });
 });
 </script>

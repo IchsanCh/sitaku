@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="sitaku-support">
+<html lang="id" data-theme="exavro-support">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" id="faviconLink" href="{{ asset('favicon.ico') }}">
     <title>@yield('title', 'Support Panel')</title>
     @vite(['resources/css/support.css', 'resources/js/support.js'])
     @stack('head-scripts')
