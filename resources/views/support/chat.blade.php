@@ -33,51 +33,13 @@
             <!-- flex-1 + min-h-0 = area ini yang nyusut/scroll pas compose row di
                  bawah manjang, BUKAN nge-dorong seluruh card ke bawah. Jadi
                  textarea kesannya "manjang ke atas" -- tombol kirim & posisi
-                 compose row tetep di tempat yang sama. -->
-            <div id="messageList" class="flex-1 min-h-0 p-4 space-y-3 overflow-y-auto bg-base-200/40">
-                @foreach ($liveChat->messages as $msg)
-                    @php
-                        $excerpt = $msg->excerpt();
-                        $replySenderLabel = $msg->replyTo && $msg->replyTo->sender_type === 'admin_support'
-                            ? ($msg->replyTo->adminSupport?->name ?? 'Admin')
-                            : $liveChat->nomor_wa;
-                        $isAdmin = $msg->sender_type === 'admin_support';
-                    @endphp
-                    <div class="flex {{ $isAdmin ? 'justify-end' : 'justify-start' }}"
-                        data-msg-id="{{ $msg->id }}"
-                        data-sender-label="{{ $isAdmin ? ($msg->adminSupport?->name ?? 'Admin') : $liveChat->nomor_wa }}"
-                        data-excerpt="{{ $excerpt }}">
-                        <div class="max-w-[75%] swipe-wrap">
-                            @if ($msg->replyTo)
-                                <div class="rounded-lg px-3 py-1.5 mb-1 text-xs bg-base-300/60 border-l-2 border-primary/40 truncate">
-                                    <span class="font-semibold">{{ $replySenderLabel }}</span> · {{ $msg->replyTo->excerpt(60) }}
-                                </div>
-                            @endif
-                            <div class="px-3.5 py-2 text-sm {{ $isAdmin ? 'bubble-out' : 'bubble-in' }}">
-                                @if ($msg->media_url)
-                                    @if ($msg->isImage())
-                                        <a href="{{ $msg->media_url }}" target="_blank" rel="noopener">
-                                            <img src="{{ $msg->media_url }}" alt="{{ $msg->media_filename }}" class="rounded-lg max-w-full max-h-64 mb-1" loading="lazy">
-                                        </a>
-                                    @else
-                                        <a href="{{ $msg->media_url }}" target="_blank" rel="noopener" class="flex items-center gap-2 underline mb-1">
-                                            📎 {{ $msg->media_filename ?? 'File' }}
-                                        </a>
-                                    @endif
-                                @endif
-                                @if ($msg->message)
-                                    <div class="leading-relaxed">{{ $msg->message }}</div>
-                                @endif
-                            </div>
-                            <div class="text-[0.68rem] text-base-content/40 mt-1 {{ $isAdmin ? 'text-right' : 'text-left' }}">
-                                {{ $isAdmin ? ($msg->adminSupport?->name ?? 'Admin') : $liveChat->nomor_wa }}
-                                · {{ $msg->created_at->format('H:i') }}
-                            </div>
-                        </div>
-                        <div class="swipe-reply-icon">↩</div>
-                    </div>
-                @endforeach
-            </div>
+                 compose row tetep di tempat yang sama.
+
+                 Isinya di-render full lewat JS (initialMessages di bawah),
+                 BUKAN loop Blade -- biar virtualisasi/pagination/real-time
+                 semua lewat satu fungsi builder yang sama, gak ada 2 cara
+                 beda buat bikin bubble pesan. -->
+            <div id="messageList" class="flex-1 min-h-0 p-4 space-y-3 overflow-y-auto bg-base-200/40"></div>
 
             <div id="replyPreview" class="px-4 pt-2 border-t border-base-300 shrink-0" hidden>
                 <div class="flex items-center justify-between bg-base-200 rounded-lg px-3 py-2 text-sm border-l-2 border-primary">
@@ -164,7 +126,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 0);
     });
     const cancelReplyBtn = document.getElementById('cancelReplyBtn');
-    const seenIds = new Set([...document.querySelectorAll('[data-msg-id]')].map(el => el.dataset.msgId));
+    const initialMessages = @json($initialMessages);
+    let hasMoreOlder = @json($hasMoreMessages);
+    const seenIds = new Set(initialMessages.map(m => String(m.id)));
 
     let replyTarget = null;
 
@@ -251,7 +215,9 @@ document.addEventListener('DOMContentLoaded', function () {
         swipeEl.addEventListener('pointerleave', function () { if (dragging) endSwipe(); });
     }
 
-    document.querySelectorAll('#messageList [data-msg-id]').forEach(attachSwipeHandler);
+    // (dulu ada attachSwipeHandler ke pesan hasil render Blade di sini --
+    // sekarang semua pesan, termasuk batch awal, dimount lewat renderPage()
+    // di virtualisasi bawah, jadi swipe handler-nya nempel otomatis di situ.)
 
     const quickReplies = @json($quickReplies->map(fn ($qr) => ['trigger' => $qr->trigger, 'content' => $qr->content]));
     const qrDropdown = document.getElementById('quickReplyDropdown');
@@ -388,16 +354,31 @@ document.addEventListener('DOMContentLoaded', function () {
     function scrollToBottom() {
         messageList.scrollTop = messageList.scrollHeight;
     }
-    scrollToBottom();
 
     function escapeHtml(str) {
         return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    function appendMessage(data) {
-        if (seenIds.has(String(data.id))) return;
-        seenIds.add(String(data.id));
+    // === render teks persis kayak WA (*tebal*, _miring_, ~coret~, ```mono```) ===
+    // Regex doang, sengaja gak pakai library markdown -- cukup buat 4 syntax
+    // WA, dan udah kebukti jalan di editor Balasan Cepat.
+    function waTextToHtml(text) {
+        if (!text) return '';
+        let html = escapeHtml(text);
+        html = html.replace(/```([^`]+?)```/g, (m, p1) => `<code>${p1}</code>`);
+        html = html.replace(/\*_(.+?)_\*/g, '<strong><em>$1</em></strong>');
+        html = html.replace(/_\*(.+?)\*_/g, '<em><strong>$1</strong></em>');
+        html = html.replace(/\*(.+?)\*/g, '<strong>$1</strong>');
+        html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+        html = html.replace(/~(.+?)~/g, '<s>$1</s>');
+        html = html.replace(/\n/g, '<br>');
+        return html;
+    }
 
+    // Bikin elemen bubble pesan doang (gak nempel ke DOM, gak nyentuh seenIds/
+    // scroll) -- dipakai bareng sama tiga jalur render (page awal, load pesan
+    // lama, pesan real-time baru), jadi cuma ada SATU cara bikin bubble.
+    function buildMessageBubble(data) {
         const isAdmin = data.sender_type === 'admin_support';
         const wrap = document.createElement('div');
         wrap.className = `flex ${isAdmin ? 'justify-end' : 'justify-start'}`;
@@ -425,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data.reply_to) {
             const replyLabel = data.reply_to.sender_type === 'admin_support' ? (data.reply_to.admin_support_name || 'Admin') : nomorWa;
             replyHtml = `<div class="rounded-lg px-3 py-1.5 mb-1 text-xs bg-base-300/60 border-l-2 border-primary/40 truncate">
-                <span class="font-semibold">${escapeHtml(replyLabel)}</span> · ${escapeHtml(data.reply_to.excerpt)}
+                <span class="font-semibold">${escapeHtml(replyLabel)}</span> · ${waTextToHtml(data.reply_to.excerpt)}
             </div>`;
         }
 
@@ -434,7 +415,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ${replyHtml}
                 <div class="px-3.5 py-2 text-sm ${isAdmin ? 'bubble-out' : 'bubble-in'}">
                     ${mediaHtml}
-                    ${data.message ? `<div class="leading-relaxed">${escapeHtml(data.message)}</div>` : ''}
+                    ${data.message ? `<div class="leading-relaxed">${waTextToHtml(data.message)}</div>` : ''}
                 </div>
                 <div class="text-[0.68rem] text-base-content/40 mt-1 ${isAdmin ? 'text-right' : 'text-left'}">
                     ${senderLabel} · ${time}
@@ -442,9 +423,157 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
             <div class="swipe-reply-icon">↩</div>
         `;
-        messageList.appendChild(wrap);
         attachSwipeHandler(wrap);
-        scrollToBottom();
+        return wrap;
+    }
+
+    // ==========================================================================
+    // Virtualisasi (bertingkat per-HALAMAN, bukan per-pesan) -- room yang udah
+    // punya ratusan ribu pesan gak bakal numpuk DOM node-nya. Tiap "page" nampung
+    // sampai 30 pesan; page yang udah discroll jauh keluar layar di-unmount
+    // (isinya dibuang dari DOM, diganti 1 div spacer setinggi terakhir diukur)
+    // biar browser gak perlu nyimpen ribuan elemen sekaligus. Cuma dipas
+    // dibutuhin lagi (scroll balik ke atas) baru di-render ulang.
+    //
+    // Sengaja per-HALAMAN (bukan per-pesan) -- lebih simpel & robust ketimbang
+    // ngukur tinggi tiap pesan satu-satu (yang tingginya beda-beda tergantung
+    // panjang teks/ada media atau enggak); estimasi per-halaman jauh lebih
+    // toleran salah dikit tanpa bikin scroll keliatan "loncat".
+    // ==========================================================================
+    const PAGE_SIZE = 30;
+    const MAX_MOUNTED_PAGES = 3; // ~90 pesan max nempel di DOM kapan pun
+
+    function chunkIntoPages(msgs) {
+        const result = [];
+        for (let i = 0; i < msgs.length; i += PAGE_SIZE) {
+            result.push({ messages: msgs.slice(i, i + PAGE_SIZE), el: null, spacerEl: null, height: null });
+        }
+        return result.length ? result : [{ messages: [], el: null, spacerEl: null, height: null }];
+    }
+
+    let pages = chunkIntoPages(initialMessages);
+    let isFetchingOlder = false;
+
+    function mountPage(page) {
+        if (page.el) return; // udah ke-mount
+
+        const container = document.createElement('div');
+        container.className = 'space-y-3';
+        page.messages.forEach((m) => container.appendChild(buildMessageBubble(m)));
+
+        if (page.spacerEl) {
+            page.spacerEl.replaceWith(container);
+            page.spacerEl = null;
+        } else {
+            messageList.appendChild(container);
+        }
+        page.el = container;
+    }
+
+    function unmountPage(page) {
+        if (!page.el) return; // udah ke-unmount / belum pernah dimount
+
+        page.height = page.el.offsetHeight;
+        const spacer = document.createElement('div');
+        spacer.style.height = page.height + 'px';
+        page.el.replaceWith(spacer);
+        page.el = null;
+        page.spacerEl = spacer;
+    }
+
+    // Selalu jaga: page paling akhir (yang lagi aktif) + sampai MAX_MOUNTED_PAGES-1
+    // page sebelumnya tetep mounted; sisanya (lebih jauh) di-unmount.
+    function reconcileMountedPages(anchorIndex) {
+        const from = Math.max(0, anchorIndex - (MAX_MOUNTED_PAGES - 1));
+        pages.forEach((page, i) => {
+            if (i >= from && i <= anchorIndex) mountPage(page);
+            else unmountPage(page);
+        });
+    }
+
+    // Render awal: mount semua page yang ada (biasanya cuma 1, 30 pesan).
+    pages.forEach((page) => mountPage(page));
+    scrollToBottom();
+
+    async function fetchOlderMessages() {
+        if (isFetchingOlder || !hasMoreOlder) return;
+        const oldest = pages[0]?.messages[0];
+        if (!oldest) return;
+
+        isFetchingOlder = true;
+        const prevScrollHeight = messageList.scrollHeight;
+
+        try {
+            const res = await fetch(`{{ route('support.chat.messages', $liveChat) }}?before_id=${oldest.id}`, {
+                headers: { 'Accept': 'application/json' },
+            });
+            if (!res.ok) return;
+            const body = await res.json();
+
+            hasMoreOlder = body.has_more;
+            if (body.data.length) {
+                body.data.forEach((m) => seenIds.add(String(m.id)));
+                pages.unshift({ messages: body.data, el: null, spacerEl: null, height: null });
+                mountPage(pages[0]);
+
+                // Konten baru nambah di ATAS -- kompensasi scrollTop biar posisi
+                // baca admin gak "loncat" ke bawah/atas begitu tinggi konten berubah.
+                messageList.scrollTop += messageList.scrollHeight - prevScrollHeight;
+
+                // Total page nambah 1 -- unmount yang paling jauh biar DOM tetep kebatasi.
+                reconcileMountedPages(pages.length - 1);
+            }
+        } catch (e) {
+            console.error('Gagal load pesan lama:', e);
+        } finally {
+            isFetchingOlder = false;
+        }
+    }
+
+    let scrollTicking = false;
+    messageList.addEventListener('scroll', function () {
+        if (scrollTicking) return;
+        scrollTicking = true;
+        requestAnimationFrame(function () {
+            scrollTicking = false;
+
+            // Deket ujung atas area yang lagi ke-render -> perluas window ke atas
+            // (mount page sebelumnya kalau ada, atau fetch dari server kalau udah
+            // mentok tapi masih ada riwayat lebih lama).
+            if (messageList.scrollTop < 300) {
+                const topMountedIndex = pages.findIndex((p) => p.el);
+                if (topMountedIndex > 0) {
+                    const prevScrollHeight = messageList.scrollHeight;
+                    mountPage(pages[topMountedIndex - 1]);
+                    messageList.scrollTop += messageList.scrollHeight - prevScrollHeight;
+                    reconcileMountedPages(pages.length - 1);
+                } else if (topMountedIndex === 0) {
+                    fetchOlderMessages();
+                }
+            }
+        });
+    });
+
+    function appendMessage(data) {
+        if (seenIds.has(String(data.id))) return;
+        seenIds.add(String(data.id));
+
+        const wasNearBottom = messageList.scrollHeight - messageList.scrollTop - messageList.clientHeight < 150;
+
+        let lastPage = pages[pages.length - 1];
+        if (lastPage.messages.length >= PAGE_SIZE) {
+            // Page terakhir udah penuh -- mulai page baru biar 1 page gak numpuk
+            // gede terus-terusan kalau sesi chat-nya lama/aktif banget.
+            lastPage = { messages: [], el: null, spacerEl: null, height: null };
+            pages.push(lastPage);
+            reconcileMountedPages(pages.length - 1);
+        }
+
+        lastPage.messages.push(data);
+        mountPage(lastPage); // no-op kalau udah mounted
+        lastPage.el.appendChild(buildMessageBubble(data));
+
+        if (wasNearBottom) scrollToBottom();
     }
 
     const pusher = new Pusher('{{ config('broadcasting.connections.reverb.key') }}', {
