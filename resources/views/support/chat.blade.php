@@ -39,7 +39,7 @@
                  BUKAN loop Blade -- biar virtualisasi/pagination/real-time
                  semua lewat satu fungsi builder yang sama, gak ada 2 cara
                  beda buat bikin bubble pesan. -->
-            <div id="messageList" class="flex-1 min-h-0 p-4 space-y-3 overflow-y-auto bg-base-200/40"></div>
+            <div id="messageList" class="flex-1 min-h-0 p-4 pb-6 space-y-3 overflow-y-auto bg-base-200/40"></div>
 
             <div id="replyPreview" class="px-4 pt-2 border-t border-base-300 shrink-0" hidden>
                 <div class="flex items-center justify-between bg-base-200 rounded-lg px-3 py-2 text-sm border-l-2 border-primary">
@@ -127,7 +127,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     const cancelReplyBtn = document.getElementById('cancelReplyBtn');
     const initialMessages = @json($initialMessages);
-    let hasMoreOlder = @json($hasMoreMessages);
     const seenIds = new Set(initialMessages.map(m => String(m.id)));
 
     let replyTarget = null;
@@ -427,132 +426,54 @@ document.addEventListener('DOMContentLoaded', function () {
         return wrap;
     }
 
-    // ==========================================================================
-    // Virtualisasi (bertingkat per-HALAMAN, bukan per-pesan) -- room yang udah
-    // punya ratusan ribu pesan gak bakal numpuk DOM node-nya. Tiap "page" nampung
-    // sampai 30 pesan; page yang udah discroll jauh keluar layar di-unmount
-    // (isinya dibuang dari DOM, diganti 1 div spacer setinggi terakhir diukur)
-    // biar browser gak perlu nyimpen ribuan elemen sekaligus. Cuma dipas
-    // dibutuhin lagi (scroll balik ke atas) baru di-render ulang.
-    //
-    // Sengaja per-HALAMAN (bukan per-pesan) -- lebih simpel & robust ketimbang
-    // ngukur tinggi tiap pesan satu-satu (yang tingginya beda-beda tergantung
-    // panjang teks/ada media atau enggak); estimasi per-halaman jauh lebih
-    // toleran salah dikit tanpa bikin scroll keliatan "loncat".
-    // ==========================================================================
-    const PAGE_SIZE = 30;
-    const MAX_MOUNTED_PAGES = 3; // ~90 pesan max nempel di DOM kapan pun
+    // Full load -- semua pesan udah ke-load sekaligus dari server (gak ada
+    // pagination lagi), tinggal dirender pake bubble yang sama. Fokusnya di
+    // sini cuma parsing teks-nya biar sama persis kayak WA (waTextToHtml),
+    // bukan lazy-load lagi.
+    let allMessages = [...initialMessages]; // urutan ascending, dari lama ke baru
 
-    function chunkIntoPages(msgs) {
-        const result = [];
-        for (let i = 0; i < msgs.length; i += PAGE_SIZE) {
-            result.push({ messages: msgs.slice(i, i + PAGE_SIZE), el: null, spacerEl: null, height: null });
-        }
-        return result.length ? result : [{ messages: [], el: null, spacerEl: null, height: null }];
+    // === divider tanggal kayak WA ("Hari ini" / "Kemarin" / "12 Januari 2026") ===
+    function dateKeyOf(msg) {
+        const d = new Date(msg.created_at);
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
     }
 
-    let pages = chunkIntoPages(initialMessages);
-    let isFetchingOlder = false;
-
-    function mountPage(page) {
-        if (page.el) return; // udah ke-mount
-
-        const container = document.createElement('div');
-        container.className = 'space-y-3';
-        page.messages.forEach((m) => container.appendChild(buildMessageBubble(m)));
-
-        if (page.spacerEl) {
-            page.spacerEl.replaceWith(container);
-            page.spacerEl = null;
-        } else {
-            messageList.appendChild(container);
-        }
-        page.el = container;
+    function formatDateDivider(dateStr) {
+        const d = new Date(dateStr);
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        const sameDay = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+        if (sameDay(d, today)) return 'Hari ini';
+        if (sameDay(d, yesterday)) return 'Kemarin';
+        return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
     }
 
-    function unmountPage(page) {
-        if (!page.el) return; // udah ke-unmount / belum pernah dimount
-
-        page.height = page.el.offsetHeight;
-        const spacer = document.createElement('div');
-        spacer.style.height = page.height + 'px';
-        page.el.replaceWith(spacer);
-        page.el = null;
-        page.spacerEl = spacer;
+    function buildDateDivider(dateStr) {
+        const div = document.createElement('div');
+        div.className = 'flex justify-center my-2';
+        div.innerHTML = `<span class="text-[0.7rem] font-medium text-base-content/50 bg-base-300/60 rounded-full px-3 py-1">${formatDateDivider(dateStr)}</span>`;
+        return div;
     }
 
-    // Selalu jaga: page paling akhir (yang lagi aktif) + sampai MAX_MOUNTED_PAGES-1
-    // page sebelumnya tetep mounted; sisanya (lebih jauh) di-unmount.
-    function reconcileMountedPages(anchorIndex) {
-        const from = Math.max(0, anchorIndex - (MAX_MOUNTED_PAGES - 1));
-        pages.forEach((page, i) => {
-            if (i >= from && i <= anchorIndex) mountPage(page);
-            else unmountPage(page);
+    // Render semua pesan (urutan ascending) sekali jalan, nyisipin divider
+    // tanggal tiap kali tanggalnya beda dari pesan sebelumnya.
+    function renderAll(msgs) {
+        const fragment = document.createDocumentFragment();
+        let prevKey = null;
+        msgs.forEach((m) => {
+            const key = dateKeyOf(m);
+            if (key !== prevKey) {
+                fragment.appendChild(buildDateDivider(m.created_at));
+                prevKey = key;
+            }
+            fragment.appendChild(buildMessageBubble(m));
         });
+        return fragment;
     }
 
-    // Render awal: mount semua page yang ada (biasanya cuma 1, 30 pesan).
-    pages.forEach((page) => mountPage(page));
+    messageList.appendChild(renderAll(allMessages));
     scrollToBottom();
-
-    async function fetchOlderMessages() {
-        if (isFetchingOlder || !hasMoreOlder) return;
-        const oldest = pages[0]?.messages[0];
-        if (!oldest) return;
-
-        isFetchingOlder = true;
-        const prevScrollHeight = messageList.scrollHeight;
-
-        try {
-            const res = await fetch(`{{ route('support.chat.messages', $liveChat) }}?before_id=${oldest.id}`, {
-                headers: { 'Accept': 'application/json' },
-            });
-            if (!res.ok) return;
-            const body = await res.json();
-
-            hasMoreOlder = body.has_more;
-            if (body.data.length) {
-                body.data.forEach((m) => seenIds.add(String(m.id)));
-                pages.unshift({ messages: body.data, el: null, spacerEl: null, height: null });
-                mountPage(pages[0]);
-
-                // Konten baru nambah di ATAS -- kompensasi scrollTop biar posisi
-                // baca admin gak "loncat" ke bawah/atas begitu tinggi konten berubah.
-                messageList.scrollTop += messageList.scrollHeight - prevScrollHeight;
-
-                // Total page nambah 1 -- unmount yang paling jauh biar DOM tetep kebatasi.
-                reconcileMountedPages(pages.length - 1);
-            }
-        } catch (e) {
-            console.error('Gagal load pesan lama:', e);
-        } finally {
-            isFetchingOlder = false;
-        }
-    }
-
-    let scrollTicking = false;
-    messageList.addEventListener('scroll', function () {
-        if (scrollTicking) return;
-        scrollTicking = true;
-        requestAnimationFrame(function () {
-            scrollTicking = false;
-
-            // Deket ujung atas area yang lagi ke-render -> perluas window ke atas
-            // (mount page sebelumnya kalau ada, atau fetch dari server kalau udah
-            // mentok tapi masih ada riwayat lebih lama).
-            if (messageList.scrollTop < 300) {
-                const topMountedIndex = pages.findIndex((p) => p.el);
-                if (topMountedIndex > 0) {
-                    const prevScrollHeight = messageList.scrollHeight;
-                    mountPage(pages[topMountedIndex - 1]);
-                    messageList.scrollTop += messageList.scrollHeight - prevScrollHeight;
-                    reconcileMountedPages(pages.length - 1);
-                } else if (topMountedIndex === 0) {
-                    fetchOlderMessages();
-                }
-            }
-        });
-    });
 
     function appendMessage(data) {
         if (seenIds.has(String(data.id))) return;
@@ -560,18 +481,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const wasNearBottom = messageList.scrollHeight - messageList.scrollTop - messageList.clientHeight < 150;
 
-        let lastPage = pages[pages.length - 1];
-        if (lastPage.messages.length >= PAGE_SIZE) {
-            // Page terakhir udah penuh -- mulai page baru biar 1 page gak numpuk
-            // gede terus-terusan kalau sesi chat-nya lama/aktif banget.
-            lastPage = { messages: [], el: null, spacerEl: null, height: null };
-            pages.push(lastPage);
-            reconcileMountedPages(pages.length - 1);
-        }
+        const prevKey = allMessages.length ? dateKeyOf(allMessages[allMessages.length - 1]) : null;
+        allMessages.push(data);
 
-        lastPage.messages.push(data);
-        mountPage(lastPage); // no-op kalau udah mounted
-        lastPage.el.appendChild(buildMessageBubble(data));
+        if (dateKeyOf(data) !== prevKey) {
+            messageList.appendChild(buildDateDivider(data.created_at));
+        }
+        messageList.appendChild(buildMessageBubble(data));
 
         if (wasNearBottom) scrollToBottom();
     }
