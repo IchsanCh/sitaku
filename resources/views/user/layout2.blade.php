@@ -1,20 +1,28 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="sitaku-panel">
+<html lang="id" data-theme="exavro-panel">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <title>@yield('title', 'SITAKU')</title>
+    <title>@yield('title', 'Exavro')</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <meta property="og:title" content="@yield('title', 'SITAKU')">
-    <meta name="description" content="@yield('meta_description', 'SITAKU adalah sistem notifikasi otomatis berbasis web yang membantu mengirimkan pesan WhatsApp ke pemohon dan pegawai secara real-time, tepat waktu, dan efisien.')">
+    <meta property="og:title" content="@yield('title', 'Exavro')">
+    <meta name="description" content="@yield('meta_description', 'Exavro adalah sistem notifikasi otomatis berbasis web yang membantu mengirimkan pesan WhatsApp ke pemohon dan pegawai secara real-time, tepat waktu, dan efisien.')">
     <meta property="og:description" content="@yield('og_description', 'Otomatisasi notifikasi ke pemohon dan pegawai dalam satu sistem yang cerdas dan mudah diatur.')">
 </head>
 
-<body class="bg-base-100">
+<body class="bg-base-200">
+    @php
+        $navUser = auth('user')->user();
+        $navInitials = collect(explode(' ', trim($navUser?->name ?? 'U')))
+            ->filter()
+            ->map(fn ($w) => mb_substr($w, 0, 1))
+            ->take(2)
+            ->implode('');
+        $navInitials = $navInitials !== '' ? mb_strtoupper($navInitials) : 'U';
+    @endphp
     <div class="drawer lg:drawer-open">
         <!-- Mobile menu toggle -->
         <input id="drawer-toggle" type="checkbox" class="drawer-toggle" />
@@ -31,15 +39,15 @@
                         </svg>
                     </label>
                 </div>
-                <div class="flex-1">
-                    <h1 class="text-xl font-bold text-primary">SITAKU</h1>
+                <div class="flex-1 flex items-center gap-2">
+                    <img src="{{ asset('image/logoLotus.png') }}" alt="" class="h-5 w-auto">
+                    <span class="font-display font-bold tracking-tight">EXAVRO</span>
                 </div>
                 <div class="flex-none">
                     <div class="dropdown dropdown-end">
-                        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-                            <div class="w-8 rounded-full">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth('user')->user()?->name ?? 'User') }}&background=4f46e5&color=fff"
-                                    alt="Avatar" />
+                        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar placeholder">
+                            <div class="w-8 rounded-full xv-avatar-initials text-xs">
+                                <span>{{ $navInitials }}</span>
                             </div>
                         </div>
                         <ul tabindex="0"
@@ -85,8 +93,8 @@
         });
 
         // Dipanggil dari menu/tombol yang dikunci fitur tier (mis. Custom Pesan
-        // di sidebar). Bukan Swal.fire lagi -- dialog native DaisyUI, id
-        // 'modal-feature-locked' di-declare di body (lihat di bawah).
+        // di sidebar). Dialog native DaisyUI, id 'modal-feature-locked' di-declare
+        // di body (lihat di bawah).
         function showFeatureLockedAlert() {
             document.getElementById('modal-feature-locked').showModal();
         }

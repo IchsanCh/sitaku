@@ -28,12 +28,11 @@
             </div>
         </div>
 
-        <dialog id="modal-tambah" class="modal" x-data="{ loading: false }">
+        <dialog id="modal-tambah" class="modal">
             <div class="modal-box">
                 <h3 class="text-xl font-semibold text-center text-primary mb-4">Tambah Pegawai</h3>
 
-                <form method="POST" action="{{ route('pegawai.store') }}" class="space-y-4"
-                    @submit.prevent="loading = true; $el.submit()">
+                <form method="POST" action="{{ route('pegawai.store') }}" class="space-y-4" id="form-tambah">
                     @csrf
                     <input type="hidden" name="user_id" value="{{ $user->id }}">
 
@@ -69,10 +68,10 @@
                         <button type="button" onclick="closeModal()" class="btn btn-error">
                             Batal
                         </button>
-                        <button type="submit" class="btn btn-primary" :disabled="loading">
-                            <span x-show="!loading">Simpan</span>
-                            <span x-show="loading" class="flex items-center gap-1 color1">
-                                <span class="loading loading-spinner loading-sm color1"></span>
+                        <button type="submit" class="btn btn-primary">
+                            <span data-btn-label>Simpan</span>
+                            <span data-btn-spinner class="hidden items-center gap-1">
+                                <span class="loading loading-spinner loading-sm"></span>
                                 Menyimpan...
                             </span>
                         </button>
@@ -84,12 +83,11 @@
                 <button>close</button>
             </form>
         </dialog>
-        <dialog id="modal-edit" class="modal" x-data="{ loading: false }">
+        <dialog id="modal-edit" class="modal">
             <div class="modal-box">
                 <h3 class="text-xl font-semibold text-center text-warning mb-4">Edit Pegawai</h3>
 
-                <form method="POST" action="{{ route('pegawai.update') }}" class="space-y-4"
-                    @submit.prevent="loading = true; $el.submit()">
+                <form method="POST" action="{{ route('pegawai.update') }}" class="space-y-4" id="form-edit">
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="id" id="edit_id">
@@ -122,10 +120,10 @@
 
                     <div class="flex justify-end gap-3 pt-4">
                         <button type="button" onclick="closeModalEdit()" class="btn btn-error">Batal</button>
-                        <button type="submit" class="btn btn-warning" :disabled="loading">
-                            <span x-show="!loading">Update</span>
-                            <span x-show="loading" class="flex items-center gap-1 color1">
-                                <span class="loading loading-spinner loading-sm color1"></span>
+                        <button type="submit" class="btn btn-warning">
+                            <span data-btn-label>Update</span>
+                            <span data-btn-spinner class="hidden items-center gap-1">
+                                <span class="loading loading-spinner loading-sm"></span>
                                 Menyimpan...
                             </span>
                         </button>
@@ -373,6 +371,21 @@
         function closeModalEdit() {
             document.getElementById('modal-edit').close();
         }
+
+        // Toggle label <-> spinner pas submit -- gantiin Alpine x-data/x-show
+        // yang sebelumnya dipake cuma buat ini doang (satu-satunya halaman di
+        // seluruh panel yang butuh Alpine, jadi daripada load Alpine.js global
+        // di semua halaman, cukup vanilla JS kecil di sini).
+        function setSubmitLoading(form) {
+            const btn = form.querySelector('button[type="submit"]');
+            const label = btn.querySelector('[data-btn-label]');
+            const spinner = btn.querySelector('[data-btn-spinner]');
+            btn.disabled = true;
+            if (label) label.classList.add('hidden');
+            if (spinner) { spinner.classList.remove('hidden'); spinner.classList.add('flex'); }
+        }
+        document.getElementById('form-tambah').addEventListener('submit', function () { setSubmitLoading(this); });
+        document.getElementById('form-edit').addEventListener('submit', function () { setSubmitLoading(this); });
 
         function searchPegawai() {
             const searchInput = document.getElementById('searchInput');

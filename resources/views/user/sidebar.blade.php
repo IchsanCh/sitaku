@@ -20,6 +20,13 @@
     // Balasan Cepat numpang feature yang sama kayak live support di menu WA --
     // gak ada gunanya punya balasan cepat kalau live support-nya sendiri gak kebuka.
     $quickReplyLocked = ! ($navUser?->hasFeature('menu_action_live_support') ?? false);
+
+    $navInitials = collect(explode(' ', trim($navUser?->name ?? 'U')))
+        ->filter()
+        ->map(fn ($w) => mb_substr($w, 0, 1))
+        ->take(2)
+        ->implode('');
+    $navInitials = $navInitials !== '' ? mb_strtoupper($navInitials) : 'U';
 @endphp
 
 <div class="drawer-side z-40">
@@ -30,27 +37,22 @@
     <aside class="min-h-full w-64 bg-base-100 text-base-content flex flex-col border-r border-base-300">
         <!-- Logo/Brand Section -->
         <div class="p-4 border-b border-base-300">
-            <div class="flex items-center gap-3">
-                <div class="avatar">
-                    <div class="w-10 rounded-full ring-1 ring-base-300 flex items-center justify-center">
-                        <img src="{{ asset('image/logoLotus.png') }}" alt="Logo Lotusaja" class="h-full w-full">
-                    </div>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-base-content tracking-tight">SITAKU</h2>
-                    <p class="text-xs text-base-content/50">Notification System</p>
+            <div class="flex items-center gap-2.5">
+                <img src="{{ asset('image/logoLotus.png') }}" alt="" class="h-6 w-auto shrink-0">
+                <div class="min-w-0">
+                    <h2 class="font-display font-bold text-base tracking-tight leading-tight">EXAVRO</h2>
+                    <p class="text-[0.68rem] text-base-content/45 leading-tight">Notification System</p>
                 </div>
             </div>
         </div>
 
         <!-- Navigation Menu -->
         <nav class="flex-1 p-3 overflow-y-auto">
-            <ul class="menu menu-vertical w-full gap-1 p-0">
-                <!-- Dashboard -->
+            <ul class="menu menu-vertical w-full gap-0.5 p-0">
+
+                <li class="xv-nav-label">Utama</li>
                 <li>
-                    <a href="{{ route('dashboard.user') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-                            {{ request()->routeIs('dashboard.user') ? 'bg-primary text-primary-content' : 'hover:bg-base-200 text-base-content/80' }}">
+                    <a href="{{ route('dashboard.user') }}" class="xv-nav-item {{ request()->routeIs('dashboard.user') ? 'xv-nav-item-active' : '' }}">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -59,75 +61,12 @@
                     </a>
                 </li>
 
-                <!-- Pegawai -->
-                <li>
-                    <a href="{{ route('user.pegawai') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-                            {{ request()->routeIs('user.pegawai') ? 'bg-primary text-primary-content' : 'hover:bg-base-200 text-base-content/80' }}">
-                        <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                        </svg>
-                        Pegawai
-                    </a>
-                </li>
-
-                <!-- Custom Pesan (locked kalau tier gak punya fiturnya) -->
-                <li>
-                    <details class="group" {{ request()->routeIs('custom.pesan.*') ? 'open' : '' }}>
-                        <summary
-                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm cursor-pointer hover:bg-base-200 text-base-content/80 transition-colors">
-                            <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
-                            </svg>
-                            <span class="flex-1">Custom Pesan</span>
-                            @if ($customPesanLocked)
-                                <svg class="w-3.5 h-3.5 text-base-content/30 shrink-0" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                                </svg>
-                            @endif
-                        </summary>
-                        <ul class="ml-4 mt-1 border-l border-base-300 pl-3 space-y-1">
-                            <li>
-                                <a href="{{ $customPesanLocked ? '#' : route('custom.pesan.pemohon') }}"
-                                    @if ($customPesanLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" @endif
-                                    class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors
-                                        {{ $customPesanLocked ? 'text-base-content/35 cursor-not-allowed' : (request()->routeIs('custom.pesan.pemohon') ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-base-200 text-base-content/70') }}">
-                                    Pesan Pemohon
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ $customPesanLocked ? '#' : route('custom.pesan.penyerahan') }}"
-                                    @if ($customPesanLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" @endif
-                                    class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors
-                                        {{ $customPesanLocked ? 'text-base-content/35 cursor-not-allowed' : (request()->routeIs('custom.pesan.penyerahan') ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-base-200 text-base-content/70') }}">
-                                    Pesan Penyerahan
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ $customPesanLocked ? '#' : route('custom.pesan.pegawai') }}"
-                                    @if ($customPesanLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" @endif
-                                    class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors
-                                        {{ $customPesanLocked ? 'text-base-content/35 cursor-not-allowed' : (request()->routeIs('custom.pesan.pegawai') ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-base-200 text-base-content/70') }}">
-                                    Pesan Pegawai
-                                </a>
-                            </li>
-                        </ul>
-                    </details>
-                </li>
-
+                <li class="xv-nav-label">Otomasi WhatsApp</li>
                 <!-- Menu WA (state machine) -- menu.index kebuka buat semua tier,
                      cuma create/hapus slot baru yang eksklusif Premium (dicek di
                      dalem halamannya sendiri, bukan di sini). -->
                 <li>
-                    <a href="{{ route('menu.index') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-                            {{ request()->routeIs('menu.*') ? 'bg-primary text-primary-content' : 'hover:bg-base-200 text-base-content/80' }}">
+                    <a href="{{ route('menu.index') }}" class="xv-nav-item {{ request()->routeIs('menu.*') ? 'xv-nav-item-active' : '' }}">
                         <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -141,8 +80,7 @@
                 <li>
                     <a href="{{ $quickReplyLocked ? '#' : route('quick-reply.index') }}"
                         @if ($quickReplyLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" @endif
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-                            {{ $quickReplyLocked ? 'text-base-content/35 cursor-not-allowed' : (request()->routeIs('quick-reply.*') ? 'bg-primary text-primary-content' : 'hover:bg-base-200 text-base-content/80') }}">
+                        class="xv-nav-item {{ $quickReplyLocked ? 'xv-nav-item-locked' : (request()->routeIs('quick-reply.*') ? 'xv-nav-item-active' : '') }}">
                         <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -159,12 +97,92 @@
                     </a>
                 </li>
 
+                <!-- Custom Pesan (locked kalau tier gak punya fiturnya) -->
+                <li>
+                    <details class="group" {{ request()->routeIs('custom.pesan.*') ? 'open' : '' }}>
+                        <summary class="xv-nav-item cursor-pointer">
+                            <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                            </svg>
+                            <span class="flex-1">Custom Pesan</span>
+                            @if ($customPesanLocked)
+                                <svg class="w-3.5 h-3.5 text-base-content/30 shrink-0" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                                </svg>
+                            @endif
+                        </summary>
+                        <ul class="xv-nav-sublist">
+                            <li>
+                                <a href="{{ $customPesanLocked ? '#' : route('custom.pesan.pemohon') }}"
+                                    @if ($customPesanLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" @endif
+                                    class="xv-nav-subitem {{ $customPesanLocked ? 'xv-nav-item-locked' : (request()->routeIs('custom.pesan.pemohon') ? 'xv-nav-subitem-active' : '') }}">
+                                    Pesan Pemohon
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ $customPesanLocked ? '#' : route('custom.pesan.penyerahan') }}"
+                                    @if ($customPesanLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" @endif
+                                    class="xv-nav-subitem {{ $customPesanLocked ? 'xv-nav-item-locked' : (request()->routeIs('custom.pesan.penyerahan') ? 'xv-nav-subitem-active' : '') }}">
+                                    Pesan Penyerahan
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ $customPesanLocked ? '#' : route('custom.pesan.pegawai') }}"
+                                    @if ($customPesanLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" @endif
+                                    class="xv-nav-subitem {{ $customPesanLocked ? 'xv-nav-item-locked' : (request()->routeIs('custom.pesan.pegawai') ? 'xv-nav-subitem-active' : '') }}">
+                                    Pesan Pegawai
+                                </a>
+                            </li>
+                        </ul>
+                    </details>
+                </li>
+
+                <li>
+                    <details class="group" {{ request()->routeIs('pesan.*') ? 'open' : '' }}>
+                        <summary class="xv-nav-item cursor-pointer">
+                            <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                            <span class="flex-1">Log Pesan</span>
+                        </summary>
+                        <ul class="xv-nav-sublist">
+                            <li>
+                                <a href="{{ route('pesan.user') }}" class="xv-nav-subitem {{ request()->routeIs('pesan.user') ? 'xv-nav-subitem-active' : '' }}">
+                                    Pesan Pemohon
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('pesan.pegawai') }}" class="xv-nav-subitem {{ request()->routeIs('pesan.pegawai') ? 'xv-nav-subitem-active' : '' }}">
+                                    Pesan Pegawai
+                                </a>
+                            </li>
+                        </ul>
+                    </details>
+                </li>
+
+                <li class="xv-nav-label">Tim &amp; Dukungan</li>
+                <li>
+                    <a href="{{ route('user.pegawai') }}" class="xv-nav-item {{ request()->routeIs('user.pegawai') ? 'xv-nav-item-active' : '' }}">
+                        <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                        </svg>
+                        Pegawai
+                    </a>
+                </li>
+
                 <!-- Akun Admin Support (locked bareng Balasan Cepat, sama-sama butuh live support) -->
                 <li>
                     <a href="{{ $quickReplyLocked ? '#' : route('admin-support.index') }}"
                         @if ($quickReplyLocked) onclick="event.preventDefault(); showFeatureLockedAlert()" @endif
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-                            {{ $quickReplyLocked ? 'text-base-content/35 cursor-not-allowed' : (request()->routeIs('admin-support.*') ? 'bg-primary text-primary-content' : 'hover:bg-base-200 text-base-content/80') }}">
+                        class="xv-nav-item {{ $quickReplyLocked ? 'xv-nav-item-locked' : (request()->routeIs('admin-support.*') ? 'xv-nav-item-active' : '') }}">
                         <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -180,42 +198,9 @@
                     </a>
                 </li>
 
-                <!-- Log Pesan -->
+                <li class="xv-nav-label">Akun</li>
                 <li>
-                    <details class="group" {{ request()->routeIs('pesan.*') ? 'open' : '' }}>
-                        <summary
-                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm cursor-pointer hover:bg-base-200 text-base-content/80 transition-colors">
-                            <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
-                            <span class="flex-1">Log Pesan</span>
-                        </summary>
-                        <ul class="ml-4 mt-1 border-l border-base-300 pl-3 space-y-1">
-                            <li>
-                                <a href="{{ route('pesan.user') }}"
-                                    class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors
-                                        {{ request()->routeIs('pesan.user') ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-base-200 text-base-content/70' }}">
-                                    Pesan Pemohon
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('pesan.pegawai') }}"
-                                    class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors
-                                        {{ request()->routeIs('pesan.pegawai') ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-base-200 text-base-content/70' }}">
-                                    Pesan Pegawai
-                                </a>
-                            </li>
-                        </ul>
-                    </details>
-                </li>
-
-                <!-- Billing -->
-                <li>
-                    <a href="{{ route('user.billing') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-                            {{ request()->routeIs('user.billing') ? 'bg-primary text-primary-content' : 'hover:bg-base-200 text-base-content/80' }}">
+                    <a href="{{ route('user.billing') }}" class="xv-nav-item {{ request()->routeIs('user.billing') ? 'xv-nav-item-active' : '' }}">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
@@ -223,12 +208,8 @@
                         Billing
                     </a>
                 </li>
-
-                <!-- Pengaturan -->
                 <li>
-                    <a href="{{ route('setting.user') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors
-                            {{ request()->routeIs('setting.user') ? 'bg-primary text-primary-content' : 'hover:bg-base-200 text-base-content/80' }}">
+                    <a href="{{ route('setting.user') }}" class="xv-nav-item {{ request()->routeIs('setting.user') ? 'xv-nav-item-active' : '' }}">
                         <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -247,16 +228,12 @@
             <div class="dropdown dropdown-top dropdown-end w-full">
                 <div tabindex="0" role="button"
                     class="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-base-200 transition-colors">
-                    <div class="avatar">
-                        <div class="w-9 rounded-full ring-1 ring-base-300">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode($navUser?->name ?? 'User') }}&background=4f46e5&color=fff"
-                                alt="Avatar" />
-                        </div>
+                    <div class="w-9 h-9 rounded-full xv-avatar-initials text-sm ring-1 ring-base-300 shrink-0">
+                        {{ $navInitials }}
                     </div>
                     <div class="flex flex-col items-start flex-1 min-w-0">
                         <span class="font-medium text-sm truncate w-full">{{ $navUser?->name ?? 'User' }}</span>
-                        <span
-                            class="text-xs text-base-content/50 truncate w-full">{{ $navUser?->email ?? 'user@example.com' }}</span>
+                        <span class="text-xs text-base-content/50 truncate w-full">{{ $navUser?->email ?? 'user@example.com' }}</span>
                     </div>
                     <svg class="w-4 h-4 shrink-0 text-base-content/40" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
