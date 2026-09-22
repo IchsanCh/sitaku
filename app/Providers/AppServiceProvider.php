@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // URL::forceScheme('https');
+        URL::forceScheme('https');
         $this->loadHelpers();
         Carbon::setLocale('id');
         ResetPassword::createUrlUsing(function ($notifiable, string $token) {

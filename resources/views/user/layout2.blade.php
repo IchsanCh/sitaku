@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title', 'Exavro')</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/exavro-panel.css', 'resources/js/panel.js'])
     <meta property="og:title" content="@yield('title', 'Exavro')">
     <meta name="description" content="@yield('meta_description', 'Exavro adalah sistem notifikasi otomatis berbasis web yang membantu mengirimkan pesan WhatsApp ke pemohon dan pegawai secara real-time, tepat waktu, dan efisien.')">
     <meta property="og:description" content="@yield('og_description', 'Otomatisasi notifikasi ke pemohon dan pegawai dalam satu sistem yang cerdas dan mudah diatur.')">
@@ -77,28 +77,6 @@
 
         @include('user.sidebar')
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const drawerToggle = document.getElementById('drawer-toggle');
-            const menuLinks = document.querySelectorAll('.drawer-side a');
-
-            menuLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    if (window.innerWidth < 1024) {
-                        drawerToggle.checked = false;
-                    }
-                });
-            });
-        });
-
-        // Dipanggil dari menu/tombol yang dikunci fitur tier (mis. Custom Pesan
-        // di sidebar). Dialog native DaisyUI, id 'modal-feature-locked' di-declare
-        // di body (lihat di bawah).
-        function showFeatureLockedAlert() {
-            document.getElementById('modal-feature-locked').showModal();
-        }
-    </script>
 
     <dialog id="modal-feature-locked" class="modal">
         <div class="modal-box">
