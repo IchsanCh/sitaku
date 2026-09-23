@@ -5,7 +5,7 @@
             Made with 🤍 by <a href="https://lotusaja.com" class="text-white" target="_blank">Lotusaja</a>
         </p>
         <p class="text-center text-sm">
-            &copy; {{ date('Y') }} Sitaku. All rights reserved.
+            &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
         </p>
     </div>
 </div>

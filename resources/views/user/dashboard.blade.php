@@ -1,15 +1,15 @@
 @extends('user.layout2')
 
-@section('title', 'Dashboard')
-@section('meta_description', 'Selamat datang di Dashboard SITAKU! Atur notifikasi otomatis dan cek log pesan di sini.')
-@section('og_description', 'Gunakan Dashboard SITAKU untuk mengelola semua notifikasi WhatsApp secara otomatis.')
+@section('title', 'Dashboard — Exavro')
+@section('meta_description', 'Selamat datang di Dashboard Exavro! Atur notifikasi otomatis dan cek log pesan di sini.')
+@section('og_description', 'Gunakan Dashboard Exavro untuk mengelola semua notifikasi WhatsApp secara otomatis.')
 
 @section('content')
     <div class="max-w-7xl mx-auto p-6">
         <!-- Header -->
         <div class="mb-8">
             <p class="text-sm font-semibold text-primary mb-1">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</p>
-            <h1 class="text-2xl md:text-3xl font-bold text-base-content tracking-tight">Halo, {{ $user->name }} 👋</h1>
+            <h1 class="font-display text-2xl md:text-3xl font-bold text-base-content tracking-tight">Halo, {{ $user->name }} 👋</h1>
             <p class="text-base-content/60 mt-1">Berikut ringkasan aktivitas notifikasi Anda.</p>
         </div>
 
@@ -205,46 +205,6 @@
                     showToast('error', "{{ $error }}", 'Validation Error');
                 @endforeach
             @endif
-
-            function showToast(type, message, title = '') {
-                const toastContainer = document.getElementById('toastContainer');
-                if (!toastContainer) return;
-
-                const alertClass = type === 'error' ? 'alert-error' :
-                    type === 'success' ? 'alert-success' :
-                    type === 'warning' ? 'alert-warning' : 'alert-info';
-
-                const icon = type === 'error' ?
-                    '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' :
-                    type === 'success' ?
-                    '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' :
-                    '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-
-                const toast = document.createElement('div');
-                toast.className = `alert ${alertClass} shadow-lg mb-4`;
-                toast.innerHTML = `
-                    <div class="flex items-start gap-3">
-                        ${icon}
-                        <div class="flex-1">
-                            ${title ? `<div class="font-bold">${title}</div>` : ''}
-                            <div class="text-sm">${message}</div>
-                        </div>
-                        <button class="btn btn-ghost btn-sm" onclick="this.parentElement.parentElement.remove()">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                `;
-
-                toastContainer.appendChild(toast);
-
-                setTimeout(() => {
-                    if (toast.parentElement) {
-                        toast.remove();
-                    }
-                }, 5000);
-            }
         });
     </script>
 @endsection
