@@ -17,6 +17,7 @@ class Subscription extends Model
         'start_date',
         'end_date',
         'payment_token',
+        'snap_token',
     ];
     public function user()
     {

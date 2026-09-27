@@ -1,0 +1,15 @@
+/* ==========================================================================
+   EXAVRO — billing checkout page (resources/views/user/billing-payment.blade.php)
+   Loaded on top of exavro-panel.css (Tailwind + daisyUI already available
+   there). Only what Tailwind utilities can't already express lives here.
+   ========================================================================== */
+
+.billing-pay-card {
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.billing-pay-card:hover {
+    transform: translateY(-4px);
+}

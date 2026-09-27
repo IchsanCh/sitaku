@@ -1,0 +1,65 @@
+/* ==========================================================================
+   EXAVRO — billing index page (resources/views/user/billing.blade.php)
+   Loaded on top of exavro-panel.css (Tailwind + daisyUI + tema Exavro udah
+   ada di situ). Sebelumnya card paket di sini pakai warna hex hardcode
+   peninggalan Sitaku (#11999e dkk, lihat app.css .c2/.bgc2) yang gak
+   nyambung ke token tema Exavro sekarang -- di sini semua warna diambil
+   dari CSS variable tema (--color-primary dkk) biar otomatis ikut kalau
+   temanya berubah lagi nanti.
+   ========================================================================== */
+
+.pricing-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 1rem;
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.pricing-card:hover {
+    transform: translateY(-4px);
+}
+
+.pricing-card__accent-bar {
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(
+        90deg,
+        var(--color-primary),
+        var(--color-secondary)
+    );
+}
+
+.pricing-card--featured {
+    border-color: transparent;
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-primary) 8%, var(--color-base-100)) 0%,
+        var(--color-base-100) 65%
+    );
+}
+
+.pricing-card__badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-primary-content);
+    background-color: var(--color-primary);
+}
+
+.pricing-card__tier {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-primary);
+}

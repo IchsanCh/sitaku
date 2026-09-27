@@ -8,6 +8,7 @@
     <title>@yield('title', 'Exavro')</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     @vite(['resources/css/exavro-panel.css', 'resources/js/panel.js'])
+    @stack('styles')
     <meta property="og:title" content="@yield('title', 'Exavro')">
     <meta name="description" content="@yield('meta_description', 'Exavro adalah sistem notifikasi otomatis berbasis web yang membantu mengirimkan pesan WhatsApp ke pemohon dan pegawai secara real-time, tepat waktu, dan efisien.')">
     <meta property="og:description" content="@yield('og_description', 'Otomatisasi notifikasi ke pemohon dan pegawai dalam satu sistem yang cerdas dan mudah diatur.')">
@@ -105,6 +106,8 @@
     </dialog>
 
     @include('partials.confirm-modal')
+
+    @stack('scripts')
 </body>
 
 </html>

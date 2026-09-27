@@ -29,6 +29,10 @@ class BillingController extends Controller
 
     public function pay(Request $request)
     {
+        $request->validate([
+            'package_id' => ['required', 'integer', 'exists:packages,id'],
+        ]);
+
         do {
             $kodeInvoice = str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
         } while (Subscription::where('id', $kodeInvoice)->exists());
@@ -87,8 +91,7 @@ class BillingController extends Controller
                 'order_id' => $orderId,
                 'user_id' => $user->id
             ]);
-            // Tambahkan sebelum return $snapToken;
-            $subscription = Subscription::create([
+            Subscription::create([
                 'id' => $kodeInvoice,
                 'user_id' => $user->id,
                 'package_id' => $package->id,
@@ -97,9 +100,16 @@ class BillingController extends Controller
                 'start_date' => Carbon::now(),
                 'end_date' => Carbon::now()->addDays($package->duration_days ?? 30),
                 'payment_token' => $orderId,
+                'snap_token' => $snapToken,
             ]);
 
-            return view('user.billing-payment', compact('snapToken', 'package'));
+            // Redirect (bukan render langsung) -- ini yang benerin bug "refresh
+            // bikin invoice baru". Sebelumnya endpoint ini POST yang langsung
+            // return view(); browser nyimpen itu sebagai submission terakhir,
+            // jadi refresh = resubmit form = Subscription::create() kepanggil
+            // lagi. Dengan redirect ke route GET, refresh cuma re-GET halaman
+            // checkout yang sama, gak pernah nge-trigger create() lagi.
+            return redirect()->route('billing.checkout', ['payToken' => $orderId]);
         } catch (\Exception $e) {
             Log::error('Failed to generate snap token:', [
                 'order_id' => $orderId,
@@ -108,6 +118,104 @@ class BillingController extends Controller
 
             return redirect()->route('user.billing')
                 ->with('error', 'Gagal memproses pembayaran. Silakan coba lagi.');
+        }
+    }
+
+    /**
+     * Halaman checkout (GET, idempotent) -- tempat tombol "Bayar Sekarang" +
+     * Midtrans Snap muncul. Ini yang dituju pay() lewat redirect, dan aman
+     * di-refresh berkali-kali karena cuma baca data yang udah ada, gak pernah
+     * bikin Subscription baru.
+     */
+    public function checkout($payToken)
+    {
+        $user = Auth::guard('user')->user();
+
+        $subscription = Subscription::where('user_id', $user->id)
+            ->where('payment_token', $payToken)
+            ->first();
+
+        if (!$subscription) {
+            return redirect()->route('user.billing')
+                ->with('error', 'Transaksi tidak ditemukan.');
+        }
+
+        if ($subscription->status === 'success') {
+            return redirect()->route('user.billing')
+                ->with('info', 'Paket ini sudah aktif, gak perlu bayar lagi.');
+        }
+
+        // eager-load buat partials.tier-features di view (dipakai bareng modal
+        // pilih paket di billing index, jadi butuh $tier->features juga)
+        $subscription->loadMissing('package.tier.features');
+        $package = $subscription->package;
+        $snapToken = $subscription->snap_token;
+
+        // Baris lama (dibuat sebelum kolom snap_token ada) atau token yang
+        // entah kenapa kosong -- jangan biarin null nyampe ke JS Midtrans di
+        // view (itu bakal error diam-diam di browser). Coba generate ulang
+        // sekali; kalau tetep gagal, kasih tanda yang jelas ke user & arahin
+        // balik, bukan halaman checkout yang kosong/rusak.
+        if (!$snapToken) {
+            $snapToken = $this->regenerateSnapToken($subscription, $package);
+
+            if (!$snapToken) {
+                return redirect()->route('user.billing')
+                    ->with('error', 'Sesi pembayaran untuk transaksi ini sudah tidak valid. Silakan pilih paket lagi.');
+            }
+        }
+
+        return view('user.billing-payment', compact('subscription', 'package', 'snapToken'));
+    }
+
+    /**
+     * Self-heal: minta Snap token baru buat order_id yang sama, dipakai
+     * checkout() waktu subscription.snap_token kosong. Best-effort -- kalau
+     * Midtrans nolak (mis. transaksi lama udah kadaluarsa di sisi mereka),
+     * return null dan biarin caller yang mutusin gimana ngasih tau user.
+     */
+    protected function regenerateSnapToken(Subscription $subscription, Package $package): ?string
+    {
+        try {
+            Config::$serverKey = config('midtrans.server_key');
+            Config::$isProduction = config('midtrans.is_production');
+            Config::$isSanitized = true;
+            Config::$is3ds = true;
+
+            $snapToken = Snap::getSnapToken([
+                'transaction_details' => [
+                    'order_id' => $subscription->payment_token,
+                    'gross_amount' => (int) $subscription->total,
+                ],
+                'customer_details' => [
+                    'first_name' => $subscription->user->name,
+                    'email' => $subscription->user->email,
+                ],
+                'item_details' => [[
+                    'id' => $package->id,
+                    'price' => $package->price,
+                    'quantity' => 1,
+                    'name' => $package->name,
+                ]],
+                'callbacks' => [
+                    'finish' => route('billing.success', [
+                        'package_id' => $package->id,
+                        'order_id' => $subscription->payment_token,
+                    ]),
+                ],
+            ]);
+
+            $subscription->update(['snap_token' => $snapToken]);
+
+            return $snapToken;
+        } catch (\Exception $e) {
+            Log::error('Failed to regenerate snap token for a subscription missing one:', [
+                'subscription_id' => $subscription->id,
+                'payment_token' => $subscription->payment_token,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
         }
     }
 

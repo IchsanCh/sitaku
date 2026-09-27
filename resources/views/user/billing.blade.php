@@ -2,15 +2,19 @@
 
 @section('title', 'Billing')
 @section('meta_description',
-    'Pilih paket langganan Sitaku sesuai kebutuhanmu. Tersedia paket Basic dan Premium dengan
-    fitur lengkap untuk pengelolaan data yang lebih canggih.')
+    'Pilih paket langganan Exavro sesuai kebutuhanmu. Tersedia beberapa paket dengan fitur
+    lengkap untuk pengelolaan data yang lebih canggih.')
 @section('og_description',
-    'Nikmati fitur premium dari Sitaku dengan berlangganan paket pilihan. Praktis, cepat, dan
+    'Nikmati fitur premium dari Exavro dengan berlangganan paket pilihan. Praktis, cepat, dan
     aman dengan pembayaran online Midtrans.')
+
+@push('styles')
+    @vite(['resources/css/billing.css'])
+@endpush
 
 @section('content')
     <div class="min-h-screen bg-gradient-to-br from-base-200 to-base-300">
-        <div class="bg-base-100 borderbc1">
+        <div class="bg-base-100 border-b border-base-300">
             <div class="max-w-4xl mx-auto px-6 py-8">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
@@ -26,6 +30,7 @@
                 </div>
             </div>
         </div>
+
         <!-- Modal Pilih Paket -->
         <input type="checkbox" id="buy-package-modal" class="modal-toggle" />
         <div class="modal modal-bottom sm:modal-middle">
@@ -51,34 +56,27 @@
                     @forelse ($packages as $package)
                         @php $isFeatured = $topPrice > 0 && (int) $package->price === (int) $topPrice; @endphp
                         <div
-                            class="relative flex flex-col rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1
-                                {{ $isFeatured ? 'border-transparent shadow-xl' : 'border-base-300 bg-base-100 shadow-sm hover:shadow-lg' }}"
-                            @if ($isFeatured) style="background: linear-gradient(180deg, #e4f9f5 0%, #ffffff 60%);" @endif>
+                            class="pricing-card border {{ $isFeatured ? 'pricing-card--featured shadow-xl' : 'border-base-300 bg-base-100 shadow-sm hover:shadow-lg' }}">
 
-                            <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #11999e, #30e3ca);"></div>
+                            <div class="pricing-card__accent-bar"></div>
 
                             @if ($isFeatured)
-                                <span
-                                    class="absolute top-4 right-4 text-[11px] font-bold uppercase tracking-wide text-white px-3 py-1 rounded-full"
-                                    style="background-color:#236961;">
-                                    Paling Lengkap
-                                </span>
+                                <span class="pricing-card__badge">Paling Lengkap</span>
                             @endif
 
                             <div class="p-6 flex flex-col flex-1">
                                 @if ($package->tier)
-                                    <span class="text-xs font-bold uppercase tracking-widest mb-1"
-                                        style="color:#11999e;">{{ $package->tier->name }}</span>
+                                    <span class="pricing-card__tier mb-1">{{ $package->tier->name }}</span>
                                 @endif
 
-                                <h4 class="text-2xl font-bold mb-1" style="color:#40514e;">{{ $package->name }}</h4>
+                                <h4 class="text-2xl font-bold mb-1 text-base-content">{{ $package->name }}</h4>
 
                                 @if ($package->description)
                                     <p class="text-sm text-base-content/60 mb-5">{{ $package->description }}</p>
                                 @endif
 
                                 <div class="mb-6">
-                                    <span class="text-3xl font-black" style="color:#40514e;">Rp
+                                    <span class="text-3xl font-black text-base-content">Rp
                                         {{ number_format($package->price, 0, ',', '.') }}</span>
                                     <span class="text-sm text-base-content/50">/ {{ $package->duration_days }} hari</span>
                                 </div>
@@ -90,10 +88,8 @@
                                 <form method="POST" action="{{ route('billing.pay') }}">
                                     @csrf
                                     <input type="hidden" name="package_id" value="{{ $package->id }}">
-                                    <button type="submit" class="btn w-full font-bold border-0 text-white transition-colors"
-                                        style="background-color: {{ $isFeatured ? '#11999e' : '#40514e' }};"
-                                        onmouseover="this.style.backgroundColor='#236961'"
-                                        onmouseout="this.style.backgroundColor='{{ $isFeatured ? '#11999e' : '#40514e' }}'">
+                                    <button type="submit"
+                                        class="btn w-full font-bold {{ $isFeatured ? 'btn-primary' : 'btn-outline btn-primary' }}">
                                         Langganan Sekarang
                                     </button>
                                 </form>
@@ -111,6 +107,18 @@
             <label class="modal-backdrop" for="buy-package-modal">Close</label>
         </div>
 
+        <!-- Processing overlay -- muncul begitu salah satu tombol "Langganan
+        Sekarang" diklik, biar user gak bisa klik dobel/pilih paket lain
+        sambil nunggu diarahin ke halaman bayar. -->
+        <div id="billing-processing-overlay"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 items-center justify-center hidden">
+            <div class="bg-base-100 rounded-2xl p-8 text-center shadow-2xl max-w-sm mx-4">
+                <div class="loading loading-spinner loading-lg text-primary mb-4"></div>
+                <h3 class="font-bold text-lg mb-2">Menyiapkan Pembayaran</h3>
+                <p class="text-base-content/70 text-sm">Mohon tunggu sebentar...</p>
+            </div>
+        </div>
+
         <!-- Main Content Area -->
         <div class="max-w-7xl mx-auto px-6 py-8">
             <!-- Action Header -->
@@ -126,7 +134,7 @@
                 </label>
             </div>
 
-            <!-- Enhanced Billing Table -->
+            <!-- Billing Table -->
             <div class="card bg-base-100 shadow-2xl border border-base-300">
                 <div class="card-body p-0">
                     <div class="bg-gradient-to-r from-primary/5 to-secondary/5 p-6 border-b border-base-200">
@@ -245,7 +253,7 @@
                                         </td>
                                         <td class="py-4">
                                             <a href="{{ route('billing.status', ['payToken' => $p->payment_token]) }}"
-                                                class="btn bgc5 text-white">Lihat</a>
+                                                class="btn btn-primary btn-sm">Lihat</a>
                                         </td>
                                     </tr>
                                 @empty
@@ -287,7 +295,7 @@
                 </div>
             </div>
 
-            <!-- Enhanced Pagination -->
+            <!-- Pagination -->
             @if ($billing->hasPages())
                 <div class="flex flex-col items-center gap-4 mt-8">
                     <div class="join shadow-lg bg-base-100 rounded-xl">
@@ -348,136 +356,29 @@
         </div>
     </div>
 
-    <!-- Enhanced Toast Container -->
+    <!-- Toast Container (shared window.showToast dari panel.js) -->
     <div class="toast toast-top toast-end z-50" id="toastContainer"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('error'))
-                showToast('error', "{{ session('error') }}");
+                showToast('error', @json(session('error')));
             @endif
-
             @if (session('success'))
-                showToast('success', "{{ session('success') }}");
+                showToast('success', @json(session('success')));
             @endif
-
             @if (session('info'))
-                showToast('info', "{{ session('info') }}");
+                showToast('info', @json(session('info')));
             @endif
-
             @if ($errors->any())
                 @foreach ($errors->all() as $error)
-                    showToast('error', "{{ $error }}");
+                    showToast('error', @json($error));
                 @endforeach
             @endif
         });
-
-        function showToast(type, message) {
-            const toastContainer = document.getElementById('toastContainer');
-            if (!toastContainer) return;
-
-            const alertClass = type === 'error' ? 'alert-error' : (type === 'info' ? 'alert-info' : 'alert-success');
-            const icon = type === 'error' ?
-                '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>' :
-                (type === 'info' ?
-                    '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' :
-                    '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>');
-
-            const toast = document.createElement('div');
-            toast.className = `alert ${alertClass} shadow-2xl mb-4 border-0 backdrop-blur-sm`;
-            toast.style.transform = 'translateX(100%)';
-            toast.style.opacity = '0';
-            toast.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <div class="flex-shrink-0">${icon}</div>
-                    <span class="font-medium">${message}</span>
-                    <button class="btn btn-ghost btn-sm btn-circle ml-auto hover:btn-error transition-colors duration-200" onclick="removeToast(this)">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-            `;
-
-            toastContainer.appendChild(toast);
-
-            // Animate in
-            setTimeout(() => {
-                toast.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                toast.style.transform = 'translateX(0)';
-                toast.style.opacity = '1';
-            }, 10);
-
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                removeToast(toast.querySelector('button'));
-            }, 5000);
-        }
-
-        function removeToast(button) {
-            const toast = button.closest('.alert');
-            if (toast) {
-                toast.style.transform = 'translateX(100%)';
-                toast.style.opacity = '0';
-                setTimeout(() => {
-                    if (toast.parentElement) {
-                        toast.remove();
-                    }
-                }, 300);
-            }
-        }
-
-        // Add loading states for buttons
-        document.querySelectorAll('a[href*="langganan"], a[href*="subscribe"]').forEach(button => {
-            button.addEventListener('click', function(e) {
-                if (this.href === '#') {
-                    e.preventDefault();
-                    return;
-                }
-
-                const originalText = this.innerHTML;
-                this.innerHTML = `
-                    <span class="loading loading-spinner loading-sm mr-2"></span>
-                    Memproses...
-                `;
-                this.classList.add('btn-disabled');
-
-                // Reset after 3 seconds if still on page (fallback)
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                    this.classList.remove('btn-disabled');
-                }, 3000);
-            });
-        });
-
-        // Add smooth scroll for better UX
-        document.documentElement.style.scrollBehavior = 'smooth';
-
-        // Add ripple effect to buttons (optional enhancement)
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('click', function(e) {
-                const rect = this.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                const ripple = document.createElement('span');
-                ripple.className = 'absolute rounded-full bg-white/30 animate-ping';
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
-                ripple.style.width = '10px';
-                ripple.style.height = '10px';
-                ripple.style.transform = 'translate(-50%, -50%)';
-                ripple.style.pointerEvents = 'none';
-
-                this.style.position = 'relative';
-                this.style.overflow = 'hidden';
-                this.appendChild(ripple);
-
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            });
-        });
     </script>
 
+    @push('scripts')
+        @vite(['resources/js/billing.js'])
+    @endpush
 @endsection
